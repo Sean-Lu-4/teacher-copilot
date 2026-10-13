@@ -1,0 +1,7 @@
+[
+  {"topic": "calling methods parameters return values", "unit": 1, "material_type": "lecture", "expected_sources": [{"file": "AP CSA Unit1 讲义.pdf", "pages": [27, 31, 32]}], "review_status": "Text reviewed; teacher should verify suitability against PDF"},
+  {"topic": "if else conditional statements", "unit": null, "material_type": "lecture", "expected_sources": [], "review_status": "Teacher to identify unit and expected pages"},
+  {"topic": "for while loops iteration", "unit": null, "material_type": "lecture", "expected_sources": [], "review_status": "Teacher to identify unit and expected pages"},
+  {"topic": "classes objects constructors instance variables", "unit": null, "material_type": "lecture", "expected_sources": [], "review_status": "Teacher to identify unit and expected pages"},
+  {"topic": "arrays traversal index length", "unit": null, "material_type": "lecture", "expected_sources": [], "review_status": "Teacher to identify unit and expected pages"}
+]

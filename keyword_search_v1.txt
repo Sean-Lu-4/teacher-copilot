@@ -1,0 +1,312 @@
+from openai import OpenAI
+from pypdf import PdfReader
+from pathlib import Path
+
+
+print("\n========== DEBUG ==========")
+print("RUNNING RAG VERSION")
+print("Current file:", Path(__file__).resolve())
+print("===========================\n")
+
+# =========================
+# 1. OpenAI Client
+# =========================
+
+client = OpenAI()
+
+
+# =========================
+# 2. Load PDF Materials
+# =========================
+
+materials_folder = Path("materials/ap csa")
+
+pages = []
+
+pdf_files = list(materials_folder.glob("*.pdf"))
+
+print(f"Found {len(pdf_files)} PDF files.")
+
+for pdf_file in pdf_files:
+    print(f"Loading: {pdf_file.name}")
+
+    reader = PdfReader(pdf_file)
+
+    for page_number, page in enumerate(reader.pages, start=1):
+        text = page.extract_text()
+
+        if text:
+            pages.append({
+                "file": pdf_file.name,
+                "page": page_number,
+                "text": text
+            })
+
+print("\nAll teaching materials loaded successfully.")
+print("Total pages extracted:", len(pages))
+print("DEBUG: PDF count =", len(pdf_files))
+print("DEBUG: Page count =", len(pages))
+
+
+# =========================
+# 3. Search Relevant Pages
+# =========================
+
+def search_pages(topic, pages, top_k=8):
+    """
+    Search PDF pages using simple keyword matching.
+    Returns the top_k most relevant pages.
+    """
+
+    topic_words = topic.lower().split()
+
+    print("\nSearch keywords:", topic_words)
+
+    scored_pages = []
+
+    for page in pages:
+        text_lower = page["text"].lower()
+
+        score = 0
+
+        for word in topic_words:
+            score += text_lower.count(word)
+
+        if score > 0:
+            scored_pages.append((score, page))
+
+    print("Matched pages:", len(scored_pages))
+
+    scored_pages.sort(
+        key=lambda x: x[0],
+        reverse=True
+    )
+
+    return scored_pages[:top_k]
+
+
+# =========================
+# 4. User Input
+# =========================
+
+subject = input("\nEnter subject: ")
+level = input("Enter level: ")
+topic = input("Enter topic: ")
+duration = input("Enter duration in minutes: ")
+learning_objectives = input(
+    "Enter learning objectives (optional): "
+)
+
+
+# =========================
+# 5. Retrieve Relevant Pages
+# =========================
+
+
+print("\n>>> STARTING PAGE SEARCH <<<")
+
+relevant_pages = search_pages(
+    topic,
+    pages,
+    top_k=8
+)
+
+print(">>> SEARCH FINISHED <<<")
+
+print("\n--- Relevant Pages Found ---")
+
+if not relevant_pages:
+    print("No relevant pages found.")
+
+else:
+    for score, page in relevant_pages:
+        print(
+            f"{page['file']} "
+            f"- Page {page['page']} "
+            f"- Score: {score}"
+        )
+
+
+# =========================
+# 6. Build Retrieved Material
+# =========================
+
+retrieved_material = ""
+
+for score, page in relevant_pages:
+    retrieved_material += (
+        f"\n\n===== SOURCE: "
+        f"{page['file']} "
+        f"| Page {page['page']} "
+        f"| Score {score} =====\n\n"
+        + page["text"]
+    )
+
+
+# =========================
+# 7. Build Prompt
+# =========================
+
+prompt = f"""
+You are an experienced international school teacher
+and curriculum designer.
+
+Create a practical, classroom-ready lesson plan
+using the information below.
+
+COURSE INFORMATION
+
+Subject: {subject}
+
+Level: {level}
+
+Topic: {topic}
+
+Duration: {duration} minutes
+
+Learning Objectives:
+{
+    learning_objectives
+    if learning_objectives
+    else "Please generate suitable objectives."
+}
+
+
+TEACHING MATERIAL
+
+Use the retrieved teaching material below
+as the primary source for this lesson.
+
+Base the lesson mainly on this material.
+
+Do not introduce factual content that conflicts
+with the provided material.
+
+If the material does not contain enough information
+for a requested section, do not invent specific
+curriculum content.
+
+Keep the response within the lesson scope.
+
+
+--- BEGIN RETRIEVED MATERIAL ---
+
+{retrieved_material}
+
+--- END RETRIEVED MATERIAL ---
+
+
+CORE REQUIREMENTS
+
+1. Be appropriate for the student's level.
+
+2. Fit within the given lesson duration.
+
+3. Avoid vague activities such as
+   "students discuss" without clear instructions.
+
+4. Include concrete teacher actions
+   and student actions.
+
+5. Include realistic timings for each stage.
+
+6. Include a short assessment to check whether
+   students achieved the learning objectives.
+
+7. Include homework related to the topic.
+
+
+CURRICULUM AND QUALITY REQUIREMENTS
+
+1. Align the lesson specifically with the stated
+   curriculum or examination board.
+
+2. For AP Computer Science A lessons,
+   include at least one AP-style code tracing,
+   reasoning, or application question.
+
+3. Include a progression of difficulty:
+
+   - basic understanding
+   - application
+   - higher-order thinking
+
+4. Do not introduce concepts outside the stated
+   lesson scope unless they are clearly labelled
+   as optional extension material.
+
+5. When two concepts are commonly confused,
+   use a comparison table where appropriate.
+
+6. Identify likely student misconceptions
+   and suggest a specific teacher intervention
+   for each misconception.
+
+7. Use clean Markdown formatting only.
+
+8. Ensure all examples are technically correct
+   and appropriate for the stated student level.
+
+
+OUTPUT FORMAT
+
+Please use exactly these sections:
+
+1. Lesson Overview
+
+2. Learning Objectives
+
+3. Starter Activity
+- Time:
+- Teacher Actions:
+- Student Actions:
+
+4. Teacher Explanation
+- Time:
+- Key Content:
+- Teacher Actions:
+
+5. Student Activity
+- Time:
+- Instructions:
+- Expected Outcome:
+
+6. Practice
+- Time:
+- Task:
+
+7. Higher-Order / Exam-Style Question
+- Question:
+- Expected Reasoning:
+- Answer:
+
+8. Assessment
+- Time:
+- Method:
+- Success Criteria:
+
+9. Homework
+
+10. Common Misconceptions and Teacher Interventions
+"""
+
+
+# =========================
+# 8. Call AI
+# =========================
+
+response = client.responses.create(
+    model="gpt-5.6-luna",
+    input=prompt
+)
+
+
+# =========================
+# 9. Output Lesson Plan
+# =========================
+
+print("\n" + "=" * 60)
+print("TEACHER COPILOT - GENERATED LESSON PLAN")
+print("=" * 60)
+
+print(response.output_text)

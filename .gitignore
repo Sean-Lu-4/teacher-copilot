@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+.env.*
+.cache/
+outputs/
+embeddings_cache*.json
+*.backup-*
+# Keep local teaching materials out of source control by default.
+materials/
+backups/

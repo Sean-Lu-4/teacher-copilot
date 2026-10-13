@@ -1,0 +1,158 @@
+"""Printable worksheets built only from the current saved question records."""
+from io import BytesIO
+
+MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+
+
+def build_docx(plan, records, audience, language='bilingual'):
+    if audience not in {'student', 'teacher'}:
+        raise ValueError('请选择学生版或教师版。')
+    try:
+        from docx import Document
+        from docx.shared import Cm, Pt, RGBColor
+        from docx.oxml import OxmlElement
+        from docx.oxml.ns import qn
+    except ImportError as exc:
+        raise ValueError('Word 导出需要安装项目 requirements.txt 中的依赖。') from exc
+    from .worksheets import TOPICS, summary
+
+    document = Document()
+    # The bundled default template may carry a decorative title border.
+    for style in document.styles:
+        for border in list(style.element.iter(qn('w:pBdr'))):
+            border.getparent().remove(border)
+    section = document.sections[0]
+    section.page_width, section.page_height = Cm(21), Cm(29.7)
+    section.top_margin = section.bottom_margin = Cm(1.8)
+    section.left_margin = section.right_margin = Cm(2)
+    for name, size in [('Normal', 10.5), ('Title', 22), ('Heading 1', 15), ('Heading 2', 11)]:
+        style = document.styles[name]
+        style.font.name = 'Calibri'
+        style.font.size = Pt(size)
+        style.font.color.rgb = RGBColor(0, 0, 0)
+        style.element.get_or_add_rPr().rFonts.set(qn('w:eastAsia'), 'Microsoft YaHei')
+        style.paragraph_format.space_after = Pt(6)
+    document.styles['Normal'].paragraph_format.line_spacing = 1.15
+    if audience == 'teacher':
+        # The answer key contains several explanatory blocks after each
+        # question. Keep the teacher edition compact enough that a short
+        # final block does not spill onto an otherwise empty extra page.
+        document.styles['Normal'].font.size = Pt(9.5)
+        document.styles['Normal'].paragraph_format.line_spacing = 1.0
+        for name in ['Normal', 'Heading 1', 'Heading 2']:
+            document.styles[name].paragraph_format.space_after = Pt(3)
+        document.styles['Heading 2'].paragraph_format.space_before = Pt(4)
+    footer = section.footer.paragraphs[0]
+    footer.alignment = 2
+    footer.add_run('AP CSA  |  ' + ('学生版' if audience == 'student' else '教师版') + '  |  ')
+    field = OxmlElement('w:fldSimple')
+    field.set(qn('w:instr'), 'PAGE')
+    footer._p.append(field)
+
+    def paragraph(text):
+        return document.add_paragraph(str(text))
+
+    def code(text):
+        # One paragraph per source line permits long code to cross pages safely.
+        for line in str(text).split('\n'):
+            p = paragraph(line)
+            p.paragraph_format.space_after = Pt(0)
+            p.paragraph_format.line_spacing = 1.0 if audience == 'teacher' else 1.05
+            p.paragraph_format.left_indent = Cm(.2)
+            for run in p.runs:
+                run.font.name = 'Consolas'
+                run.font.size = Pt(9)
+            shade = OxmlElement('w:shd')
+            shade.set(qn('w:fill'), 'F2F4F6')
+            p._p.get_or_add_pPr().append(shade)
+        paragraph('').paragraph_format.space_after = Pt(0)
+
+    settings = plan.get('worksheet_settings')
+    is_exam = (settings or {}).get('purpose') == 'exam'
+    topic = TOPICS.get((settings or {}).get('topic'), plan.get('course', {}).get('topic', '练习'))
+    document.add_paragraph('AP CSA 正式试卷' if is_exam else 'AP CSA 作业', 'Title')
+    paragraph(topic + '  ' + ('学生版' if audience == 'student' else '教师答案与解析'))
+    source = plan.get('generation', {}).get('source', 'local')
+    if source == 'mock': paragraph('AI 模拟体验：使用本地题库，未调用 AI。')
+    elif source == 'ai': paragraph('AI 生成题目，待教师审核。')
+    actual = sum(r['content']['minutes'] for r in records)
+    paragraph(f'{len(records)} 道题  |  预计作答 {actual} 分钟')
+    if is_exam:
+        marks = sum(r['content'].get('marks', 0) for r in records)
+        paragraph(f'考试时间 {settings["minutes"]} 分钟  |  总分 {marks} 分')
+        if marks != settings.get('total_marks'):
+            paragraph(f'注意：当前题目合计 {marks} 分，与设定总分 {settings.get("total_marks")} 分不同，请教师核对。')
+        paragraph('原创课堂测验，非 AP 官方试卷。分值用于本次课堂评分。')
+    if audience == 'student':
+        paragraph('姓名：________________    班级：____________    日期：____________')
+        paragraph('按题目要求阅读或编写 Java 代码。代码片段按题干指定的位置执行。')
+    else:
+        paragraph('供教师核对答案、评分与讲解使用。题目用时为估计，考试风格题的难度仍需课堂校准。')
+        for warning in summary(settings, records)['warnings']:
+            paragraph(warning)
+    for index, record in enumerate(records, 1):
+        q = record['content']
+        block_start = len(document.paragraphs)
+        labels = {'pending': '待审核', 'passed': '通过', 'failed': '需修改'}
+        heading = document.add_paragraph(f'第 {index} 题  {q["title"]}', 'Heading 1')
+        if index > 1 and (is_exam or audience == 'teacher' or any(r['content'].get('question_kind') == 'write' for r in records)):
+            heading.paragraph_format.page_break_before = True
+        paragraph((f'{q.get("marks", 0)} 分  |  ' if is_exam else '') + f'预计 {q["minutes"]} 分钟')
+        code(q['code'])
+        paragraph(q['task'])
+        for key, value in q.get('options', {}).items():
+            paragraph(f'{key}. {value}')
+        if audience == 'student':
+            document.add_paragraph('作答区', 'Heading 2')
+            count = 12 if q.get('question_kind') == 'write' else 5
+            for _ in range(count):
+                p = paragraph('____________________________________________________________________')
+                p.paragraph_format.space_after = Pt(7)
+                p.runs[0].font.color.rgb = RGBColor(180, 180, 180)
+            # Keep the prompt with the start of the answer area; long prompts
+            # and remaining answer lines must still be able to span pages.
+            for p in document.paragraphs[block_start:-count]:
+                p.paragraph_format.keep_with_next = True
+            continue
+        for title, value in [('参考答案', q['answer']), ('正确选项', q.get('answer_key')),
+                             ('解析步骤', q['reasoning'])]:
+            if language == 'english':
+                continue
+            if value:
+                document.add_paragraph(title, 'Heading 2')
+                if isinstance(value, list):
+                    for n, item in enumerate(value, 1):
+                        paragraph(f'{n}. {item}')
+                else:
+                    paragraph(value)
+        if language not in {'bilingual','english','chinese'}:
+            raise ValueError('解析语言选项无效。')
+        if language in {'bilingual','chinese'}:
+            pass
+        if q.get('explanation_en') and language in {'bilingual','english'}:
+            document.add_paragraph('English explanation', 'Heading 2')
+            paragraph(q['explanation_en'])
+        if q.get('reference_solution'):
+            document.add_paragraph('参考实现', 'Heading 2')
+            code(q['reference_solution'])
+        for title, value in [('干扰项解释', [f'{k}：{v}' for k, v in q.get('distractors', {}).items()]),
+                             ('常见错误', q['errors']), ('评分标准', q['rubric']),
+                             ('学生答错时的讲解建议', q['intervention']),
+                             ('前置知识', q.get('prerequisites'))]:
+            if value:
+                document.add_paragraph(title, 'Heading 2')
+                for item in value if isinstance(value, list) else [value]:
+                    paragraph(item)
+        if is_exam:
+            metadata = ''
+            if audience == 'teacher':
+                metadata = (f'  |  题目编号 {q["id"]}  |  修订 {record["revision"]}'
+                            f'  |  教师审核：{labels.get(record["validation"]["teacher_review"], "待审核")}')
+            paragraph(f'本题满分 {q.get("marks", 0)} 分。按上述评分标准分配得分；接受等价的正确解法。{metadata}')
+        if audience == 'student':
+            paragraph(f'题目编号 {q["id"]}  |  修订 {record["revision"]}')
+    document.core_properties.title = 'AP CSA ' + topic + ' ' + audience
+    document.core_properties.author = 'Teacher Copilot'
+    stream = BytesIO()
+    document.save(stream)
+    return stream.getvalue()
