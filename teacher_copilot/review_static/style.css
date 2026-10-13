@@ -126,7 +126,7 @@ nav .nav-link.active{color:#fff;background:#155eef;border-color:#155eef}
 @media(max-width:850px){.public-notice{font-size:14px;text-align:left}.teacher-tools{margin-top:14px}}
 
 #topic[multiple]{min-height:180px;padding:6px}#topic[multiple] option{padding:8px 10px;border-radius:6px}#topic[multiple] option:checked{background:#e7efff;color:#174ea6;font-weight:700}
-# selected choice chips
+/* Selected choice chips */
 .selected-chips{display:flex;flex-wrap:wrap;gap:7px;margin:-2px 0 12px}.selected-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;background:#e7efff;border:1px solid #b9cdf0;color:#174ea6;font-size:14px;font-weight:650}.selected-chip button{min-height:0;padding:0 2px;border:0;background:transparent;color:#174ea6;font-size:18px;line-height:1;box-shadow:none}.selected-chip button:hover{background:transparent;color:#a23b15}
 
 
@@ -146,3 +146,6 @@ nav .nav-link.active{color:#fff;background:#155eef;border-color:#155eef}
 .selection-help{margin:0 0 22px;padding:10px 12px;border-radius:8px;background:#f7faff;border:1px solid #e1eaf6}
 @media(min-width:950px){.choice-options{grid-template-columns:repeat(2,minmax(0,1fr))}.choice-option{min-height:52px}.choice-group{margin-bottom:26px}.topic-group{padding-top:24px}}
 @media(max-width:850px){.choice-option{font-size:17px;min-height:52px;padding:12px 14px}.choice-options{gap:9px}.selection-help{font-size:14px}}
+
+.workspace{grid-template-columns:minmax(380px,440px) minmax(0,1fr)}
+.choice-group .selected-chips{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:#f4f7fc;border-radius:10px;margin-top:14px}.selected-chips:empty{display:none}.selected-chip{max-width:100%;line-height:1.5}.selected-chip button{flex-shrink:0;min-width:28px;min-height:28px}.choice-options{max-height:340px;overflow-y:auto;padding:2px}.selection-help{margin-bottom:26px}@media(max-width:850px){.workspace{grid-template-columns:1fr}}
