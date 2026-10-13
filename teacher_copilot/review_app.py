@@ -186,6 +186,14 @@ class ReviewStore:
             if payload.get('action') == 'bank-feedback':
                 from .csa_review import save_feedback
                 return save_feedback(self.root, payload)
+            if payload.get('action') == 'teacher-feedback':
+                from .feedback import save_feedback
+                base_root = self.root.parent.parent if self.root.parent.name == 'sessions' else self.root
+                return save_feedback(base_root, payload)
+            if payload.get('action') == 'submit-question':
+                from .feedback import save_submission
+                base_root = self.root.parent.parent if self.root.parent.name == 'sessions' else self.root
+                return save_submission(base_root, payload)
             if payload.get('action') == 'generate':
                 mode=payload.get('source','local')
                 if mode not in {'local','mock','ai'}:raise ValueError('请选择有效的题目来源。')
@@ -433,8 +441,12 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                 name, mime = names[parsed.path]
                 content = (ASSETS / name).read_bytes()
                 if demo and mime == 'text/html':
-                    notice = '<p role="status">公开试用版：练习仅属于当前浏览器；服务重启可能清空，请及时导出 Word。AI 暂未开放。</p>'
+                    notice = '<p class="public-notice" role="status">公开试用：练习只保存在当前浏览器，服务重启后可能清空。完成后请及时下载 Word；AI 实时生成暂未开放。</p>'
                     content = content.replace(b'<main>', ('<main>' + notice).encode())
+                    content = content.replace('本地题库 / AI 按需生成'.encode(), '公开试用版 · 本地题库'.encode())
+                    content = content.replace('本地题库 · 可筛选组卷'.encode(), '公开试用版 · 可筛选组卷'.encode())
+                    content = content.replace('查看全课程题目审核页 →'.encode(), '查看课程范围与题库说明 →'.encode())
+                    content = content.replace('有额度时可为旧题生成英文解析。'.encode(), '教师答案支持中英双语导出。'.encode())
                 self.send(content, mime=mime + '; charset=utf-8')
             except (ValueError, OSError) as exc:
                 self.send({'error': str(exc)}, 400)

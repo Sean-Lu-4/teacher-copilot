@@ -9,7 +9,7 @@ function message(text,error=false){$('message').textContent=text;$('message').cl
 function setBusy(value){busy=value;document.querySelector('main').inert=value;$('generate').textContent=value?'处理中，请稍候…':($('mode').value==='exam'?'生成正式试卷 →':'生成作业 →');$('setup').setAttribute('aria-busy',String(value));}
 function canLeave(){return !dirty||confirm('还有未保存的修改，是否放弃？');}
 async function request(payload){const response=await fetch('/api/action',{method:'POST',headers:{'Content-Type':'application/json','X-Review-Token':token},body:JSON.stringify({run:state?.run,version:state?.version,request_id:crypto.randomUUID(),...payload})});const data=await response.json();if(!response.ok)throw Error(data.error);return data;}
-async function history(){const response=await fetch('/api/state');const data=await response.json();if(!response.ok)throw Error(data.error);token=data.token;$('source').querySelector('option[value=ai]').disabled=!data.ai.ready;$('ai-status').textContent=data.ai.message+(data.usage?` 今日请求 ${data.usage.attempts}/${data.usage.limit} 次，剩余 ${data.usage.remaining} 次。`:'');$('ai-model-stat').textContent=data.ai.ready?`AI 已启用 · ${data.ai.model}`:`AI 未启用 · ${data.ai.model}`;$('catalog-stats').textContent=`${data.catalog.bank_count} 道题 · ${data.catalog.topics.length} 个课题 · 4 个单元`;if(!catalogData)initCatalog(data.catalog);const previous=$('runs').value;$('runs').replaceChildren();for(const run of data.runs){const o=el('option',run===state?.run?'当前练习':run.replace(/_worksheet_.*/,' · 自选练习'));o.value=run;$('runs').append(o);}if(state)$('runs').value=state.run;else if(previous)$('runs').value=previous;$('load').disabled=!data.runs.length;}
+async function history(){const response=await fetch('/api/state');const data=await response.json();if(!response.ok)throw Error(data.error);token=data.token;$('source').querySelector('option[value=ai]').disabled=!data.ai.ready;$('ai-status').textContent=data.ai.message+(data.usage?` 今日请求 ${data.usage.attempts}/${data.usage.limit} 次，剩余 ${data.usage.remaining} 次。`:'');$('ai-model-stat').textContent=data.ai.ready?`AI 实时生成已启用 · ${data.ai.model}`:'本地题库可用 · AI 实时生成暂未开放';$('catalog-stats').textContent=`${data.catalog.bank_count} 道题 · ${data.catalog.topics.length} 个课题 · 4 个单元`;if(!catalogData)initCatalog(data.catalog);const previous=$('runs').value;$('runs').replaceChildren();for(const run of data.runs){const o=el('option',run===state?.run?'当前练习':run.replace(/_worksheet_.*/,' · 自选练习'));o.value=run;$('runs').append(o);}if(state)$('runs').value=state.run;else if(previous)$('runs').value=previous;$('load').disabled=!data.runs.length;}
 function settings(){const exam=$('mode').value==='exam';return {purpose:exam?'exam':'homework',topic:$('topic').value,contents:Array.from(document.querySelectorAll('input[name="contents"]:checked')).map(e=>e.value),difficulty:$('difficulty').value,minutes:Number(exam?$('exam-minutes').value:$('minutes').value),...(exam?{question_count:Number($('exam-count').value),total_marks:Number($('exam-marks').value),question_types:Array.from(document.querySelectorAll('input[name="question-types"]:checked')).map(e=>e.value),selected_ids:pendingPicked}:{})};}
 function setContents(checked=[]){const topic=catalogData.topics.find(t=>t.id===$('topic').value);$('bank-note').textContent=`当前课题共 ${topic.bank_count} 道原创题，按所选内容与难度组卷。优先避开最近 5 份作业中的题目；题量不足时会说明重复与时长缺口。`;$('content-options').replaceChildren();for(const c of topic.contents){const label=el('label',undefined,'check');const input=el('input');input.type='checkbox';input.name='contents';input.value=c.id;input.checked=checked.includes(c.id);label.append(input,document.createTextNode(c.title));$('content-options').append(label);}}
 function setTopics(unit,selected){$('topic').replaceChildren();for(const t of catalogData.topics.filter(t=>t.unit===unit)){const o=el('option',t.title);o.value=t.id;$('topic').append(o);}if(selected)$('topic').value=selected;setContents();}
@@ -56,7 +56,7 @@ $('regenerate').onclick=async()=>{
   finally{setBusy(false);}
 };
 
-$('source').onchange=()=>{message($('source').value==='ai'?'生成将调用付费 API，每次最多一次请求；失败不自动重试。':$('source').value==='mock'?'模拟体验使用本地题目，不会调用 AI。':'已选择免费本地题库。');};
+$('source').onchange=()=>{message($('source').value==='ai'?'AI 实时生成会消耗额度，每次最多请求一次。':$('source').value==='mock'?'模拟体验使用本地题目，不会调用 AI。':'已选择免费本地题库。');};
 $('mode').onchange=()=>{toggleMode();message($('mode').value==='exam'?'已切换到正式试卷，可使用本地题库或 AI 实时生成。请设置时间、题量、总分和题型。':'已切换到快速练习：适合 10/20 分钟课堂或作业。');};
 if(pendingPicked.length)$('mode').value='exam';
 toggleMode();
@@ -118,3 +118,19 @@ if($('quality'))$('quality').onclick=async()=>{
     }else message('结构质量检查通过：未发现重复题目或缺少答案字段。');
   }catch(e){message(e.message,true);}finally{setBusy(false);}
 };
+
+/* Teacher trial intake: feedback and question proposals are kept out of the live bank until review. */
+function formPayload(form){return Object.fromEntries(new FormData(form).entries());}
+async function submitTeacherForm(form, action, success){
+  const button=form.querySelector('button[type="submit"]');
+  button.disabled=true;
+  try{
+    const payload=formPayload(form); payload.action=action;
+    if(state){payload.run=state.run;}
+    const response=await fetch('/api/action',{method:'POST',headers:{'Content-Type':'application/json','X-Review-Token':token},body:JSON.stringify(payload)});
+    const data=await response.json(); if(!response.ok) throw Error(data.error||'提交失败。');
+    form.reset(); message(success+' 编号：'+data.id);
+  }catch(error){message(error.message,true)}finally{button.disabled=false}
+}
+if($('feedback-form'))$('feedback-form').addEventListener('submit',event=>{event.preventDefault();submitTeacherForm(event.currentTarget,'teacher-feedback','感谢反馈。');});
+if($('question-form'))$('question-form').addEventListener('submit',event=>{event.preventDefault();submitTeacherForm(event.currentTarget,'submit-question','题目已提交，等待审核。');});
