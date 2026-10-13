@@ -53,6 +53,33 @@ for key,(_,topics) in GROUPS.items():
     BANKS[key] += [q for q in HOMEWORK + GAP if q['ced_topics'][0] in scope]
 ALL_CSA_CONTENTS = list(CONTENT)
 BANKS['all-csa'] = QUESTIONS
+APPROVED_QUESTIONS = []
+
+
+def register_approved_question(submission):
+    """Add a reviewed teacher submission to the in-process bank."""
+    title = str(submission.get('title') or '').strip()
+    qid = 'T-' + str(submission.get('id') or 'QUESTION').replace('-', '')[-10:]
+    if any(q.get('id') == qid for q in QUESTIONS):
+        return qid
+    topic_text = str(submission.get('topic') or '').strip()
+    topic_id = next((key for key, value in VISIBLE_TOPICS.items() if key == topic_text or value == topic_text), 'all-csa')
+    objective_id = (TOPIC_CONTENTS.get(topic_id) or ['practice'])[0]
+    content = {
+        'id': qid, 'title': title, 'origin': '教师提交并审核通过',
+        'code': str(submission.get('code') or ''), 'task': str(submission.get('task') or '').strip(),
+        'answer': str(submission.get('answer') or '').strip(), 'rubric': '答案与题目要求一致，过程清晰。',
+        'intervention': '请回到题干，先标出输入、步骤和预期输出，再逐步检查。',
+        'objectives': [objective_id], 'reasoning': ['先确认题目要求。', '逐步执行代码或推导答案。', '用结果核对题目条件。'],
+        'errors': ['跳过题目条件。', '只看最终答案，未检查中间步骤。'],
+        'level': int(submission.get('level') or 2), 'minutes': int(submission.get('minutes') or 5),
+        'question_kind': 'concept', 'ced_topics': [objective_id]
+    }
+    QUESTIONS.append(content)
+    APPROVED_QUESTIONS.append(content)
+    BANKS.setdefault(topic_id, []).append(content)
+    QUESTION_VERSIONS[qid] = 'teacher-approved'
+    return qid
 VISIBLE_TOPICS['all-csa'] = '全课程混合组卷'
 QUESTION_VERSIONS = {q['id']:version for bank,version in [(METHODS,METHODS_VERSION),(CONDITIONALS,CONDITIONALS_VERSION),(CSA,CSA_VERSION),(HOMEWORK,HOMEWORK_VERSION),(GAP,GAP_VERSION)] for q in bank}
 LEGACY_TOPICS={'methods':'csa-calls','method-calls':'csa-calls','method-returns':'csa-calls','conditionals':'csa-selection','csa-logic':'csa-selection'}

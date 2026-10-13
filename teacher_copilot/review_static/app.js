@@ -14,7 +14,13 @@ function settings(){const exam=$('mode').value==='exam';const topics=Array.from(
 function setContents(checked=[]){const selected=Array.from($('topic').selectedOptions).map(o=>o.value);const topics=catalogData.topics.filter(t=>selected.includes(t.id));if(!topics.length){$('content-options').replaceChildren();$('bank-note').textContent='请选择至少一个课题。';return;}const topic={bank_count:topics.reduce((n,t)=>n+t.bank_count,0),contents:[...new Map(topics.flatMap(t=>t.contents).map(c=>[c.id,c])).values()]};$('bank-note').textContent=`当前选中 ${topics.length} 个课题，共约 ${topic.bank_count} 道原创题，按所选内容与难度组卷。优先避开最近 5 份作业中的题目；题量不足时会说明重复与时长缺口。`;$('content-options').replaceChildren();for(const c of topic.contents){const label=el('label',undefined,'check');const input=el('input');input.type='checkbox';input.name='contents';input.value=c.id;input.checked=checked.includes(c.id);label.append(input,document.createTextNode(c.title));$('content-options').append(label);}}
 function renderChoiceOptions(selectId,boxId,kind){
   const select=$(selectId), box=$(boxId); if(!select||!box)return;
+  let toggle=box.parentNode.querySelector('.choice-toggle');
+  if(!toggle){toggle=el('button',undefined,'choice-toggle');toggle.type='button';toggle.setAttribute('aria-expanded','false');box.before(toggle);toggle.onclick=()=>{box.dataset.open=box.dataset.open==='true'?'false':'true';renderChoiceOptions(selectId,boxId,kind);};}
   box.replaceChildren();
+  const chosen=Array.from(select.options).filter(o=>o.selected);
+  toggle.textContent=chosen.length?`已选 ${chosen.length} 项 · 点击${box.dataset.open==='true'?'收起':'展开'}`:'请选择 · 点击展开';
+  toggle.setAttribute('aria-expanded',String(box.dataset.open==='true'));
+  box.hidden=box.dataset.open!=='true';
   Array.from(select.options).forEach(option=>{
     const label=el('label',undefined,'choice-option');
     const input=el('input'); input.type='checkbox'; input.name=kind; input.value=option.value; input.checked=option.selected;

@@ -400,6 +400,14 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                     f'http://localhost:{self.server.server_port}'}
             return host_ok and origin_ok
 
+        def admin_key_ok(self):
+            configured = os.getenv('TEACHER_COPILOT_ADMIN_KEY', '').strip()
+            supplied = self.headers.get('X-Admin-Key', '').strip()
+            return bool(configured) and hmac.compare_digest(supplied, configured)
+
+        def admin_root(self):
+            return self.workspace().root.parent.parent if self.workspace().root.parent.name == 'sessions' else self.workspace().root
+
         def do_GET(self):
             if self.path == '/healthz':
                 return self.send({'ok': True})
@@ -421,6 +429,10 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                     return self.send(dict(**data, token=token))
                 if parsed.path == '/api/bank':
                     return self.send(bank_data())
+                if parsed.path == '/api/admin/intake':
+                    if not self.admin_key_ok(): return self.send({'error':'需要管理员密钥。'}, 401)
+                    from .feedback import list_items
+                    return self.send(list_items(self.admin_root()))
                 if parsed.path == '/api/library':
                     from .library import items
                     with self.workspace().lock:
@@ -435,7 +447,8 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                          '/bank': ('bank.html', 'text/html'), '/bank.js': ('bank.js', 'text/javascript')}
                 names.update({'/curriculum': ('curriculum.html','text/html'),
                               '/curriculum.js': ('curriculum.js','text/javascript')})
-                names.update({'/library':('library.html','text/html'), '/library.js':('library.js','text/javascript')})
+                names.update({'/library':('library.html','text/html'), '/library.js':('library.js','text/javascript'),
+                              '/admin':('admin.html','text/html'), '/admin.js':('admin.js','text/javascript')})
                 if parsed.path not in names:
                     return self.send({'error': '页面不存在。'}, 404)
                 name, mime = names[parsed.path]
@@ -452,8 +465,27 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                 self.send({'error': str(exc)}, 400)
 
         def do_POST(self):
-            if not self.local_request() or self.headers.get('X-Review-Token') != token:
-                return self.send({'error': '请从本机审阅页面提交。'}, 403)
+            if not self.local_request():
+                return self.send({'error': '请从允许的页面提交。'}, 403)
+            if self.path == '/api/admin/action':
+                if not self.admin_key_ok(): return self.send({'error':'需要管理员密钥。'}, 401)
+                try:
+                    size=int(self.headers.get('Content-Length','0'))
+                    payload=json.loads(self.rfile.read(size))
+                    from .feedback import update_feedback, update_submission, list_items
+                    root=self.admin_root(); action=payload.get('action'); item_id=payload.get('id')
+                    if action=='update-feedback': result=update_feedback(root,item_id,payload.get('status','reviewed'),payload.get('note',''),payload.get('actor','管理员'))
+                    elif action=='update-submission':
+                        result=update_submission(root,item_id,payload.get('status','rejected'),payload.get('note',''),payload.get('actor','管理员'))
+                        if result['item']['status']=='approved':
+                            from .worksheets import register_approved_question
+                            result['question_id']=register_approved_question(result['item'])
+                    else: raise ValueError('不支持的管理操作。')
+                    result['items']=list_items(root); self.send(result)
+                except (ValueError,TypeError,KeyError,OSError) as exc: self.send({'error':str(exc)},400)
+                return
+            if self.headers.get('X-Review-Token') != token:
+                return self.send({'error': '请从练习页面提交。'}, 403)
             if self.path != '/api/action':
                 return self.send({'error': '页面不存在。'}, 404)
             try:

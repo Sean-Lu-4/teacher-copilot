@@ -1,3 +1,4 @@
+import json
 """Small, file-backed feedback and teacher question intake queue."""
 from datetime import datetime, timezone
 import re
@@ -60,3 +61,36 @@ def save_submission(root, payload):
     atomic_json(_root(root) / 'submissions' / f"{item['id']}.json", item)
     return {'saved': True, 'id': item['id'], 'status': 'pending'}
 
+
+
+def list_items(root):
+    base = _root(root)
+    def read(folder):
+        rows=[]
+        for path in sorted((base / folder).glob('*.json'), reverse=True):
+            try: rows.append(json.loads(path.read_text(encoding='utf-8')))
+            except (OSError, ValueError): continue
+        return rows
+    return {'feedback': read('feedback'), 'submissions': read('submissions')}
+
+
+def update_submission(root, submission_id, status, note='', actor='管理员'):
+    if status not in {'pending','approved','rejected'}:
+        raise ValueError('审核状态无效。')
+    base=_root(root) / 'submissions' / f'{submission_id}.json'
+    if not base.is_file(): raise ValueError('找不到这条题目提交。')
+    item=json.loads(base.read_text(encoding='utf-8'))
+    previous=item.get('status','pending')
+    item.update(status=status, review_note=_text(note,'审核备注',1000), reviewed_by=_text(actor,'审核人',100,True), reviewed_at=datetime.now(timezone.utc).isoformat())
+    atomic_json(base,item)
+    return {'updated':True,'previous':previous,'item':item}
+
+
+def update_feedback(root, feedback_id, status, note='', actor='管理员'):
+    if status not in {'new','reviewed','archived'}: raise ValueError('反馈状态无效。')
+    base=_root(root) / 'feedback' / f'{feedback_id}.json'
+    if not base.is_file(): raise ValueError('找不到这条反馈。')
+    item=json.loads(base.read_text(encoding='utf-8'))
+    item.update(status=status, review_note=_text(note,'处理备注',1000), reviewed_by=_text(actor,'处理人',100,True), reviewed_at=datetime.now(timezone.utc).isoformat())
+    atomic_json(base,item)
+    return {'updated':True,'item':item}
