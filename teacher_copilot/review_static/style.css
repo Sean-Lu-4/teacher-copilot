@@ -126,3 +126,5 @@ nav .nav-link.active{color:#fff;background:#155eef;border-color:#155eef}
 @media(max-width:850px){.public-notice{font-size:14px;text-align:left}.teacher-tools{margin-top:14px}}
 
 #topic[multiple]{min-height:180px;padding:6px}#topic[multiple] option{padding:8px 10px;border-radius:6px}#topic[multiple] option:checked{background:#e7efff;color:#174ea6;font-weight:700}
+# selected choice chips
+.selected-chips{display:flex;flex-wrap:wrap;gap:7px;margin:-2px 0 12px}.selected-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;background:#e7efff;border:1px solid #b9cdf0;color:#174ea6;font-size:14px;font-weight:650}.selected-chip button{min-height:0;padding:0 2px;border:0;background:transparent;color:#174ea6;font-size:18px;line-height:1;box-shadow:none}.selected-chip button:hover{background:transparent;color:#a23b15}
