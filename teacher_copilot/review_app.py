@@ -321,6 +321,15 @@ class ReviewStore:
 
 def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, allowed_origins=None):
     store = ReviewStore(root)
+    # Rehydrate approved teacher submissions after a restart so they remain in the bank.
+    try:
+        from .feedback import list_items
+        from .worksheets import register_approved_question
+        for submission in list_items(root).get('submissions', []):
+            if submission.get('status') == 'approved':
+                register_approved_question(submission)
+    except (OSError, ValueError, TypeError):
+        pass
     token = secrets.token_urlsafe(32)
     host = host or os.getenv('TEACHER_COPILOT_HOST', '127.0.0.1')
     if allowed_hosts is None:
