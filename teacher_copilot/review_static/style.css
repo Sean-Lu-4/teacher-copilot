@@ -128,3 +128,21 @@ nav .nav-link.active{color:#fff;background:#155eef;border-color:#155eef}
 #topic[multiple]{min-height:180px;padding:6px}#topic[multiple] option{padding:8px 10px;border-radius:6px}#topic[multiple] option:checked{background:#e7efff;color:#174ea6;font-weight:700}
 # selected choice chips
 .selected-chips{display:flex;flex-wrap:wrap;gap:7px;margin:-2px 0 12px}.selected-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;background:#e7efff;border:1px solid #b9cdf0;color:#174ea6;font-size:14px;font-weight:650}.selected-chip button{min-height:0;padding:0 2px;border:0;background:transparent;color:#174ea6;font-size:18px;line-height:1;box-shadow:none}.selected-chip button:hover{background:transparent;color:#a23b15}
+
+
+/* Click-to-select course controls: easier than native Ctrl/Cmd multi-select. */
+.choice-group{margin:0 0 22px;padding:0;border:0;min-width:0}
+.choice-group legend{display:flex;align-items:baseline;gap:6px;width:100%;margin:0 0 10px;padding:0;font-weight:750;font-size:18px}
+.choice-group legend small{font-size:13px;font-weight:600;color:#526477}
+.topic-group{border-top:1px solid #e4ebf4;padding-top:20px}
+.native-multi{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;border:0!important;padding:0!important;margin:-1px!important;opacity:0!important;pointer-events:none!important}
+.choice-options{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:12px}
+.choice-option{display:flex;align-items:center;gap:11px;min-height:48px;padding:10px 13px;border:1px solid #c8d4e3;border-radius:10px;background:#fff;color:#243b53;font-size:16px;font-weight:600;cursor:pointer;transition:background .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease}
+.choice-option:hover{border-color:#8db3ed;background:#f7faff;transform:translateY(-1px)}
+.choice-option:has(input:checked){border-color:#155eef;background:#eef4ff;color:#174ea6;box-shadow:0 3px 9px rgba(21,94,239,.12)}
+.choice-option input{width:20px!important;height:20px!important;min-height:20px!important;margin:0;accent-color:#155eef;flex:0 0 auto}
+.choice-option span{line-height:1.35}
+.choice-group .selected-chips{min-height:30px;margin:4px 0 0}
+.selection-help{margin:0 0 22px;padding:10px 12px;border-radius:8px;background:#f7faff;border:1px solid #e1eaf6}
+@media(min-width:950px){.choice-options{grid-template-columns:repeat(2,minmax(0,1fr))}.choice-option{min-height:52px}.choice-group{margin-bottom:26px}.topic-group{padding-top:24px}}
+@media(max-width:850px){.choice-option{font-size:17px;min-height:52px;padding:12px 14px}.choice-options{gap:9px}.selection-help{font-size:14px}}
