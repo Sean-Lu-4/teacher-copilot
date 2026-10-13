@@ -3,14 +3,14 @@ services:
     name: teacher-copilot-trial
     runtime: docker
     plan: free
-    healthCheckPath: /api/state
+    healthCheckPath: /healthz
     envVars:
       - key: TEACHER_COPILOT_ENABLE_AI
+        value: "0"
+      - key: TEACHER_COPILOT_PUBLIC_DEMO
         value: "1"
       - key: OPENAI_MODEL
         value: gpt-6-luna
-      - key: OPENAI_API_KEY
-        sync: false
       - key: TEACHER_COPILOT_ALLOWED_HOSTS
         sync: false
       - key: TEACHER_COPILOT_ALLOWED_ORIGINS

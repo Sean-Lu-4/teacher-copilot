@@ -8,7 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
+COPY teacher_copilot ./teacher_copilot
 
 EXPOSE 8765
-CMD ["sh", "-c", "python -m teacher_copilot.review_app --host 0.0.0.0 --port ${PORT:-8765}"]
+CMD ["sh", "-c", "python -m teacher_copilot.review_app --host 0.0.0.0 --port ${PORT:-8765} --no-browser"]

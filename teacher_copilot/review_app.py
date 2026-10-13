@@ -4,6 +4,8 @@ import base64
 from copy import deepcopy
 from datetime import datetime
 import hashlib
+import hmac
+from http.cookies import SimpleCookie
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import os
@@ -324,10 +326,40 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
     # Host/Origin headers.
     if host not in {'127.0.0.1', 'localhost', '::1'} and (not allowed_hosts or not allowed_origins):
         raise ValueError('公网部署必须设置允许的域名和来源：TEACHER_COPILOT_ALLOWED_HOSTS、TEACHER_COPILOT_ALLOWED_ORIGINS。')
+    demo = os.getenv('TEACHER_COPILOT_PUBLIC_DEMO') == '1'
+    if demo and ai_questions.availability()['ready']:
+        raise ValueError('Public demo must run with AI disabled.')
+    session_secret = secrets.token_bytes(32)
+    stores = {}
+    stores_lock = threading.Lock()
     explicit_hosts = bool(allowed_hosts)
     explicit_origins = bool(allowed_origins)
 
     class Handler(BaseHTTPRequestHandler):
+        def workspace(self):
+            if not demo:
+                return store
+            if hasattr(self, '_workspace'):
+                return self._workspace
+            cookies = SimpleCookie()
+            try:
+                cookies.load(self.headers.get('Cookie', ''))
+                value = cookies['tc_session'].value if 'tc_session' in cookies else ''
+            except Exception:
+                value = ''
+            sid, _, signature = value.partition('.')
+            valid = len(sid) == 64 and all(c in '0123456789abcdef' for c in sid)
+            expected = hmac.new(session_secret, sid.encode(), hashlib.sha256).hexdigest()
+            if not valid or not hmac.compare_digest(signature, expected):
+                sid = secrets.token_hex(32)
+                signature = hmac.new(session_secret, sid.encode(), hashlib.sha256).hexdigest()
+                self._new_cookie = f'tc_session={sid}.{signature}; Path=/; HttpOnly; Secure; SameSite=Lax'
+            with stores_lock:
+                if sid not in stores:
+                    stores[sid] = ReviewStore(Path(root) / 'sessions' / sid)
+                self._workspace = stores[sid]
+            return self._workspace
+
         def log_message(self, *_):
             pass
 
@@ -336,6 +368,8 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                 data = json.dumps(data, ensure_ascii=False).encode('utf-8')
             self.send_response(status)
             self.send_header('Content-Type', mime)
+            if getattr(self, '_new_cookie', None):
+                self.send_header('Set-Cookie', self._new_cookie)
             self.send_header('Content-Length', str(len(data)))
             self.send_header('Cache-Control', 'no-store')
             self.send_header('X-Content-Type-Options', 'nosniff')
@@ -359,6 +393,8 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
             return host_ok and origin_ok
 
         def do_GET(self):
+            if self.path == '/healthz':
+                return self.send({'ok': True})
             if not self.local_request():
                 return self.send({'error': '仅支持本机页面访问。'}, 403)
             from urllib.parse import parse_qs
@@ -366,24 +402,24 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
             try:
                 if parsed.path == '/api/state':
                     run = parse_qs(parsed.query).get('run', [None])[0]
-                    runs = store.runs()
-                    with store.lock:
-                        state = store.state(run or runs[0]) if runs else None
-                    return self.send(dict(runs=runs, state=state, token=token, catalog=catalog(include_mixed=True),ai=ai_questions.availability(),usage=store.ai_usage()))
+                    runs = self.workspace().runs()
+                    with self.workspace().lock:
+                        state = self.workspace().state(run or runs[0]) if runs else None
+                    return self.send(dict(runs=runs, state=state, token=token, catalog=catalog(include_mixed=True),ai=ai_questions.availability(),usage=self.workspace().ai_usage()))
                 if parsed.path == '/api/curriculum':
                     from .csa_review import review_data
-                    with store.lock:
-                        data=review_data(store.root)
+                    with self.workspace().lock:
+                        data=review_data(self.workspace().root)
                     return self.send(dict(**data, token=token))
                 if parsed.path == '/api/bank':
                     return self.send(bank_data())
                 if parsed.path == '/api/library':
                     from .library import items
-                    with store.lock:
-                        return self.send(dict(items=items(store),token=token))
+                    with self.workspace().lock:
+                        return self.send(dict(items=items(self.workspace()),token=token))
                 if parsed.path in {'/gap-review', '/gap-review.css'}:
                     filename, mime = ('report.html', 'text/html') if parsed.path == '/gap-review' else ('report.css', 'text/css')
-                    report_path = store.root / 'gap_review' / filename
+                    report_path = self.workspace().root / 'gap_review' / filename
                     if not report_path.is_file():
                         return self.send({'error': '尚未生成题库缺口报告。'}, 404)
                     return self.send(report_path.read_bytes(), mime=mime+'; charset=utf-8')
@@ -395,7 +431,11 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                 if parsed.path not in names:
                     return self.send({'error': '页面不存在。'}, 404)
                 name, mime = names[parsed.path]
-                self.send((ASSETS / name).read_bytes(), mime=mime + '; charset=utf-8')
+                content = (ASSETS / name).read_bytes()
+                if demo and mime == 'text/html':
+                    notice = '<p role="status">公开试用版：练习仅属于当前浏览器；服务重启可能清空，请及时导出 Word。AI 暂未开放。</p>'
+                    content = content.replace(b'<main>', ('<main>' + notice).encode())
+                self.send(content, mime=mime + '; charset=utf-8')
             except (ValueError, OSError) as exc:
                 self.send({'error': str(exc)}, 400)
 
@@ -411,7 +451,7 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                 payload = json.loads(self.rfile.read(size))
                 if not isinstance(payload, dict):
                     raise ValueError('提交格式无效。')
-                self.send(store.mutate(payload))
+                self.send(self.workspace().mutate(payload))
             except Conflict as exc:
                 self.send({'error': str(exc)}, 409)
             except (ValueError, TypeError, KeyError, OSError) as exc:
