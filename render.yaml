@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: teacher-copilot-trial
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/state
+    envVars:
+      - key: TEACHER_COPILOT_ENABLE_AI
+        value: "1"
+      - key: OPENAI_MODEL
+        value: gpt-6-luna
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: TEACHER_COPILOT_ALLOWED_HOSTS
+        sync: false
+      - key: TEACHER_COPILOT_ALLOWED_ORIGINS
+        sync: false
