@@ -122,16 +122,26 @@ def bank_data():
 
 
 def validate_settings(settings):
-    if not isinstance(settings, dict) or (settings.get('topic') not in TOPICS and settings.get('topic') != 'all-csa'):
+    if not isinstance(settings, dict):
         raise ValueError('请选择列表中的课题。')
+    topics = settings.get('topics', [])
+    if (not topics and settings.get('topic') not in TOPICS and settings.get('topic') != 'all-csa'):
+        raise ValueError('请选择列表中的课题。')
+    if not isinstance(topics, list) or len(topics) > 24 or any(t not in VISIBLE_TOPICS or t == 'all-csa' for t in topics):
+        raise ValueError('请选择有效的课题。')
+    topics = list(dict.fromkeys(topics))
+    if topics:
+        settings = dict(settings, topic=topics[0] if len(topics) == 1 else 'all-csa')
     contents = settings.get('contents')
     if not isinstance(contents, list) or not contents or any(not isinstance(k, str) or k not in CONTENT for k in contents):
         raise ValueError('请至少选择一项考查内容。')
     valid_contents = ALL_CSA_CONTENTS if settings['topic']=='all-csa' else TOPIC_CONTENTS[settings['topic']]
+    if topics:
+        valid_contents = set().union(*(set(TOPIC_CONTENTS[t]) for t in topics))
     if any(k not in valid_contents for k in contents):
         raise ValueError('考查内容不属于当前课题，请重新选择。')
     purpose = settings.get('purpose')
-    if settings['topic']=='all-csa' and purpose!='exam':
+    if settings['topic']=='all-csa' and purpose!='exam' and not topics:
         raise ValueError('跨课题组卷请选择正式试卷模式。')
     if purpose not in {None, 'homework', 'exam'}:
         raise ValueError('请选择快速练习或正式试卷。')
@@ -146,6 +156,8 @@ def validate_settings(settings):
     if purpose=='homework' and minutes not in (10,20):
         raise ValueError('请选择 10 分钟或 20 分钟作业。')
     normalized=dict(topic=settings['topic'], contents=list(dict.fromkeys(contents)), difficulty=difficulty, minutes=minutes)
+    if topics:
+        normalized['topics']=topics
     if purpose=='homework':
         normalized['purpose']='homework'
     elif purpose=='exam':
@@ -170,13 +182,19 @@ def validate_settings(settings):
     return normalized
 
 
+def selected_bank(settings):
+    if settings.get('topics'):
+        return list({q['id']: q for t in settings['topics'] for q in BANKS[t]}.values())
+    return BANKS[settings['topic']]
+
+
 def assemble(settings, recent=None):
     settings = validate_settings(settings)
     contents, difficulty, minutes = settings['contents'], settings['difficulty'], settings['minutes']
     homework = settings.get('purpose') == 'homework'
     wanted = set().union(*(CONTENT[c][1] for c in contents))
     levels = DIFFICULTIES[difficulty][1]
-    bank = BANKS[settings['topic']]
+    bank = selected_bank(settings)
     version = (CSA_VERSION if settings['topic'] in GROUPS or settings['topic']=='all-csa' else
                CONDITIONALS_VERSION if settings['topic'] == 'conditionals' else METHODS_VERSION)
     eligible = [q for q in bank if q['level'] in levels and selection_objectives(q,settings['topic'])
@@ -206,6 +224,7 @@ def assemble(settings, recent=None):
     chosen = sorted((eligible[i] for i in states[best]), key=lambda q: q['level'])
     records = [create_record(q, QUESTION_VERSIONS[q['id']], dict(kind='original', sources=[])) for q in chosen]
     normalized=dict(topic=settings['topic'], contents=list(dict.fromkeys(contents)), difficulty=difficulty, minutes=minutes)
+    if settings.get('topics'): normalized['topics']=settings['topics']
     if homework: normalized['purpose']='homework'
     return normalized, records
 
@@ -216,7 +235,7 @@ def assemble_exam(settings, recent=None):
     wanted=set().union(*(CONTENT[c][1] for c in settings['contents']))
     levels=DIFFICULTIES.get(settings['difficulty'], ('混合',{1,2,3,4}))[1]
     kinds=set(settings['question_types'])
-    bank=BANKS[settings['topic']]
+    bank=selected_bank(settings)
     eligible=[q for q in bank if q['level'] in levels and (q.get('question_kind') or 'concept') in kinds
               and selection_objectives(q,settings['topic']) and selection_objectives(q,settings['topic']) <= wanted]
     if settings.get('selected_ids'):
@@ -296,7 +315,7 @@ def replace_question(settings, records, index, recent=None):
             if event.get('action') == 'replace':
                 used.add(event['detail']['previous_content']['id'])
     levels=DIFFICULTIES.get(settings['difficulty'], ('混合',{1,2,3,4}))[1]
-    candidates = [q for q in BANKS[topic] if q['id'] not in used
+    candidates = [q for q in selected_bank(settings) if q['id'] not in used
                   and q['level'] in levels
                   and other_minutes + q['minutes'] <= settings['minutes']
                   and required & selection_objectives(q, topic)
