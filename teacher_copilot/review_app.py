@@ -436,6 +436,17 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                     with self.workspace().lock:
                         data=review_data(self.workspace().root)
                     return self.send(dict(**data, token=token))
+                if parsed.path == '/api/source-bank':
+                    path = ASSETS.parent / 'imported_bank' / 'bank.json'
+                    if not path.exists(): return self.send({'error':'资料题库尚未导入。'},404)
+                    return self.send(path.read_bytes())
+                if parsed.path.startswith('/source-pdf/'):
+                    import re
+                    filename=parsed.path.removeprefix('/source-pdf/')
+                    if not re.fullmatch(r'[a-f0-9]{64}\.pdf',filename): return self.send({'error':'无效的文件。'},404)
+                    path=ASSETS.parent / 'imported_bank' / 'pdfs' / filename
+                    if not path.is_file(): return self.send({'error':'文件不存在。'},404)
+                    return self.send(path.read_bytes(),mime='application/pdf')
                 if parsed.path == '/api/bank':
                     return self.send(bank_data())
                 if parsed.path == '/api/admin/intake':
@@ -457,6 +468,7 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                 names.update({'/curriculum': ('curriculum.html','text/html'),
                               '/curriculum.js': ('curriculum.js','text/javascript')})
                 names.update({'/library':('library.html','text/html'), '/library.js':('library.js','text/javascript'),
+                              '/source-bank':('source-bank.html','text/html'), '/source-bank.js':('source-bank.js','text/javascript'),
                               '/admin':('admin.html','text/html'), '/admin.js':('admin.js','text/javascript')})
                 if parsed.path not in names:
                     return self.send({'error': '页面不存在。'}, 404)
