@@ -11,6 +11,10 @@ services:
         value: "1"
       - key: OPENAI_MODEL
         value: gpt-6-luna
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_MODEL
+        value: openrouter/free
       - key: TEACHER_COPILOT_ALLOWED_HOSTS
         sync: false
       - key: TEACHER_COPILOT_ALLOWED_ORIGINS

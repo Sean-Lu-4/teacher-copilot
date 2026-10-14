@@ -72,24 +72,11 @@ def build_docx(plan, records, audience, language='bilingual'):
     topic = TOPICS.get((settings or {}).get('topic'), plan.get('course', {}).get('topic', '练习'))
     document.add_paragraph('AP CSA 正式试卷' if is_exam else 'AP CSA 作业', 'Title')
     paragraph(topic + '  ' + ('学生版' if audience == 'student' else '教师答案与解析'))
-    source = plan.get('generation', {}).get('source', 'local')
-    if source == 'mock': paragraph('AI 模拟体验：使用本地题库，未调用 AI。')
-    elif source == 'ai': paragraph('AI 生成题目，待教师审核。')
-    actual = sum(r['content']['minutes'] for r in records)
-    paragraph(f'{len(records)} 道题  |  预计作答 {actual} 分钟')
     if is_exam:
         marks = sum(r['content'].get('marks', 0) for r in records)
         paragraph(f'考试时间 {settings["minutes"]} 分钟  |  总分 {marks} 分')
-        if marks != settings.get('total_marks'):
-            paragraph(f'注意：当前题目合计 {marks} 分，与设定总分 {settings.get("total_marks")} 分不同，请教师核对。')
-        paragraph('原创课堂测验，非 AP 官方试卷。分值用于本次课堂评分。')
     if audience == 'student':
         paragraph('姓名：________________    班级：____________    日期：____________')
-        paragraph('按题目要求阅读或编写 Java 代码。代码片段按题干指定的位置执行。')
-    else:
-        paragraph('供教师核对答案、评分与讲解使用。题目用时为估计，考试风格题的难度仍需课堂校准。')
-        for warning in summary(settings, records)['warnings']:
-            paragraph(warning)
     for index, record in enumerate(records, 1):
         q = record['content']
         block_start = len(document.paragraphs)
@@ -136,21 +123,11 @@ def build_docx(plan, records, audience, language='bilingual'):
             document.add_paragraph('参考实现', 'Heading 2')
             code(q['reference_solution'])
         for title, value in [('干扰项解释', [f'{k}：{v}' for k, v in q.get('distractors', {}).items()]),
-                             ('常见错误', q['errors']), ('评分标准', q['rubric']),
-                             ('学生答错时的讲解建议', q['intervention']),
-                             ('前置知识', q.get('prerequisites'))]:
+                             ('评分标准', q['rubric'])]:
             if value:
                 document.add_paragraph(title, 'Heading 2')
                 for item in value if isinstance(value, list) else [value]:
                     paragraph(item)
-        if is_exam:
-            metadata = ''
-            if audience == 'teacher':
-                metadata = (f'  |  题目编号 {q["id"]}  |  修订 {record["revision"]}'
-                            f'  |  教师审核：{labels.get(record["validation"]["teacher_review"], "待审核")}')
-            paragraph(f'本题满分 {q.get("marks", 0)} 分。按上述评分标准分配得分；接受等价的正确解法。{metadata}')
-        if audience == 'student':
-            paragraph(f'题目编号 {q["id"]}  |  修订 {record["revision"]}')
     document.core_properties.title = 'AP CSA ' + topic + ' ' + audience
     document.core_properties.author = 'Teacher Copilot'
     stream = BytesIO()

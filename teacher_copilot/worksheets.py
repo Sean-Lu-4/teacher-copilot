@@ -507,23 +507,10 @@ def paper_report(plan, records, audience):
              f"共 {info['count']} 题 · 预计作答 {info['minutes']} 分钟", '']
     if not teacher:
         lines += ['姓名：________________　班级：________________　日期：________________', '']
-    instruction = ('每题独立；辅助类分别定义，普通语句置于 main，独立展示的方法置于合适的类内。文件题假设所需异常已声明或处理。概念题按所给情境回答。' if any(r['content'].get('ced_topics') for r in records) else
-                   '代码片段位于 main 方法内；每道题独立执行。' if (settings or {}).get('topic') == 'conditionals'
-                   else '给出的方法与调用位于同一个类中。')
-    lines += ['说明：' + instruction + '请阅读代码并完成题目。', '']
-    if teacher:
-        source=plan.get('generation',{}).get('source','local')
-        source_text={'local':'本地原创题库；本次未调用付费 API。','mock':'AI 模拟体验：使用本地题库，未调用 AI。','ai':'AI 实时生成：已调用 API，答案与代码待教师审核。'}[source]
-        lines += ['来源：'+source_text+'考试风格题不是 AP 真题，难度与用时需课堂校准。', '']
-        lines += [f'- {w}' for w in info['warnings']] + ['']
     for n, r in enumerate(records, 1):
         q = r['content']
         lines += [f"## 第 {n} 题 · {q['title']}", '', f"建议用时：{q['minutes']} 分钟" + (f" · 分值：{q['marks']} 分" if q.get('marks') else ''), '',
                   fence(q['code'], 'text' if q.get('question_kind')=='concept' else 'java'), '', fence(q['task']), '']
-        if teacher:
-            lines += ['题号：' + q['id'] + (' · Topic ' + ', '.join(q['ced_topics']) if q.get('ced_topics') else ''), '']
-        if teacher and q.get('prerequisites'):
-            lines += ['前置知识：' + q['prerequisites'], '']
         for key, value in q.get('options', {}).items():
             lines += [f'{key}.', '', fence(value), '']
         if teacher:
@@ -534,8 +521,7 @@ def paper_report(plan, records, audience):
                 lines += ['', '**参考实现**', '', fence(q['reference_solution'], 'java'), '']
             lines += ['', '**干扰项解释**', ''] if q.get('distractors') else []
             lines += [f'- {k}：{v}' for k, v in q.get('distractors', {}).items()]
-            lines += ['', '**常见错误**', ''] + [f'- {v}' for v in q['errors']]
-            lines += ['', '评分：' + q['rubric'], '', '学生答错时的讲解建议：' + q['intervention'], '']
+            lines += ['', '评分：' + q['rubric'], '']
         else:
             lines += ['作答：', '', '____________________________________________________________', '',
                       '____________________________________________________________', '']

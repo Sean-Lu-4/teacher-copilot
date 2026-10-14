@@ -109,10 +109,10 @@ class ReviewStore:
         settings = plan.get('worksheet_settings')
         source=plan.get('generation',{}).get('source','local')
         info=summary(settings,records)
-        if source!='local':
+        if source not in {'local','mock'}:
             info['warnings'].append('AI 模拟体验：使用本地题库，未调用 AI。' if source=='mock' else 'AI 生成题目待教师审核；已检查结构、标签、重复和时长，未自动验证答案正确性或运行 Java。')
             if 'homework' in info:
-                info['homework'].update(source=source,api_enabled=source=='ai')
+                info['homework'].update(source=source,api_enabled=source in {'ai','hybrid'})
         return dict(run=run, records=records, version=version, settings=settings,
                     source=source,generation=plan.get('generation',{}),
                     navigation_settings=navigation_settings(settings), summary=info,
@@ -196,7 +196,7 @@ class ReviewStore:
                 return save_submission(base_root, payload)
             if payload.get('action') == 'generate':
                 mode=payload.get('source','local')
-                if mode not in {'local','mock','ai'}:raise ValueError('请选择有效的题目来源。')
+                if mode not in {'local','mock','ai','hybrid'}:raise ValueError('请选择有效的题目来源。')
                 recent = self.recent_usage(payload.get('run'))
                 requested=payload.get('settings') or {}
                 if requested.get('purpose')=='exam':
@@ -205,10 +205,27 @@ class ReviewStore:
                         generation=dict(source='local')
                     else:
                         settings=validate_settings(requested)
-                        records,generation=self.ai_records(settings,mode,payload.get('run'),request_id=payload.get('request_id'))
+                        records,generation=self.ai_records(settings,'ai' if mode=='hybrid' else mode,payload.get('run'),request_id=payload.get('request_id'))
                 elif mode=='local':
                     settings, records = assemble(requested, recent)
                     generation=dict(source='local')
+                elif mode=='hybrid':
+                    settings = validate_settings(requested)
+                    try:
+                        _, records = assemble(requested, recent)
+                    except ValueError:
+                        records = []
+                    used = sum(r['content']['minutes'] for r in records)
+                    if used < settings['minutes']:
+                        covered = set().union(*(set(r['content'].get('objectives', [])) for r in records))
+                        extra, generation = self.ai_records(settings, 'ai', payload.get('run'),
+                            supplement_minutes=settings['minutes'] - used,
+                            covered_objectives=covered, request_id=payload.get('request_id'))
+                        records += extra
+                        generation['source'] = 'hybrid'
+                        generation['notice'] = f'题库题目不足，已用 AI 补足 {settings["minutes"] - used} 分钟。'
+                    else:
+                        generation=dict(source='local')
                 else:
                     settings=validate_settings(requested)
                     records,generation=self.ai_records(settings,mode,payload.get('run'),request_id=payload.get('request_id'))
@@ -217,13 +234,14 @@ class ReviewStore:
                           if reused else '本次题目未出现在最近 5 份作业和当前预览中。')
                 if mode=='ai':notice='AI 已生成并保存；结构检查通过，内容与难度待教师确认。'
                 elif mode=='mock':notice='模拟流程使用本地题库，未调用 AI；'+notice
+                elif mode=='hybrid':notice=generation.get('notice','题库已满足设定时长，未调用 AI。')
                 self.root.mkdir(parents=True, exist_ok=True)
                 directory = Path(tempfile.mkdtemp(prefix=datetime.now().strftime('%Y%m%d_%H%M%S_worksheet_'), dir=self.root))
                 atomic_json(directory / 'exercise_plan.json', dict(course=dict(topic=TOPICS.get(settings['topic'],'跨课题综合练习'), duration=settings['minutes']),
                             worksheet_settings=settings, schedule=[], textbook_evidence=[], mode='local_worksheet',
                             questions=[r['content'] for r in records], generation_notice=notice,generation=generation))
                 save_questions(directory / 'questions.json', records)
-                if mode=='ai':
+                if mode in {'ai','hybrid'} and generation.get('source') in {'ai','hybrid'}:
                     from .ai_usage import request_path
                     path=request_path(self.root,payload.get('request_id'))
                     entry=json.loads(path.read_text(encoding='utf-8'));entry['run']=directory.name

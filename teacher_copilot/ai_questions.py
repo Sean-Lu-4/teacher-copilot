@@ -3,6 +3,7 @@ import json
 import os
 import re
 import uuid
+from types import SimpleNamespace
 from copy import deepcopy
 from .questions import create_record
 from .worksheets import (validate_settings, CONTENT, DIFFICULTIES, BANKS,
@@ -27,22 +28,53 @@ SCHEMA = dict(type='object', additionalProperties=False, required=['questions'],
 
 def availability():
     enabled = os.getenv('TEACHER_COPILOT_ENABLE_AI') == '1'
-    ready = enabled and bool(os.getenv('OPENAI_API_KEY'))
-    model = os.getenv('OPENAI_MODEL', DEFAULT_MODEL)
-    return dict(ready=ready, model=model, message=(f'实时生成已启用 · {model}。每次生成或 AI 换题会产生 API 费用。' if ready else
-        f'实时生成未启用（默认模型：{model}）。可先选择 AI 模拟体验，不消耗额度。'))
+    router = bool(os.getenv('OPENROUTER_API_KEY'))
+    model = os.getenv('OPENROUTER_MODEL', 'openrouter/free') if router else os.getenv('OPENAI_MODEL', DEFAULT_MODEL)
+    ready = enabled and bool(os.getenv('OPENROUTER_API_KEY') or os.getenv('OPENAI_API_KEY'))
+    free_ready = ready and router and (model == 'openrouter/free' or model.endswith(':free'))
+    message = ('免费模型补题已启用；免费额度和可用性受服务商限制。' if free_ready else
+               'AI 生成已启用，使用现有 API 额度。' if ready else 'AI 尚未启用，可先使用题库组卷。')
+    if not free_ready:
+        message += ' 免费补题需配置 OpenRouter 免费模型。'
+    return dict(ready=ready, free_ready=free_ready, model=model, message=message)
+
+
+def model_response(client_factory, *, instructions, prompt, schema, name, limit, timeout):
+    if client_factory is None:
+        from openai import OpenAI
+        client_factory = OpenAI
+    router_key = os.getenv('OPENROUTER_API_KEY')
+    options = dict(max_retries=0, timeout=timeout, base_url='https://openrouter.ai/api/v1' if router_key else 'https://api.openai.com/v1')
+    if router_key:
+        options['api_key'] = router_key
+    with client_factory(**options) as client:
+        if not router_key:
+            return client.responses.create(model=availability()['model'], instructions=instructions,
+                input=prompt, max_output_tokens=limit, store=False,
+                text=dict(format=dict(type='json_schema', name=name, strict=True, schema=schema)))
+        response = client.chat.completions.create(model=availability()['model'],
+            messages=[dict(role='system', content=instructions + '\nReturn JSON matching this schema: ' + json.dumps(schema)),
+                      dict(role='user', content=prompt)],
+            max_tokens=limit, response_format={'type':'json_object'})
+        choice = response.choices[0]
+        usage = getattr(response, 'usage', None)
+        return SimpleNamespace(status='completed' if choice.finish_reason == 'stop' else 'incomplete', output=[],
+            output_text=choice.message.content, usage=SimpleNamespace(
+                input_tokens=getattr(usage, 'prompt_tokens', None), output_tokens=getattr(usage, 'completion_tokens', None)))
 
 
 def signature(q):
     return re.sub(r'\s+', '', q['code']+'\n'+q['task']).casefold()
 
 
-def validate_result(data, settings, excluded, *, replacement=None):
+def validate_result(data, settings, excluded, *, replacement=None, supplement_minutes=None, covered_objectives=()):
     if not isinstance(data,dict) or set(data)!= {'questions'} or not isinstance(data['questions'],list) or not 1<=len(data['questions'])<=30:
         raise ValueError('AI 返回的题目数量或格式不符合要求；未保存，请重新生成。')
     wanted = set().union(*(CONTENT[c][1] for c in settings['contents']))
     required = selection_objectives(replacement,settings['topic']) if replacement else wanted
-    target = replacement['minutes'] if replacement else settings['minutes']
+    if supplement_minutes is not None:
+        required = wanted - set(covered_objectives)
+    target = supplement_minutes if supplement_minutes is not None else (replacement['minutes'] if replacement else settings['minutes'])
     seen={signature(q) for q in excluded}
     records=[]
     for raw in data['questions']:
@@ -95,8 +127,10 @@ def validate_result(data, settings, excluded, *, replacement=None):
     return sorted(records,key=lambda r:r['content']['level'])
 
 
-def generate(settings, mode, excluded=(), recent=None, *, replacement=None, records=None, index=None, client_factory=None, usage_callback=None):
+def generate(settings, mode, excluded=(), recent=None, *, replacement=None, records=None, index=None, client_factory=None, usage_callback=None, supplement_minutes=None, covered_objectives=()):
     settings=validate_settings(settings)
+    if supplement_minutes is not None and (type(supplement_minutes) is not int or not 1 <= supplement_minutes <= settings["minutes"] or settings.get("purpose") == "exam"):
+        raise ValueError("补题时长无效。")
     if settings.get('purpose')!='exam' and settings['minutes'] not in (10,20):
         raise ValueError('AI 模式暂仅支持 10／20 分钟作业。')
     if mode=='mock':
@@ -105,7 +139,7 @@ def generate(settings, mode, excluded=(), recent=None, *, replacement=None, reco
             record['generation_mode']='mock'
         return result,dict(source='mock',model=None,input_tokens=0,output_tokens=0)
     if mode!='ai' or not availability()['ready']:
-        raise ValueError('实时生成未启用，请使用本地题库或 AI 模拟体验。')
+        raise ValueError('实时生成未启用，请使用本地题库。')
     wanted=set().union(*(CONTENT[c][1] for c in settings['contents']))
     if settings.get('selected_ids'):
         raise ValueError('自选题清单请使用本地题库组卷；AI 生成请取消自选限制。')
@@ -113,8 +147,8 @@ def generate(settings, mode, excluded=(), recent=None, *, replacement=None, reco
               and selection_objectives(q,settings['topic'])<=wanted][:2]
     request=dict(settings=settings,objective_labels={key:CONTENT[key][0] for key in settings['contents']},
         allowed_objectives=sorted(wanted),
-        required_objectives=sorted(selection_objectives(replacement,settings['topic']) if replacement else wanted),
-        total_minutes=replacement['minutes'] if replacement else settings['minutes'],
+        required_objectives=sorted((wanted - set(covered_objectives)) if supplement_minutes is not None else (selection_objectives(replacement,settings['topic']) if replacement else wanted)),
+        total_minutes=supplement_minutes if supplement_minutes is not None else (replacement['minutes'] if replacement else settings['minutes']),
         total_marks=replacement.get('marks') if replacement else settings.get('total_marks'),
         question_count=1 if replacement else (settings.get('question_count') if settings.get('purpose')=='exam' else '1 to 10'),
         examples=[{k:q.get(k,'') for k in ('title','code','task','answer','rubric')} for q in examples],
@@ -132,13 +166,9 @@ def generate(settings, mode, excluded=(), recent=None, *, replacement=None, reco
         'For homework assign reasonable positive marks. explanation_en must be a complete English answer key: answer, reasoning, common mistakes, scoring rubric and teaching guidance. Preserve code and identifiers. '
         'Do not execute code or request tools. Return only the specified JSON structure.')
     try:
-        if client_factory is None:
-            from openai import OpenAI
-            client_factory=OpenAI
-        with client_factory(max_retries=0,timeout=180.0 if settings.get('purpose')=='exam' else 45.0,base_url='https://api.openai.com/v1') as client:
-            response=client.responses.create(model=os.getenv('OPENAI_MODEL', DEFAULT_MODEL),instructions=instructions,
-                input=json.dumps(request,ensure_ascii=False),max_output_tokens=output_limit(settings,replacement),store=False,
-                text=dict(format=dict(type='json_schema',name='worksheet',strict=True,schema=SCHEMA)))
+        response=model_response(client_factory, instructions=instructions, prompt=json.dumps(request,ensure_ascii=False),
+            schema=SCHEMA, name='worksheet', limit=output_limit(settings,replacement),
+            timeout=180.0 if settings.get('purpose')=='exam' else 45.0)
     except Exception:
         # Never reflect provider errors: they can contain credentials or request data.
         raise ValueError('AI 请求失败或超时，未自动重试。请检查网络、模型权限和 API 额度；也可切回本地题库。') from None
@@ -153,10 +183,11 @@ def generate(settings, mode, excluded=(), recent=None, *, replacement=None, reco
         data=json.loads(text)
     except (ValueError,TypeError):
         raise ValueError('AI 返回内容不是有效的题目数据，未保存。') from None
-    result=validate_result(data,settings,list(excluded)+examples,replacement=replacement)
+    result=validate_result(data,settings,list(excluded)+examples,replacement=replacement,
+        supplement_minutes=supplement_minutes,covered_objectives=covered_objectives)
     for record in result:record['generation_mode']='ai'
     usage=response.usage
-    return result,dict(source='ai',model=os.getenv('OPENAI_MODEL', DEFAULT_MODEL),
+    return result,dict(source='ai',model=availability()['model'],
         input_tokens=getattr(usage,'input_tokens',None),output_tokens=getattr(usage,'output_tokens',None))
 
 
@@ -171,14 +202,8 @@ def translate_explanation(content, *, client_factory=None, usage_callback=None):
               'Keep Java identifiers, code, numbers, and scoring meaning exact. Return only JSON.\n\n'
               + json.dumps({k:content.get(k,'') for k in ('code','title','task','answer','reasoning','errors','distractors','rubric','intervention','marks')}, ensure_ascii=False))
     try:
-        if client_factory is None:
-            from openai import OpenAI
-            client_factory=OpenAI
-        with client_factory(max_retries=0, timeout=45.0, base_url='https://api.openai.com/v1') as client:
-            response=client.responses.create(model=os.getenv('OPENAI_MODEL', DEFAULT_MODEL),
-                instructions='You are an AP CSA bilingual teaching editor.', input=prompt,
-                max_output_tokens=1800, store=False,
-                text=dict(format=dict(type='json_schema',name='explanation',strict=True,schema=schema)))
+        response=model_response(client_factory, instructions='You are an AP CSA bilingual teaching editor.',
+            prompt=prompt, schema=schema, name='explanation', limit=1800, timeout=45.0)
     except Exception:
         raise ValueError('英文解析生成失败，请检查网络、模型权限和 API 额度。') from None
     if usage_callback: usage_callback(usage_of(response))
