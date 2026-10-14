@@ -1,5 +1,6 @@
 """Deterministic, time-bounded assembly from the local Methods question bank."""
 import json
+import re
 from pathlib import Path
 
 from .expanded_bank import QUESTIONS as METHODS, BANK_VERSION as METHODS_VERSION
@@ -79,12 +80,20 @@ def _load_imported_ap_questions():
         target_topic = source_topic if source_topic in GROUPS else 'csa-selection'
         objective_id = objective(GROUPS[target_topic][1][0])
         options = source.get('options') or {}
+        task_text = source.get('text', '').strip()
+        # PDF extraction often leaves the answer choices in the raw stem.  The
+        # browser renders parsed choices separately, so keep only the prompt
+        # here to avoid showing every option twice.
+        if options:
+            option_start = re.search(r'(?m)^\s*\(A\)\s*', task_text)
+            if option_start:
+                task_text = task_text[:option_start.start()].rstrip()
         content = {
             'id': 'AP-' + str(source.get('id', '')).replace('-', ''),
             'title': source.get('title') or f"AP Unit {source.get('unit', '')} · 题目 {source.get('number', '')}",
             'origin': 'AP Progress Check / Question Bank（教师提供资料）',
             'code': '// AP source question; see the task text and linked original PDF.',
-            'task': source.get('text', '').strip(),
+            'task': task_text,
             'answer': source.get('answer', '').strip() or '请查看原版评分指南。',
             'rubric': '选择题按答案键判定；FRQ 请按原版评分指南逐小问评分。',
             'intervention': '先让学生独立作答，再对照英文评分指南定位错误原因。',
