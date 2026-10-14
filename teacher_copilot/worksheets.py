@@ -233,6 +233,7 @@ def bank_data():
         rows.append(dict(id=question['id'], title=question['title'], topic=topic,
                          topic_title=VISIBLE_TOPICS.get(topic, topic), level=question['level'],
                          minutes=question['minutes'], question_kind=question.get('question_kind', 'concept'),
+                         question_format='mcq' if question.get('options') else 'frq',
                          objectives=list(question.get('objectives', [])), origin=question.get('origin', ''),
                          code=question.get('code', ''), task=question.get('task', ''), answer=question.get('answer', ''),
                          rubric=question.get('rubric', ''), prerequisites='', options=question.get('options', {}),
@@ -242,7 +243,7 @@ def bank_data():
     return dict(version=BANK_VERSION, count=original_count, total_count=len(rows), questions=rows,
                 topics=[dict(id=t['id'],title=t['title']) for t in catalog()['topics']],
                 difficulties=[dict(id=k,title=v[0]) for k,v in DIFFICULTIES.items()],
-                question_types=[dict(id=k,title=v) for k,v in EXAM_TYPES.items()])
+                question_types=[dict(id='mcq', title='MCQ 选择题'), dict(id='frq', title='FRQ 开放题')])
 
 
 def validate_settings(settings):
