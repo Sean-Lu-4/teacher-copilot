@@ -11176,7 +11176,7 @@
       "number": 39,
       "text": "Consider the following code segment.\ndouble a = 1.1;\ndouble b = 1.2;\n \nif ((a + b) * (a - b) != (a * a) - (b * b))\n{\n  System.out.println(\"Mathematical error!\");\n}\n \nWhich of the following best describes why the phrase \"Mathematical error!\" would be printed?\n(Remember that mathematically (a + b) * (a - b) = a - b .)\n(A)\nPrecedence rules make the if condition true.\n(B)\nAssociativity rules make the if condition true.\n(C)\nRoundoff error makes the if condition true.\n(D)\nA compiler bug or hardware error has occurred.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -13283,7 +13283,7 @@
       "number": 113,
       "text": "Assume that the following variable declarations have been made.\ndouble d = Math.random();\ndouble r;\n \nWhich of the following assigns a value to r from the uniform distribution over the range 0.5 ≤ r < 5.5 ?\n(A) r = d + 0.5;\n(B) r = d + 0.5 * 5.0;\n(C) r = d * 5.0;\n(D) r = d * 5.0 + 0.5;",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -14651,7 +14651,7 @@
       "number": 7,
       "text": "Consider the following declarations.\nint valueOne, valueTwo;\nAssume that valueOne and valueTwo have been initialized. Which of the following evaluates to true if\nvalueOne and valueTwo contain the same value?\n(A) valueOne.equals((Object) valueTwo)\n(B) valueOne == valueTwo\n(C) valueOne.compareTo(valueTwo) == 0\n(D) valueOne.equals(valueTwo)",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -14909,7 +14909,7 @@
       "number": 15,
       "text": "Consider the following code segment.\nint x = /* some integer value */ ;\nint y = /* some integer value */ ;\n \nboolean result = (x < y);\n \nresult = ( (x >= y) && !result );\n \nWhich of the following best describes the conditions under which the value of result will be true after the code\nsegment is executed?\n(A)\nOnly when x >= y\n(B)\nOnly when x and y are equal\n(C)\nThe value will always be true.\n(D)\nThe value will never be true.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "A",
       "status": "needs_review",
       "sources": [
         {
@@ -14952,7 +14952,7 @@
       "number": 16,
       "text": "Consider the following method.\npublic int someCode(int a, int b, int c)\n{\n  if ((a < b) && (b < c))\n    return a;\n  if ((a >= b) && (b >= c))\n    return b;\n  if ((a == b) || (a == c) || (b == c))\n    return c;\n}\nWhich of the following best describes why this method does not compile?\n(A)\nIt is possible to reach the end of the method without returning a value.\n(B)\nThe if statements must have else parts when they contain return statements.\n(C)\nMethods cannot have multiple return statements.\n(D)\nThe third if statement is not reachable.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "A",
       "status": "needs_review",
       "sources": [
         {
@@ -15554,7 +15554,7 @@
       "number": 34,
       "text": "Consider the following code segment.\nint k = 0;\nwhile (k < 10)\n{\n  System.out.print((k % 3) + \" \");\n  if ((k % 3) == 0)\n    k = k + 2;\n  else\n    k++;\n}\n \nWhat is printed as a result of executing the code segment?\n(A) 0 2 0 2 0 2\n(B) 0 2 1 0 2 1 0\n(C) 0 2 0 2 0 2 0\n(D) 0 1 2 1 2 1 2",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -15898,7 +15898,7 @@
       "number": 44,
       "text": "Consider the following method.\npublic void conditionalTest(int a, int b)\n{\n  if ((a > 0) && (b > 0))\n  {\n    if (a > b)\n      System.out.println(\"A\");\n    else\n      System.out.println(\"B\");\n  }\n  else if ((b < 0) || (a < 0))\n    System.out.println(\"C\");\n  else\n    System.out.println(\"D\");\n}\nWhat is printed as a result of the call conditionalTest(3, -2)?\n(A) A\n(B) B\n(C) C\n(D) D",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -16242,7 +16242,7 @@
       "number": 55,
       "text": "Consider the following code segment.\nint num1 = 0;\nint num2 = 3;\nwhile ((num2 != 0) && ((num1 / num2) >= 0))\n{\n  num1 = num1 + 2;\n  num2 = num2 - 1;\n}\nWhat are the values of numl and num2 after the while loop completes its execution?\n(A) num1 = 0, num2 = 3\n(B) num1 = 8, num2 = -1\n(C) num1 = 4, num2 = 1\n(D) num1 = 6, num2 = 0",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -16285,7 +16285,7 @@
       "number": 56,
       "text": "Consider the following method.\npublic void numberCheck(int maxNum)\n{\n  int typeA = 0;\n  int typeB = 0;\n  int typeC = 0;\n \n  for (int k = 1; k <= maxNum; k++)\n  {\n    if (k % 2 == 0 && k % 5 == 0)\n     typeA++;\n    if (k % 2 == 0)\n      typeB++;\n    if (k % 5 == 0)\n      typeC++;\n  }\n \n  System.out.println(typeA + \" \" + typeB + \" \" + typeC);\n}\n \nWhat is printed as a result of the call numberCheck(50) ?\n(A) 5 20 5\n(B) 5 20 10\n(C) 5 25 5\n(D) 5 25 10",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -16500,7 +16500,7 @@
       "number": 61,
       "text": "Assume obj1 and obj2 are object references. Which of the following best describes when the expression obj1\n== obj2 is true?\n(A)\nWhen obj1 and obj2 are defined within the same method\n(B)\nWhen obj1 and obj2 are instances of the same class\n(C)\nWhen obj1 and obj2 refer to objects that contain the same data\n(D)\nWhen obj1 and obj2 refer to the same object",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -16543,7 +16543,7 @@
       "number": 62,
       "text": "Assume that x and y are boolean variables and have been properly initialized.\n(x && y) || !(x && y)\nThe result of evaluating the expression above is best described as\n(A)\nalways true\n(B)\nalways false\n(C) true only when x is true and y is true\n(D) true only when x and y have the same value",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "A",
       "status": "needs_review",
       "sources": [
         {
@@ -16758,7 +16758,7 @@
       "number": 69,
       "text": "Assume that a and b are variables of type int. The expression\n!(a < b) && !(a > b)\nis equivalent to which of the following?\n(A) true\n(B) false\n(C) a == b\n(D) a != b",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -16844,7 +16844,7 @@
       "number": 71,
       "text": "Consider the following code segment. The code is intended to read nonnegative numbers and compute their product until\na negative number is read; however, it does not work as intended. (Assume that the readInt method correctly reads\nthe next number from the input stream.)\nint k = 0;\nint prod = 1;\n \nwhile (k >= 0)\n{\n  System.out.print(\"enter a number: \");\n  k = readInt(); // readInt reads the next number from input\n  prod = prod * k;\n}\n \nSystem.out.println(\"product: \" + prod);\nWhich of the following best describes the error in the program?\n(A)\nThe variable prod is incorrectly initialized.\n(B)\nThe while condition always evaluates to true.\n(C)\nThe negative number entered to signal no more input is included in the product.\n(D)\nIf the user enters a zero, the computation of the product will be terminated prematurely.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -17656,7 +17656,7 @@
       "number": 96,
       "text": "Consider the following code segment.\nWhat is printed as a result of executing the code segment?\n(A)\n4 10 16\n(B)\n0 6 12 18\n(C)\n1 4 7 10 13 16 19\n(D)\n0 2 4 6 8 10 12 14 16 18",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -17914,7 +17914,7 @@
       "number": 103,
       "text": "Consider the following code segment.\nint a = 24;\nint b = 30;\nwhile (b != 0)\n{\n  int r = a % b;\n  a = b;\n  b = r;\n}\n \nSystem.out.println(a);\n \nWhat is printed as a result of executing the code segment?\n(A)\n0\n(B)\n6\n(C)\n24\n(D)\n30",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -18086,7 +18086,7 @@
       "number": 109,
       "text": "Consider the following code segment.\nint k = 1;\nwhile (k < 20)\n{\n  if ((k % 3) == 1)\n    System.out.print(k + \" \");\n \n  k++;\n}\n \nWhat is printed as a result of executing this code segment?\n(A) 2 5 8 11 14 17\n(B) 3 6 9 12 15 18\n(C) 1 4 7 10 13 16 19\n(D) 1 3 5 7 9 11 13 15 17 19",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -18511,7 +18511,7 @@
       "number": 124,
       "text": "Consider the following output.\n1\n1 2\n1 2 3\n1 2 3 4\n1 2 3 4 5\n1 2 3 4 5 6\nWhich of the following code segments will produce the output shown above?\n(A) for (int j = 1; j <= 6; j++)\n{\n  for (int k = 1; k < j; k++)\n    System.out.print(\" \" + k);\n  System.out.println();\n}\n(B) for (int j = 1; j <= 6; j++)\n{\n  for (int k = 1; k <= j; k++)\n    System.out.print(\" \" + j);\n  System.out.println();\n}\n(C) for (int j = 1; j <= 6; j++)\n{\n  for (int k = 1; k <= j; k++)\n    System.out.print(\" \" + k);\n  System.out.println();\n}\n(D) for (int j = 1; j < 6; j++)\n{\n  for (int k = 1; k <= j; k++)\n    System.out.print(\" \" + k);\n  System.out.println();\n}",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -18597,7 +18597,7 @@
       "number": 127,
       "text": "Consider the following code segment.\nfor (int outer = 0; outer < n; outer++)\n{\n  for (int inner = 0; inner <= outer; inner++)\n  {\n    System.out.print(outer + \" \");\n  }\n}\n \nIf n has been declared as an integer with the value 4, what is printed as a result of executing the code segment?\n(A) 0 1 2 3\n(B) 0 1 2 2 3 3 3\n(C) 0 1 1 2 2 2 3 3 3 3\n(D) 0 0 1 0 1 2 0 1 2 3",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -18640,7 +18640,7 @@
       "number": 128,
       "text": "Consider the following method.\n     public int sol(int lim)\n {\n   int s = 0;\n \n   for (int outer = 1; outer <= lim; outer++)\n   {\n     for (int inner = outer; inner <= lim; inner++)\n     {\n       s++;\n     }\n   }\n \n   return s;\n }\n \nWhat value is returned as a result of the call sol(10)?\n(A)\n20\n(B)\n45\n(C)\n55\n(D)\n100",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -18984,7 +18984,7 @@
       "number": 139,
       "text": "The question refer to the following code segment.\nint k = a random number such that  1  ≤  k ≤ n ;\nfor (int p = 2; p <= k; p++)\n  for (int r = 1; r < k; r++)\n    System.out.println(\"Hello\");\nWhat is the maximum number of times that  Hello will be printed?\n(A) n - 1\n(B) n - 2\n(C)\n(n - 1)\n(D) n",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -19027,7 +19027,7 @@
       "number": 140,
       "text": "The question refer to the following code segment.\nint k = a random number such that  1  ≤  k ≤ n ;\nfor (int p = 2; p <= k; p++)\n  for (int r = 1; r < k; r++)\n    System.out.println(\"Hello\");\nWhat is the minimum number of times that  Hello will be printed?\n(A)\n0\n(B)\n1\n(C)\n2\n2\n2\n(D) n - 1",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "A",
       "status": "needs_review",
       "sources": [
         {
@@ -19414,7 +19414,7 @@
       "number": 153,
       "text": "Consider the following class declaration\npublic class SomeClass\n{\n  private int num;\n \n  public SomeClass(int n)\n  {\n    num = n;\n  }\n \n  public void increment(int more)\n  {\n    num = num + more;\n  }\n \n  public int getNum()\n  {\n    return num;\n  }\n}\n \nThe following code segment appears in another class.\n \nSomeClass one = new SomeClass(100);\nSomeClass two = new SomeClass(100);\nSomeClass three = one;\n \none.increment(200);\n \nSystem.out.println(one.getNum() + \" \" + two.getNum() + \" \" +\n                   three.getNum());\n \nWhat is printed as a result of executing the code segment?\n(A) 100 100 100\n(B) 300 100 100\n(C) 300 100 300\n(D) 300 300 300",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -19500,7 +19500,7 @@
       "number": 156,
       "text": "Consider the following code segment.\nString str = \"abcdef\";\nfor (int rep = 0; rep < str.length() - 1; rep++)\n{\n  System.out.print(str.substring(rep, rep + 2));\n}\n \nWhat is printed as a result of executing this code segment?\n(A) aabbccddeeff\n(B) abbccddeef\n(C) abcbcdcdedef\n(D)\nNothing is printed because an IndexOutOfBoundsException is thrown.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -20856,7 +20856,7 @@
       "number": 37,
       "text": "The question refer to the following declarations.\npublic class Point\n{\n  private double myX;\n  private double myyY;\n  // postcondition: this Point has coordinates (0,0)\n  public Point ()\n  { /* implementation not shown */ }\n  // postcondition: this Point has coordinates (x,y)\n  public Point(double x, double y)\n  { /* implementation not shown */ }\n  // other methods not shown\n}\npublic class Circle\n{\n  private Point myCenter;\n  private double myRadius;\n  // postcondition: this Circle has center at (0, 0) and radius 0.0\n  public Circle()\n  { /* implementation not shown */ }\n  // postcondition: this Circle has the given center and radius\n  public Circle(Point center, double radius)\n  { /* implementation not shown */ }\n  // other methods not shown\n}\nIn a client program which of the following correctly declares and initializes  Circle circ  with center at (29.5, 33.0)\nand radius 10.0 ?\n(A) Circle circ = new Circle((29.5, 33.0), 10.0);\n(B) Circle circ = new Circle(new Point (29.5, 33.0), 10.0);\n(C) Circle circ = new Circle();\ncirc.myCenter = new Point(29.5, 33.0);\ncirc.myRadius = 10.0;\n(D) Circle circ = new Circle();\ncirc.myCenter = new Point();\ncirc.myCenter.myX = 29.5;\ncirc.myCenter.myY = 33.0;\ncire.myRadius = 10.0;",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -21243,7 +21243,7 @@
       "number": 47,
       "text": "The question refer to the following declarations.\npublic class Point\n{\n  private double myX;\n  private double myyY;\n  // postcondition: this Point has coordinates (0,0)\n  public Point ()\n  { /* implementation not shown */ }\n  // postcondition: this Point has coordinates (x,y)\n  public Point(double x, double y)\n  { /* implementation not shown */ }\n  // other methods not shown\n}\npublic class Circle\n{\n  private Point myCenter;\n  private double myRadius;\n  // postcondition: this Circle has center at (0, 0) and radius 0.0\n  public Circle()\n  { /* implementation not shown */ }\n  // postcondition: this Circle has the given center and radius\n  public Circle(Point center, double radius)\n  { /* implementation not shown */ }\n  // other methods not shown\n}\nWhich of the following would be the best specification for a Circle method isInside that determines whether\na Point lies inside this Circle?\n(A) public boolean isInside()\n(B) public boolean isInside(Point p)\n(C) public void isInside(Point p, boolean found)\n(D) public boolean isInside(Point p, Point center, double radius)",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -21329,7 +21329,7 @@
       "number": 49,
       "text": "Consider the following methods.\nWhen the call test ( ) is executed, what are the values of s and n at the point indicated by / * End of method * / ?\n(A)\ns / n\nworld / 6\n(B)\ns / n\nworldpeace / 6\n(C)\ns / n\nworldpeace / 12\n(D)\ns / n\npeace / 12",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "A",
       "status": "needs_review",
       "sources": [
         {
@@ -22060,7 +22060,7 @@
       "number": 81,
       "text": "Directions: Select the choice that best fits each statement. The following question(s) refer to the following incomplete\nclass declaration.\n Which of the following can be used to replace / * missing code * / so that advance will correctly update the time?\n(A)\nminutes = minutes % 60;\n(B)\nhours = hours + minutes / 60;\nminutes = minutes % 60;\n(C)\nhours = hours + minutes % 60;\nminutes = minutes / 60;\n(D)\nhours = hours + minutes / 60;",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -23050,7 +23050,7 @@
       "number": 24,
       "text": "Assume that an array of integer values has been declared as follows and has been initialized.\nint[] arr = new int[10];\nWhich of the following code segments correctly interchanges the value of  arr[0] and  arr[5] ?\n(A)\narr[0] = 5;\narr[5] = 0;\n(B)\narr[0] = arr[5];\narr[5] = arr[0];\n(C)\nint k = arr[5];\narr[0] = arr[5];\narr[5] = k;\n(D)\nint k = arr[0];\narr[0] = arr[5];\narr[5] = k;",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -23202,7 +23202,7 @@
       "number": 31,
       "text": "Consider the following method.\n// precondition: arr contains no duplicates;\n//               the elements in arr are in sorted order;\n//               0 ≤ low ≤ arr.length; low - 1 ≤ high < arr.length\npublic static int mystery(int[] arr, int low, int high, int num)\n{\n  int mid = (low + high) / 2;\n \n  if (low > high)\n  {\n    return low;\n  }\n  else if (arr[mid] < num)\n  {\n    return mystery(arr, mid + 1, high, num);\n  }\n  else if (arr[mid] > num)\n  {\n    return mystery(arr, low, mid - 1, num);\n  }\n  else // arr{mid] == num\n  {\n    return mid;\n      }\n}\nHow many calls to mystery (including the initial call) are made as a result of the call mystery(arr, 0,\narr.length - 1, 14) if arr is the following array?\n \n0\n1\n2\n3\n4\n5\n6\n7\narr 11 13 25 26 29 30 31 32\n     \n(A)\n2\n(B)\n4\n(C)\n7\n(D)\n8",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -23278,7 +23278,7 @@
       "number": 33,
       "text": "The following question refer to the following information.\nConsider the following data field and method. Method maxHelper is intended to return the largest value among\nthe first numVals values in an array; however, maxHelper does not work as intended.\n     private int[] nums;\n \n     // precondition: 0 < numVals <= nums.length\n     private int maxHelper(int numVals)\n     {\nLine 1:   int max = maxHelper(numVals - 1);\n \nLine 2:   if (max > nums[numVals - 1])\n          return max;\n        else\n          return nums[numVals - 1];\n      }\nWhich of the following best describes the conditions under which maxHelper does not work as intended?\n(A)\nWhen numVals is 1\n(B)\nWhen the elements of nums are in nonincreasing order\n(C)\nWhen the elements of nums are in nondecreasing order\n(D)\nMethod maxHelper never works as intended.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "A",
       "status": "needs_review",
       "sources": [
         {
@@ -23316,7 +23316,7 @@
       "number": 34,
       "text": "The following question refer to the following information.\nConsider the following data field and method. Method maxHelper is intended to return the largest value among\nthe first numVals values in an array; however, maxHelper does not work as intended.\n     private int[] nums;\n \n     // precondition: 0 < numVals <= nums.length\n     private int maxHelper(int numVals)\n     {\nLine 1:   int max = maxHelper(numVals - 1);\n \nLine 2:   if (max > nums[numVals - 1])\n          return max;\n        else\n          return nums[numVals - 1];\n      }\nWhich of the following corrects the method maxHelper so that it works as intended?\n(A)\nInsert the following statement before Line 1.\n  if (numVals == 0)\n    return numVals;\n(B)\nInsert the following statement before Line 1.\n  if (numVals == 1\n    return nums[0];\n(C)\nInsert the following statement between Line 1 and Line 2.\n  if (numVals == 0)\n    return numVals;\n(D)\nInsert the following statement between Line 1 and Line 2.\n  if (numVals == 1)\n    return nums[0];",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -23772,7 +23772,7 @@
       "number": 51,
       "text": "Consider the following method.\npublic static void sort(String[] arr)\n{\n  for (int pass = arr.length - 1; pass >= 1; pass--)\n  {\n    String large = arr[0];\n    int index = 0;\n    for (int k = 0; k <= pass; k++)\n    {\n      if ((arr[k].compareTo(large)) > 0)\n      {\n        large = arr[k];\n        index = k;\n      }\n    }\n    arr[index] = arr[pass];\n    arr[pass] = large;\n  }\n}\n \nAssume arr is the following array.\n\"Ann\"\n\"Mike\"\n\"Walt\"\n\"Lisa\"\n\"Shari\"\n\"Jose\"\n\"Mary\"\n“Bill”\nWhat is the intermediate value of arr after two iterations of the outer for loop in the call sort(arr)?\n(A)\n\"Ann\"\n\"Mike\"\n\"Walt\"\n\"Lisa\"\n\"Shari\"\n\"Jose\"\n\"Mary\"\n“Bill”\n(B)\n\"Ann\"\n\"Mike\"\n\"Lisa\"\n\"Shari\"\n\"Jose\"\n\"Mary\"\n“Bill”\n\"Walt\"\n(C)\n\"Ann\"\n“Bill”\n\"Jose\"\n\"Lisa\"\n\"Mary\"\n\"Mike\"\n\"Shari\"\n\"Walt\"\n(D)\n\"Ann\"\n\"Mike\"\n“Bill”\n\"Lisa\"\n\"Mary\"\n\"Jose\"\n\"Shari\"\n\"Walt\"",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -23810,7 +23810,7 @@
       "number": 52,
       "text": "Consider the static method selectSort shown below. Method selectSort is intended to sort an array into\nincreasing order; however, it does not always work as intended.\n      // precondition:  numbers.length > 0\n      // postcondition: numbers is sorted in increasing order\n      public static void selectSort(int[] numbers)\n      {\n        int temp;\nLine 1:   for (int j = 0; j < numbers.length - 1; j++)\n        {\nLine 2:     int pos = 0;\nLine 3:     for (int k = j + 1; k < numbers.length; k++)\n                          {\nLine 4:       if (numbers[k] < numbers[pos])\n                               {\nLine 5:         pos = k;\n                                }\n                         }\n         temp = numbers[j];\n         numbers[j] = numbers[pos];\n         numbers[pos] = temp;\n        }\n      }\n \nWhich of the following changes should be made so that selectSort will work as intended?\n(A)\nLine 1 should be changed to\n  for (int j = 0; j < numbers.length - 2; j++)\n(B)\nLine 2 should be changed to\n  int pos = j;\n(C)\nLine 3 should be changed to\n  for (int k = 0; k < numbers.length; k++)\n(D)\nLine 4 should be changed to\n  if (numbers[k] > numbers[pos])",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -23848,7 +23848,7 @@
       "number": 53,
       "text": "The following incomplete method is intended to sort its array parameter arr in increasing order.\n// postcondition: arr is sorted in increasing order\npublic static void sortArray(int[] arr)\n{\n  int j, k;\n \n  for (j = arr.length - 1; j > 0; j--)\n  {\n    int pos = j;\n \n    for ( /* missing code */ )\n    {\n      if (arr[k] > arr[pos])\n      {\n        pos = k;\n      }\n   }\n   swap(arr, j, pos);\n }\n    }\n \nAssume that swap(arr, j, pos) exchanges the values of arr[j] and arr[pos]. Which of the following\ncould be used to replace /* missing code */ so that executing the code segment sorts the values in array arr?\n(A)\nk = j - 1; k > 0; k--\n(B)\nk = j - 1; k >= 0; k--\n(C)\nk = 1; k < arr.length; k++\n(D)\nk = 0; k <= arr.length; k++",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -23957,7 +23957,7 @@
       "number": 56,
       "text": "Consider the following instance variable and method.\nWhich of the following is the best postcondition for checkArray ?\n(A)\nReturns the index of the last element in array array whose value is greater than array [loc]\n(B)\nReturns the largest value in array array\n(C)\nReturns the index of the largest value in array array\n(D)\nReturns the index of the largest value in the second half of array array",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -24071,7 +24071,7 @@
       "number": 60,
       "text": "The method findLongest does not work as intended. Which of the following best describes the value returned by a\ncall to findLongest ?\n(A)\nIt is the length of the array nums.\n(B)\nIt is the number of occurrences of the value target in nums.\n(C)\nIt is the length of the first consecutive block of the value target in nums.\n(D)\nIt is the length of the last consecutive block of the value target in nums.\n      /* condition */\n      /* statement */\n      /* condition */\n      /* statement */\n      /* condition */\n                /* statement */\n      /* condition */\n               /* statement */",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -24109,7 +24109,7 @@
       "number": 61,
       "text": "Which of the following changes should be made so that method findLongest will work as intended?\n(A)\nInsert the statement lenCount = 0;\nbetween lines 2 and 3.\n(B)\nInsert the statement lenCount = 0;\nbetween lines 8 and 9.\n(C)\nInsert the statement lenCount = 0;\nbetween lines 11 and 12.\n(D)\nInsert the statement lenCount = 0;\nbetween lines 12 and 13.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -24147,7 +24147,7 @@
       "number": 62,
       "text": "The following incomplete method is intended to return the largest integer in the array  numbers.\n// precondition:  numbers.length > 0\npublic static int findMax(int[]numbers)\n{\nint posOfMax = O;\nfor (int index = 1; index < numbers.length; index++)\n{\n  if ( /*condition*/ )\n  {\n/* statement */\n  }\n}\nreturn numbers[posOfMax];\n}\nWhich of the following can be used to replace /* condition */ and /* statement */ so that findMax\nwill work as intended?\n(A)\n(B)\n(C)\n(D)\nnumbers[index] > numbers[posOfMax]\n= \n    posOfMax \nnumbers[index];\nnumbers[index] > numbers[posOfMax]\n    posOfMax \nindex;  \n= \nnumbers[index] > posOfMax\n= \n             posOfMax \nnumbers[index];\nnumbers[index] < posOfMax\n= \n             posOfMax \nnumbers[index];",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -24220,7 +24220,7 @@
       "number": 64,
       "text": "Consider the following incomplete method. Method findNext is intended to return the index of the first occurrence\nof the value val beyond the position start in array arr.\n// returns index of first occurrence of val in arr\n// after position start;\n// returns arr.length if val is not found\npublic int findNext(int[] arr, int val, int start)\n{\n  int pos = start + 1;\n \n  while ( /* condition */ )\n    pos++;\n \n  return pos;\n}\n \nFor example, consider the following code segment.\nint[] arr = {11, 22, 100, 33, 100, 11, 44, 100};\n \nSystem.out.println(findNext(arr, 100, 2));\n \nThe execution of the code segment should result in the value 4 being printed.\nWhich of the following expressions could be used to replace /* condition */ so that findNext will work as\nintended?\n(A)\n(pos < arr.length) && (arr[pos] != val)\n(B)\n(arr[pos] != val) && (pos < arr.length)\n(C)\n(pos < arr.length) || (arr[pos] != val)\n(D)\n(arr[pos] == val) && (pos < arr.length)",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "A",
       "status": "needs_review",
       "sources": [
         {
@@ -24410,7 +24410,7 @@
       "number": 69,
       "text": "Consider the following instance variable and method.\nWhich of the following best describes the contents of numbers after the following statement has been executed?\nint m = mystery(n);\n(A)\nAll values in positions 0 through m are less than n.\n(B)\nAll values in positions m+1 through numbers.length-1 are less than n.\n(C)\nAll values in positions m+1 through numbers.length-1 are greater than or equal to n.\n(D)\nThe largest value that is smaller than n is at position m.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -24448,7 +24448,7 @@
       "number": 70,
       "text": "The question refer to the following data field and method.\nprivate int[] arr;\n// precondition: arr.length > 0\npublic void mystery()\n{\n  int sl = 0;\n  int s2 = 0;\n  for (int k = 0; k < arr.length; k++)\n  {\n    int num = arr[k];\n    if ((num > 0) && (num % 2 == 0))\n      sl += num;\n    else if (num < 0)\n      s2 += num;\n  }\n  System.out.println(s1);\n  System.out.println(s2);\n}\nWhich of the following best describes the value of s1 output by the method mystery ?\n(A)\nThe sum of all positive values in arr\n(B)\nThe sum of all positive even values in arr\n(C)\nThe sum of all positive odd values in arr\n(D)\nThe sum of all values greater than 2 in arr",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -24486,7 +24486,7 @@
       "number": 71,
       "text": "The question refer to the following data field and method.\nprivate int[] arr;\n// precondition: arr.length > 0\npublic void mystery()\n{\n  int sl = 0;\n  int s2 = 0;\n  for (int k = 0; k < arr.length; k++)\n  {\n    int num = arr[k];\n    if ((num > 0) && (num % 2 == 0))\n      sl += num;\n    else if (num < 0)\n      s2 += num;\n  }\n  System.out.println(s1);\n  System.out.println(s2);\n}\nWhich of the following best describes the value of s2 output by the method mystery ?\n(A)\nThe sum of all positive even values in arr\n(B)\nThe sum of all negative values in arr\n(C)\nThe sum of all negative even values in arr\n(D)\nThe sum of all negative odd values in arr",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -24524,7 +24524,7 @@
       "number": 72,
       "text": "Consider the following instance variable, arr, and incomplete method, partialSum. The method is intended to return\nan integer array sum such that for all k, sum [ k ] is equal to arr[0] + arr[1] + ... + arr[k]. For instance, if arr contains\nthe values { 1, 4, 1, 3 }, the array sum will contain the values { 1, 5, 6, 9 }.\nThe following two implementations of / * missing code * / are proposed so that partialSum will work as intended.\nWhich of the following statements is true?\n(A)\nBoth implementations work as intended, but implementation 1 is faster than implementation 2.\n(B)\nBoth implementations work as intended, but implementation 2 is faster than implementation 1.\n(C)\nImplementation 1 does not work as intended, because it will cause anArrayIndexOutOfBoundsException.\n(D)\nImplementation 2 does not work as intended, because it will cause anArrayIndexOutOfBoundsException.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -24638,7 +24638,7 @@
       "number": 77,
       "text": "Consider a shuffle method that is intended to return a new array that contains all the elements from nums, but in a\ndifferent order. Let n be the number of elements in nums. The shuffle method should alternate the elements from\nnums [0] … nums[n / 2 – 1] with the elements from nums[n / 2] …nums[n – 1], as illustrated in the following\nexamples.\nThe following implementation of the shuffle method does not work as intended.\nWhich of the following best describes the problem with the given implementation of the shuffle method?\n(A)\nExecuting shuffle may cause an ArrayIndexOutOfBoundsException.\n(B)\nThe last element of the returned array (result [result.length − 1] ) may not have the correct value.\n(C)\nOne or more of nums [0] … nums [nums.length / 2 − 1] may have been copied to the wrong position(s) in\nthe returned array.\n(D)\nOne or more of nums [nums.length / 2] … nums[nums.length − 1] may have been copied to the wrong\nposition(s) in the returned array.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -25018,7 +25018,7 @@
       "number": 93,
       "text": "Consider the following code segment.\nArrayList<String> items = new ArrayList<String>();\nitems.add(\"A\");\nitems.add(\"B\");\nitems.add(\"C\");\nitems.add(0, \"D\");\nitems.remove(3);\nitems.add(0, \"E\");\nSystem.out.println(items);\nWhat is printed as a result of executing the code segment?\n(A)\n[A, B, C, E]\n(B)\n[A, B, D, E]\n(C)\n[E, D, A, B]\n(D)\n[E, D, A, C]",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -25208,7 +25208,7 @@
       "number": 100,
       "text": "Consider the following code segment.\nWhat is printed as a result of executing the code segment?\n(A)\n[dog, fish, cat]\n(B)\n[dog, fish, lizard]\n(C)\n[dog, lizard, fish]\n(D)\nThe code throws an ArrayIndexOutOfBoundsException exception.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -25360,7 +25360,7 @@
       "number": 106,
       "text": "Which of the following is a reason to use an ArrayList instead of an array?\n(A)\nAn ArrayList allows faster access to its kth item than an array does.\n(B)\nAn ArrayList can store objects and an array can only store primitive types.\n(C)\nAn ArrayList resizes itself as necessary when items are added, but an array does not.\n(D)\nAn ArrayList provides access to the number of items it stores, but an array does not.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -25512,7 +25512,7 @@
       "number": 114,
       "text": "Consider the following data field and method.\nprivate ArrayList list;\npublic void mystery(int n)\n{\n  for (int k = 0; k < n; k++)\n  {\n    Object obj = list.remove(0);\n    list.add(obj);\n  }\n}\nAssume that list has been initialized with the following Integer objects.\n[12, 9, 7, 8, 4, 3, 6, 11, 1]\nWhich of the following represents the list as a result of a call to mystery(3)?\n(A)\n[12, 9, 8, 4, 3, 6, 11, 1, 7]\n(B)\n[12, 9, 7, 8, 4, 6, 11, 1, 3]\n(C)\n[12, 9, 7, 4, 3, 6, 11, 1, 8]\n(D)\n[8, 4, 3, 6, 11, 1, 12, 9, 7]",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -25702,7 +25702,7 @@
       "number": 123,
       "text": "Consider the following method.\nAssume that a List<Integer> values initially contains the following Integer values.\nWhat will values contain as a result of executing mystery(values) ?\n(A)\n[0, 0, 4, 2, 5, 0, 3, 0]\n(B)\n[4, 2, 5, 3]\n(C)\n[0, 4, 2, 5, 3]\n(D)\nThe code throws an ArrayIndexOutOfBoundsException exception.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -26196,7 +26196,7 @@
       "number": 139,
       "text": "The following question refer to the following information.\nConsider the following data field and method. The method removeDups is intended to remove all adjacent\nduplicate numbers from myData, but does not work as intended.\nprivate ArrayList myData;\npublic void removeDups ()\n{\n  int k = 1;\n  while (k < myData.size())\n  {\n    if (myData.get(k).equals(myData.get(k - 1)))\n    {\n      myData.remove(k);\n    }\n    k++;\n  }\n}\n \nFor example, if myData has the values 3 3 4 4 4 8 7 7 7, after calling removeDups, myData should\nhave the values 3 4 8 7.\n \nWhich of the following best describes how to fix the error so that removeDups works as intended?\n(A)\nThe while condition should be (k < myData.size() - 1).\n(B)\nThe if test should be (myData.get(k).equals(myData.get(k + 1))).\n(C)\nThe body of the if statement should be: myData.remove(k - 1);\n(D)\nThere should be an else before the statement k++;",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -26234,7 +26234,7 @@
       "number": 140,
       "text": "The following question refer to the following information.\nConsider the following data field and method. The method removeDups is intended to remove all adjacent\nduplicate numbers from myData, but does not work as intended.\nprivate ArrayList myData;\npublic void removeDups ()\n{\n  int k = 1;\n  while (k < myData.size())\n  {\n    if (myData.get(k).equals(myData.get(k - 1)))\n    {\n      myData.remove(k);\n    }\n    k++;\n  }\n}\n \nFor example, if myData has the values 3 3 4 4 4 8 7 7 7, after calling removeDups, myData should\nhave the values 3 4 8 7.\n \nAssume that myData has the following values.\n2 7 5 5 5 5 6 6 3 3 3\nWhich of the following represents myData after the incorrect removeDups is executed?\n(A)\n2 7 5 6 3\n(B)\n2 7 5 6 3 3\n(C)\n2 7 5 5 6 3 3\n(D)\n2 7 5 5 5 6 3 3",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -26690,7 +26690,7 @@
       "number": 157,
       "text": "Consider the following data field and method.\nprivate int[][] mat;\npublic int mystery(int r, int c)\n{\n  if (r != 0 || c != 0)\n  {\n    return (mat[r][c] + mystery(r - 1, c - 1));\n  }\n  else\n  {\n    return mat[r][c];\n  }\n}\nAssume that mat is the 2-D array shown below.\n \n0\n1\n2\n3\n0 0\n1\n2\n3\n1 4\n5\n6\n7\n2 8\n9\n10 11\n3 12 13 14 15\n \nWhat value is returned as a result of the call mystery(2, 3)?\n(A)\n11\n(B)\n17\n(C)\n18\n(D)\nNo value is returned because mystery throws an ArrayIndexOutOfBoundsException.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -27255,7 +27255,7 @@
       "number": 176,
       "text": "Assume mat is defined as follows.\nint dim = 4;\nint[][] mat = new int[dim][dim];\nConsider the following code segment.\nint sum = 0;\nfor (int row = 0; row < dim; row++)\n{\n  sum = sum + mat[row][dim - 1];\n}\nAssume that mat contains the following values before the code segment is executed. Note that mat[0][3] is 2.\n \n0 1 2 3\n0 1 1 2 2\n1 1 2 2 4\n2 1 3 2 6\n3 1 4 2 8\n \nWhat value will sum contain after the code segment is executed?\n(A)\n6\n(B)\n8\n(C)\n15\n(D)\n20",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -27483,7 +27483,7 @@
       "number": 183,
       "text": "Consider the following data field and method.\nprivate int[][] mat;\npublic void mystery ()\n{\n  for (int row = 1; row < mat.length; row++)\n  {\n    for (int col = 0; col < mat[0].length; col++)\n    {\n      if (row != col)\n        mat[row][col] = mat[row - 1][col];\n    }\n  }\n}\nAssume that mat contains the following values. Note that mat[0][4] is 2.\n4 1 3 4 2\n1 8 7 5 3\n7 4 6 9 2\n3 8 1 2 4\n5 6 7 0 3\nWhat values does mat contain after a call to mystery?\n(A)\n4 1 3 4 2\n4 8 3 4 2\n4 8 6 4 2\n4 8 6 2 2\n4 8 6 2 3\n(B)\n4 1 3 4 2\n4 1 3 4 2\n4 1 3 4 2\n4 1 3 4 2\n4 1 3 4 2\n(C)\n4 1 3 4 2\n4 1 3 4 2\n1 8 7 5 3\n7 4 6 9 2\n3 8 1 2 4\n(D)\n4 4 4 4 4\n1 1 1 1 1\n7 7 7 7 7\n3 3 3 3 3\n5 5 5 5 5",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "A",
       "status": "needs_review",
       "sources": [
         {
@@ -27749,7 +27749,7 @@
       "number": 195,
       "text": "Consider the following method.\npublic String goAgain(String str, int index)\n{\n  if (index >= str.length())\n    return str;\n \n  return str + goAgain(str.substring(index), index + 1);\n}\n \nWhat is printed as a result of executing the following statement?\nSystem.out.println(goAgain(\"today\", 1));\n(A)\ntodayto\n(B)\ntodayoday\n(C)\ntodayodayay\n(D)\ntodayodaydayayy",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -27787,7 +27787,7 @@
       "number": 196,
       "text": "Assume that methods f and g are defined as follows.\npublic int f(int x)\n{\n  if (x <= 0)\n  {\n    return 0;\n  }\n  else\n  {\n    return g(x - 1);\n  }\n}\n \npublic int g(int x)\n{\n  if (x <= 0)\n  {\n    return 0;\n  }\n  else\n  {\n    return (f(x - 1) + x);\n  }\n}\nWhat value is returned as a result of the call f(6)?\n(A)\n 0\n(B)\n6\n(C)\n9\n(D)\n12",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -27863,7 +27863,7 @@
       "number": 198,
       "text": "Consider the following recursive method.\nAssuming that k is a nonnegative integer and m = 2 , what value is returned as a result of the call mystery (m) ?\n(A)\n0\n(B)\nk\n(C)\n(D)",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -27899,7 +27899,7 @@
       "number": 199,
       "text": "Consider the following method.\n// precondition: x >= 0\npublic void mystery(int x)\n{\n  if ((x / 10) != 0)\n  {\n    mystery(x / 10);\n  }\n \n  System.out.print(x % 10);\n}\n \nWhich of the following is printed as a result of the call  mystery(123456) ?\n(A)\n56\n(B)\n123456\n(C)\n654321\n(D)\nMany digits are printed due to infinite recursion.\nk",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -27937,7 +27937,7 @@
       "number": 200,
       "text": "Consider the following method.\nWhich of the following is printed as a result of the call mystery (1234)?\n(A)\n4321\n(B)\n12344321\n(C)\n43211234\n(D)\nMany digits are printed due to infinite recursion.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -28013,7 +28013,7 @@
       "number": 202,
       "text": "Consider the following recursive method.\npublic static String recur(int val)\n{\n  String dig = \"\" + (val % 3);\n \n  if (val / 3 > 0)\n    return dig + recur(val / 3);\n \n  return dig;\n}\n \nWhat is printed as a result of executing the following statement?\nSystem.out.println(recur(32));\n(A)\n102\n(B)\n210\n(C)\n1020\n(D)\n2101",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -28051,7 +28051,7 @@
       "number": 203,
       "text": "Consider the following static method.\nprivate static void recur(int n)\n{\n  if (n != 0)\n  {\n    recur(n - 2);\n    System.out.print(n + \" \");\n  }\n}\nWhat numbers will be printed as a result of the call recur(7) ?\n(A)\n1 3 5 7\n(B)\n7 5 3 1\n(C)\nMany numbers will be printed because of infinite recursion.\n(D)\nNo numbers will be printed because of infinite recursion.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -28089,7 +28089,7 @@
       "number": 204,
       "text": "Consider the following recursive method.\nprivate int recur(int n)\n{\n  if (n <= 1)\n  {\n    return 1;\n  }\n  else\n  {\n    return (recur(n - 2) + recur(n - 1));\n  }\n}\n \nWhat value will be returned by the call recur(4)?\n(A)\n2\n(B)\n3\n(C)\n5\n(D)\n8",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -28621,7 +28621,7 @@
       "number": 222,
       "text": "Consider the following instance variable and method.\nWhat is returned by the call mystery (0, arr.length − 1, num) ?\n(A)\nThe number of elements in arr that are less than num\n(B)\nThe number of elements in arr that are less than or equal to num\n(C)\nThe number of elements in arr that are equal to num\n(D)\nThe index of the middle element in arr",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
@@ -29039,7 +29039,7 @@
       "number": 235,
       "text": "Consider the following data field and method.\nprivate int[] seq;\n// precondition: seq.length > 0\npublic int lenIncreasing()\n{\n  int k = 1;\n \n  while ((k < seq.length) && (seq[k - 1] < seq[k]))\n  {\n    k++;\n  }\n \n  // assertion\n  return k;\n}\nWhich of the following assertions is true when execution reaches the line // assertion in lenIncreasing?\n(A)\n(k == seq.length) && (seq[k - 1] >= seq[k])\n(B)\n(k == seq.length) || (seq[k - 1] >= seq[k])\n(C)\n(k < seq.length) && (seq[k - 1] < seq[k])\n(D)\n(k < seq.length) || (seq[k - 1] < seq[k])",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -29077,7 +29077,7 @@
       "number": 236,
       "text": "Consider the following method that is intended to modify its parameter nameList by replacing all occurrences of\nname with newValue.\npublic void replace(ArrayList<String> nameList,\n                    String name, String newValue)\n{\n  for (int j = 0; j < nameList.size(); j++)\n  {\n    if ( /* expression */ )\n    {\n      nameList.set(j, newValue);\n    }\n  }\n}\n \nWhich of the following can be used to replace /* expression */ so that replace will work as intended?\n(A)\nnameList.get(j).equals(name)\n(B)\nnameList.get(j) == name\n(C)\nnameList[j] == name\n(D)\nnameList[j].equals(name)",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "A",
       "status": "needs_review",
       "sources": [
         {
@@ -29305,7 +29305,7 @@
       "number": 242,
       "text": "The following question is based on the following incomplete declaration of the class BoundedIntArray and its\nconstructor definitions.\nA BoundedintArray represents an indexed list of integers. In a BoundedIntArray the user can specify a\nsize, in which case the indices range from 0 to size - 1. The user can also specify the lowest index, low, in\nwhich case the indices can range from low to low + size - 1.\npublic class BoundedIntArray\n{\n  private int[] myItems;   // storage for the list\n  private int myLowIndex;  // lowest index\n \n  public BoundedIntArray(int size)\n  {\n    myItems = new int[size];\n    myLowIndex = 0;\n  }\n \n  public BoundedIntArray(int size, int low)\n  {\n    myItems = new int[size];\n    myLowIndex = low;\n  }\n  // other methods not shown\n}\n \nWhich of the following is the best reason for declaring the data fields myItems and myLowIndex to be private\nrather than public?\n(A)\nThis permits BoundedIntArray objects to be initialized and modified.\n(B)\nThis helps to prevent clients of the BoundedIntArray class from writing code that would need to be\nmodified if the implementation of BoundedIntArray were changed.\n(C)\nThis prevents compile-time errors whenever public methods are called that access the private data fields.\n(D)\nThis prevents run-time errors whenever public methods are called that access the private data fields.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "B",
       "status": "needs_review",
       "sources": [
         {
@@ -29381,7 +29381,7 @@
       "number": 244,
       "text": "The following question is based on the following incomplete declaration of the class BoundedIntArray and its\nconstructor definitions.\nA BoundedintArray represents an indexed list of integers. In a BoundedIntArray the user can specify a\nsize, in which case the indices range from 0 to size - 1. The user can also specify the lowest index, low, in\nwhich case the indices can range from low to low + size - 1.\npublic class BoundedIntArray\n{\n  private int[] myItems;   // storage for the list\n  private int myLowIndex;  // lowest index\n \n  public BoundedIntArray(int size)\n  {\n    myItems = new int[size];\n    myLowIndex = 0;\n  }\n \n  public BoundedIntArray(int size, int low)\n  {\n    myItems = new int[size];\n    myLowIndex = low;\n  }\n  // other methods not shown\n}\n \nConsider the following statements.\nBoundedIntArray arrl = new BoundedIntArray(100, 5);\nBoundedIntArray arr2 = new BoundedIntArray(100);\n \nWhich of the following best describes arrl and arr2 after these statements?\n(A)\narrl and arr2 both represent lists of integers indexed from 0 to 99.\n(B)\narrl represents a list of integers indexed from 0 to 104, and arr2 represents a list of integers\nindexed from 0 to 99.\n(C)\narrl represents a list of integers indexed from 5 to 99, and arr2 represents a list of integers\nindexed from 0 to 99.\n(D)\narrl represents a list of integers indexed from 5 to 104, and arr2 represents a list of\nintegers indexed from 0 to 99.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "D",
       "status": "needs_review",
       "sources": [
         {
@@ -29419,7 +29419,7 @@
       "number": 245,
       "text": "Consider the following two methods that appear within a single class.\npublic void changeIt(int[] list, int num)\n{\n  list = new int[5];\n  num = 0;\n \n  for (int x = 0; x < list.length; x++)\n    list[x] = 0;\n}\n \npublic void start()\n{\n  int[] nums = {1, 2, 3, 4, 5};\n  int value = 6;\n \n  changeIt(nums, value);\n \n  for (int k = 0; k < nums.length; k++)\n    System.out.print(nums[k] + \" \");\n \n  System.out.print(value);\n}\n \nWhat is printed as a result of the call start()?\n(A)\n0 0 0 0 0 0\n(B)\n0 0 0 0 0 6\n(C)\n1 2 3 4 5 6\n(D)\nchangeIt will throw an exception.",
       "answer": "",
-      "answer_key": "",
+      "answer_key": "C",
       "status": "needs_review",
       "sources": [
         {
