@@ -1,4 +1,7 @@
 """Deterministic, time-bounded assembly from the local Methods question bank."""
+import json
+from pathlib import Path
+
 from .expanded_bank import QUESTIONS as METHODS, BANK_VERSION as METHODS_VERSION
 from .conditionals_bank import QUESTIONS as CONDITIONALS, BANK_VERSION as CONDITIONALS_VERSION
 from .questions import create_record, content_hash
@@ -56,6 +59,73 @@ BANKS['all-csa'] = QUESTIONS
 APPROVED_QUESTIONS = []
 
 
+def _load_imported_ap_questions():
+    """Convert the teacher-supplied AP PDFs into normal, selectable bank rows.
+
+    The source-bank page remains the audit view.  These rows are the teacher-facing
+    view: each item has a Unit/topic, readable stem/options, answer, timing and
+    the same schema as the built-in questions so it can be selected for a paper.
+    """
+    path = Path(__file__).parent / 'imported_bank' / 'bank.json'
+    if not path.is_file():
+        return []
+    try:
+        raw = json.loads(path.read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return []
+    result = []
+    for source in raw.get('questions', []):
+        source_topic = source.get('topic_id')
+        target_topic = source_topic if source_topic in GROUPS else 'csa-selection'
+        objective_id = objective(GROUPS[target_topic][1][0])
+        options = source.get('options') or {}
+        content = {
+            'id': 'AP-' + str(source.get('id', '')).replace('-', ''),
+            'title': source.get('title') or f"AP Unit {source.get('unit', '')} · 题目 {source.get('number', '')}",
+            'origin': 'AP Progress Check / Question Bank（教师提供资料）',
+            'code': '// AP source question; see the task text and linked original PDF.',
+            'task': source.get('text', '').strip(),
+            'answer': source.get('answer', '').strip() or '请查看原版评分指南。',
+            'rubric': '选择题按答案键判定；FRQ 请按原版评分指南逐小问评分。',
+            'intervention': '先让学生独立作答，再对照英文评分指南定位错误原因。',
+            'objectives': [objective_id],
+            'reasoning': ['阅读题干和给定代码。', '逐步检查条件、数据变化或算法过程。', '用答案和评分指南核对结论。'],
+            'errors': ['忽略题目中的边界条件。', '只看最终选项，没有检查中间步骤。'],
+            'level': int(source.get('level', 2)),
+            'minutes': int(source.get('minutes', 2 if source.get('kind') == 'MCQ' else 12)),
+            'question_kind': source.get('question_kind') or ('concept' if source.get('kind') == 'MCQ' else 'write'),
+            'ced_topics': [objective_id],
+            'ap_unit': str(source.get('unit', '')),
+            'ap_topic': source.get('topic_title') or '未命名 Topic',
+            'source_item_id': source.get('id'),
+        }
+        if options and source.get('answer_key') in options:
+            content['options'] = options
+            content['answer_key'] = source['answer_key']
+            content['distractors'] = {key: '请结合原版英文解析复盘该选项。'
+                                      for key in options if key != source['answer_key']}
+        content['_ap_sources'] = source.get('sources', [])
+        result.append(content)
+    return result
+
+
+# Imported rows stay outside the deterministic legacy bank by default. This
+# keeps existing coverage audits stable; selected AP rows are added on demand
+# when a teacher chooses them from the browser.
+IMPORTED_AP = _load_imported_ap_questions()
+_imported_topic_by_id = {q.get('id'): q.get('topic_id') for q in json.loads(
+    (Path(__file__).parent / 'imported_bank' / 'bank.json').read_text(encoding='utf-8')
+).get('questions', [])}
+for _question in IMPORTED_AP:
+    _source_topic = _imported_topic_by_id.get(_question.get('source_item_id'))
+    _target = _source_topic if _source_topic in VISIBLE_TOPICS and _source_topic != 'all-csa' else 'csa-selection'
+    _question['_bank_topic'] = _target
+
+IMPORTED_BY_TOPIC = {}
+for _question in IMPORTED_AP:
+    IMPORTED_BY_TOPIC.setdefault(_question['_bank_topic'], []).append(_question)
+
+
 def register_approved_question(submission):
     """Add a reviewed teacher submission to the in-process bank."""
     title = str(submission.get('title') or '').strip()
@@ -82,6 +152,7 @@ def register_approved_question(submission):
     return qid
 VISIBLE_TOPICS['all-csa'] = '全课程混合组卷'
 QUESTION_VERSIONS = {q['id']:version for bank,version in [(METHODS,METHODS_VERSION),(CONDITIONALS,CONDITIONALS_VERSION),(CSA,CSA_VERSION),(HOMEWORK,HOMEWORK_VERSION),(GAP,GAP_VERSION)] for q in bank}
+QUESTION_VERSIONS.update({q['id']: 'ap-import-v2' for q in IMPORTED_AP})
 LEGACY_TOPICS={'methods':'csa-calls','method-calls':'csa-calls','method-returns':'csa-calls','conditionals':'csa-selection','csa-logic':'csa-selection'}
 
 
@@ -141,8 +212,25 @@ def bank_data():
                          objectives=list(question.get('objectives', [])),
                          origin=question.get('origin',''), code=question.get('code',''),
                          task=question.get('task',''), answer=question.get('answer',''),
-                         rubric=question.get('rubric',''), prerequisites=question.get('prerequisites','')))
-    return dict(version=BANK_VERSION, count=len(rows), questions=rows,
+                         rubric=question.get('rubric',''), prerequisites=question.get('prerequisites',''),
+                         options=question.get('options', {}), answer_key=question.get('answer_key',''),
+                         ap_unit=question.get('ap_unit',''), ap_topic=question.get('ap_topic',''),
+                         source_item_id=question.get('source_item_id',''), source_refs=question.get('_ap_sources', [])))
+    original_count = len(rows)
+    # Imported AP material is presented in the same searchable browser, while
+    # remaining excluded from automatic generation until a teacher selects it.
+    for question in IMPORTED_AP:
+        topic = question.get('_bank_topic', 'csa-selection')
+        rows.append(dict(id=question['id'], title=question['title'], topic=topic,
+                         topic_title=VISIBLE_TOPICS.get(topic, topic), level=question['level'],
+                         minutes=question['minutes'], question_kind=question.get('question_kind', 'concept'),
+                         objectives=list(question.get('objectives', [])), origin=question.get('origin', ''),
+                         code=question.get('code', ''), task=question.get('task', ''), answer=question.get('answer', ''),
+                         rubric=question.get('rubric', ''), prerequisites='', options=question.get('options', {}),
+                         answer_key=question.get('answer_key', ''), ap_unit=question.get('ap_unit', ''),
+                         ap_topic=question.get('ap_topic', ''), source_item_id=question.get('source_item_id', ''),
+                         source_refs=question.get('_ap_sources', [])))
+    return dict(version=BANK_VERSION, count=original_count, total_count=len(rows), questions=rows,
                 topics=[dict(id=t['id'],title=t['title']) for t in catalog()['topics']],
                 difficulties=[dict(id=k,title=v[0]) for k,v in DIFFICULTIES.items()],
                 question_types=[dict(id=k,title=v) for k,v in EXAM_TYPES.items()])
@@ -210,9 +298,15 @@ def validate_settings(settings):
 
 
 def selected_bank(settings):
+    selected_ids = set(settings.get('selected_ids') or [])
+    imported_selected = [q for q in IMPORTED_AP if q['id'] in selected_ids]
     if settings.get('topics'):
-        return list({q['id']: q for t in settings['topics'] for q in BANKS[t]}.values())
-    return BANKS[settings['topic']]
+        bank = list({q['id']: q for t in settings['topics'] for q in BANKS[t]}.values())
+    else:
+        bank = list(BANKS[settings['topic']])
+    if imported_selected:
+        bank.extend(q for q in imported_selected if q['id'] not in {item['id'] for item in bank})
+    return bank
 
 
 def assemble(settings, recent=None):
