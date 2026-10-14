@@ -14,7 +14,7 @@ def build_docx(plan, records, audience, language='bilingual'):
         from docx.oxml.ns import qn
     except ImportError as exc:
         raise ValueError('Word 导出需要安装项目 requirements.txt 中的依赖。') from exc
-    from .worksheets import TOPICS, summary
+    from .worksheets import TOPICS
 
     document = Document()
     # The bundled default template may carry a decorative title border.
