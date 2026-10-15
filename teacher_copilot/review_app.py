@@ -332,6 +332,9 @@ class ReviewStore:
                                 previous_validation=deepcopy(record['validation'])))]
                 if state['settings'].get('purpose')=='exam' and record['content'].get('marks'):
                     replacement['content']['marks']=record['content']['marks']
+                    raw_marks=replacement['content'].get('reference_marks')
+                    if raw_marks and raw_marks!=record['content']['marks']:
+                        replacement['content']['rubric']+=f"\n本卷分值换算 / Paper scaling: 得分 = 原始评分点得分 × {record['content']['marks']}/{raw_marks}。"
                     from .questions import content_hash
                     replacement['content_hash']=content_hash(replacement['content'])
                 records[index] = replacement
