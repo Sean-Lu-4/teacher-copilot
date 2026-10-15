@@ -85,7 +85,8 @@ def build_docx(plan, records, audience, language='bilingual'):
         if index > 1 and (is_exam or audience == 'teacher' or any(r['content'].get('question_kind') == 'write' for r in records)):
             heading.paragraph_format.page_break_before = True
         paragraph((f'{q.get("marks", 0)} 分  |  ' if is_exam else '') + f'预计 {q["minutes"]} 分钟')
-        code(q['code'])
+        if not q['code'].startswith('// AP source question'):
+            code(q['code'])
         paragraph(q['task'])
         for key, value in q.get('options', {}).items():
             paragraph(f'{key}. {value}')

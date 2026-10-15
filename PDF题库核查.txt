@@ -1,0 +1,49 @@
+PDF 题库核查（2026-10-15）
+已存档：Progress Check 34 份 + Question Bank 12 份，共 46 份 PDF。
+当前 D 盘原始路径不可访问；核查基于项目已保存的 PDF 副本。
+原题没有改写；646 道导入 MCQ 的题干、选项、答案均与修改前一致。
+导入文件有 646 道 MCQ 和 43 个去重后的 FRQ/共享题组。
+其中 9 道 MCQ 选项/答案键不完整，13 道 Unit 4 FRQ 缺评分指南，未开放组卷。
+可用：637 道导入 MCQ + 30 道导入 FRQ + 10 道原有完整 MCQ。
+270 道已按题干重建分类；其余分类中明确的共享情境和嵌套循环已修正。
+383 道仍沿用旧课题级分类，尚未完成逐条 CED Topic 核验；以下课题统计不等于每个细分考点均已覆盖。
+PDF 难度原本统一填 2/3，没有可靠依据，现显示“尚未标定”。
+自动组卷现可使用 PDF 题；过去只允许手选加入。
+
+课题 | MCQ | FRQ
+U1 · 算法、变量与表达式 | 52 | 0
+U1 · 输入、类型转换与赋值 | 43 | 0
+U1 · API 与文档 | 1 | 0
+U1 · 方法签名与类方法 | 22 | 0
+U1 · Math | 14 | 4
+U1 · 对象与实例方法 | 28 | 2
+U1 · String | 21 | 6
+U2 · 分支与布尔条件 | 87 | 7
+U2 · while、for 与循环算法 | 49 | 7
+U2 · 字符串算法 | 12 | 5
+U2 · 嵌套循环与运行次数 | 26 | 0
+U3 · 类设计与设计影响 | 4 | 0
+U3 · 类、构造器与方法 | 82 | 17
+U3 · 对象引用、static、作用域与 this | 18 | 0
+U4 · 数据集与数据伦理 | 13 | 0
+U4 · 一维数组 | 78 | 2
+U4 · 文本文件 | 7 | 0
+U4 · 包装类与 ArrayList | 63 | 2
+U4 · 二维数组 | 42 | 2
+U4 · 查找与排序 | 14 | 0
+U4 · 递归与递归算法 | 25 | 0
+
+缺评分指南（题号见原 PDF，保留在原始资料页）
+FINALUnit4FRQ-Topicorder_papersaver · 2
+FINALUnit4FRQ-Topicorder_papersaver · 4
+FINALUnit4FRQ-Topicorder_papersaver · 7
+FINALUnit4FRQ-Topicorder_papersaver · 8
+FINALUnit4FRQ-Topicorder_papersaver · 11
+FINALUnit4FRQ-Topicorder_papersaver · 12
+FINALUnit4FRQ-Topicorder_papersaver · 13
+FINALUnit4FRQ-Topicorder_papersaver · 14
+FINALUnit4FRQ-Topicorder_papersaver · 15
+FINALUnit4FRQ-Topicorder_papersaver · 16
+FINALUnit4FRQ-Topicorder_papersaver · 17
+FINALUnit4FRQ-Topicorder_papersaver · 18
+FINALUnit4FRQ-Topicorder_papersaver · 19

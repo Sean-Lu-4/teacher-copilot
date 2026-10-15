@@ -49,7 +49,7 @@ CONTENT.update({objective(t): (t + ' ' + title, {objective(t)}) for t, title in 
 BANKS = {'methods': METHODS, 'method-calls': METHODS, 'method-returns': METHODS,
          'conditionals': CONDITIONALS}
 BANKS.update({key: [q for q in CSA if q['ced_topics'][0] in topics] for key, (_, topics) in GROUPS.items()})
-DIFFICULTIES = {'basic': ('基础', {1, 2}), 'advanced': ('巩固', {3}),
+DIFFICULTIES = {'any': ('全部难度（含未标定）', {1,2,3,4}), 'basic': ('基础', {1, 2}), 'advanced': ('巩固', {3}),
                 'exam': ('考试', {4})}
 EXAM_TYPES = {'concept': 'MCQ 选择题', 'write': 'FRQ 编程题'}
 CORE = set().union(*(v[1] for v in CONTENT.values()))
@@ -91,9 +91,12 @@ def _load_imported_ap_questions():
             continue
         if source.get('kind') == 'MCQ' and not _complete_mcq(source):
             continue
+        if source.get('kind') == 'FRQ' and not source.get('answer', '').strip():
+            continue
         source_topic = source.get('topic_id')
         target_topic = source_topic if source_topic in GROUPS else 'csa-selection'
-        objective_id = objective(GROUPS[target_topic][1][0])
+        topic_codes = [t for t in source.get('ced_topics', []) if t in LABELS]
+        objectives = [objective(t) for t in topic_codes] or [objective(GROUPS[target_topic][1][0])]
         options = source.get('options') or {}
         task_text = source.get('text', '').strip()
         # PDF extraction often leaves the answer choices in the raw stem.  The
@@ -112,13 +115,17 @@ def _load_imported_ap_questions():
             'answer': source.get('answer', '').strip() or '请查看原版评分指南。',
             'rubric': '选择题按答案键判定；FRQ 请按原版评分指南逐小问评分。',
             'intervention': '先让学生独立作答，再对照英文评分指南定位错误原因。',
-            'objectives': [objective_id],
+            'objectives': objectives,
+            'difficulty_status': 'unrated',
+            'classification_status': source.get('classification_status','legacy-group-pending-review'),
+            'topic_ids': source.get('topic_ids') or [target_topic],
+            'units': sorted({t.split('.')[0] for t in topic_codes}) or [str(source.get('unit',''))],
             'reasoning': ['阅读题干和给定代码。', '逐步检查条件、数据变化或算法过程。', '用答案和评分指南核对结论。'],
             'errors': ['忽略题目中的边界条件。', '只看最终选项，没有检查中间步骤。'],
             'level': int(source.get('level', 2)),
             'minutes': int(source.get('minutes', 2 if source.get('kind') == 'MCQ' else 12)),
             'question_kind': ('concept' if source.get('kind') == 'MCQ' else 'write'),
-            'ced_topics': [objective_id],
+            'ced_topics': topic_codes,
             'ap_unit': str(source.get('unit', '')),
             'ap_topic': source.get('topic_title') or '未命名 Topic',
             'source_item_id': source.get('id'),
@@ -133,21 +140,25 @@ def _load_imported_ap_questions():
     return result
 
 
-# Imported rows stay outside the deterministic legacy bank by default. This
-# keeps existing coverage audits stable; selected AP rows are added on demand
-# when a teacher chooses them from the browser.
+# Complete PDF questions participate in the same topic bank as original MCQs.
 IMPORTED_AP = _load_imported_ap_questions()
 _imported_topic_by_id = {q.get('id'): q.get('topic_id') for q in json.loads(
     (Path(__file__).parent / 'imported_bank' / 'bank.json').read_text(encoding='utf-8')
 ).get('questions', [])}
 for _question in IMPORTED_AP:
     _source_topic = _imported_topic_by_id.get(_question.get('source_item_id'))
-    _target = _source_topic if _source_topic in VISIBLE_TOPICS and _source_topic != 'all-csa' else 'csa-selection'
+    _target = 'csa-selection' if _source_topic == 'csa-logic' else _source_topic
+    if _target not in VISIBLE_TOPICS: _target = 'csa-selection'
     _question['_bank_topic'] = _target
 
 IMPORTED_BY_TOPIC = {}
 for _question in IMPORTED_AP:
-    IMPORTED_BY_TOPIC.setdefault(_question['_bank_topic'], []).append(_question)
+    for _topic in dict.fromkeys('csa-selection' if t=='csa-logic' else t for t in _question['topic_ids']):
+        if _topic in BANKS:
+            IMPORTED_BY_TOPIC.setdefault(_topic, []).append(_question)
+            BANKS[_topic].append(_question)
+# The mixed bank is an independent list; do not mutate the original-only list.
+BANKS['all-csa'] = QUESTIONS + IMPORTED_AP
 
 
 def register_approved_question(submission):
@@ -209,10 +220,10 @@ def catalog(include_mixed=False):
     topics=[dict(id=key, title=title, unit=(GROUPS[key][1][0].split('.')[0] if key in GROUPS else '1'), bank_count=len(BANKS[key]),
                             contents=[dict(id=c, title=CONTENT[c][0]) for c in (ALL_CSA_CONTENTS if key=='all-csa' else TOPIC_CONTENTS[key])])
                 for key, title in VISIBLE_TOPICS.items() if include_mixed or key!='all-csa']
-    return dict(bank_count=len(QUESTIONS), bank_version=BANK_VERSION,
+    return dict(bank_count=len(QUESTIONS)+len(IMPORTED_AP), bank_version=BANK_VERSION,
                 objective_labels={k: title for k, (title, _) in CONTENT.items()},
                 units=[dict(id=str(key),title=f'Unit {key} · {title}') for key,title in UNITS.items()],
-                homework_minutes=[10,20],
+                homework_minutes=[10,20,30,45,60],
                 topics=topics,
                 difficulties=[dict(id=key, title=value[0]) for key, value in DIFFICULTIES.items()])
 
@@ -239,10 +250,15 @@ def bank_data():
                          rubric=question.get('rubric',''), prerequisites=question.get('prerequisites',''),
                          options=question.get('options', {}), answer_key=question.get('answer_key',''),
                          ap_unit=question.get('ap_unit',''), ap_topic=question.get('ap_topic',''),
-                         source_item_id=question.get('source_item_id',''), source_refs=question.get('_ap_sources', [])))
+                         source_item_id=question.get('source_item_id',''), source_refs=question.get('_ap_sources', []),
+                         difficulty_status=question.get('difficulty_status','rated'),
+                         classification_status=question.get('classification_status','original'),
+                         ced_topics=question.get('ced_topics',[]),
+                         topics=list(dict.fromkeys('csa-selection' if t=='csa-logic' else t for t in question.get('topic_ids',[topic]))),
+                         topic_titles=[VISIBLE_TOPICS.get(t,t) for t in dict.fromkeys('csa-selection' if t=='csa-logic' else t for t in question.get('topic_ids',[topic]))],
+                         units=question.get('units') or [GROUPS.get(topic,('', ['1.1']))[1][0].split('.')[0]]))
     original_count = len(rows)
-    # Imported AP material is presented in the same searchable browser, while
-    # remaining excluded from automatic generation until a teacher selects it.
+    # Expose each imported question once, with all searchable topic memberships.
     for question in IMPORTED_AP:
         topic = question.get('_bank_topic', 'csa-selection')
         rows.append(dict(id=question['id'], title=question['title'], topic=topic,
@@ -253,7 +269,13 @@ def bank_data():
                          rubric=question.get('rubric', ''), prerequisites='', options=question.get('options', {}),
                          answer_key=question.get('answer_key', ''), ap_unit=question.get('ap_unit', ''),
                          ap_topic=question.get('ap_topic', ''), source_item_id=question.get('source_item_id', ''),
-                         source_refs=question.get('_ap_sources', [])))
+                         source_refs=question.get('_ap_sources', []),
+                         difficulty_status=question.get('difficulty_status','rated'),
+                         classification_status=question.get('classification_status','original'),
+                         ced_topics=question.get('ced_topics',[]),
+                         topics=list(dict.fromkeys('csa-selection' if t=='csa-logic' else t for t in question.get('topic_ids',[topic]))),
+                         topic_titles=[VISIBLE_TOPICS.get(t,t) for t in dict.fromkeys('csa-selection' if t=='csa-logic' else t for t in question.get('topic_ids',[topic]))],
+                         units=question.get('units') or [GROUPS.get(topic,('', ['1.1']))[1][0].split('.')[0]]))
     return dict(version=BANK_VERSION, count=original_count, total_count=len(rows), questions=rows,
                 topics=[dict(id=t['id'],title=t['title']) for t in catalog()['topics']],
                 difficulties=[dict(id=k,title=v[0]) for k,v in DIFFICULTIES.items()],
@@ -292,8 +314,6 @@ def validate_settings(settings):
     if type(minutes) is not int or not limit[0] <= minutes <= limit[1]:
         raise ValueError(f'时间应为 {limit[0]} 至 {limit[1]} 分钟的整数。')
     homework=purpose in {None, 'homework'}
-    if purpose=='homework' and minutes not in (10,20):
-        raise ValueError('请选择 10 分钟或 20 分钟作业。')
     normalized=dict(topic=settings['topic'], contents=list(dict.fromkeys(contents)), difficulty=difficulty, minutes=minutes)
     if topics:
         normalized['topics']=topics
@@ -342,8 +362,8 @@ def assemble(settings, recent=None):
     bank = selected_bank(settings)
     version = (CSA_VERSION if settings['topic'] in GROUPS or settings['topic']=='all-csa' else
                CONDITIONALS_VERSION if settings['topic'] == 'conditionals' else METHODS_VERSION)
-    eligible = [q for q in bank if q['level'] in levels and selection_objectives(q,settings['topic'])
-                and selection_objectives(q,settings['topic']) <= wanted]
+    eligible = [q for q in bank if q['level'] in levels and (settings['difficulty'] in {'any','mixed'} or q.get('difficulty_status')!='unrated') and selection_objectives(q,settings['topic'])
+                and bool(selection_objectives(q,settings['topic']) & wanted)]
     recent = recent or {}
     def reuse_cost(group):
         return sum(recent.get(eligible[i]['id'], 0) for i in group)
@@ -352,7 +372,7 @@ def assemble(settings, recent=None):
     bits = {key: 1 << i for i, key in enumerate(sorted(CORE))}
     states = {(0, 0, 0): ()}
     for index, question in enumerate(eligible):
-        mask = sum(bits[key] for key in selection_objectives(question,settings['topic']))
+        mask = sum(bits[key] for key in selection_objectives(question,settings['topic']) & wanted)
         for (used, covered, level_mask), group in list(states.items()):
             total = used + question['minutes']
             if total <= minutes:
@@ -360,6 +380,12 @@ def assemble(settings, recent=None):
                 proposal = group + (index,)
                 if key not in states or reuse_cost(proposal) < reuse_cost(states[key]):
                     states[key] = proposal
+        if len(states)>12000:
+            best=sorted(states,key=lambda k:(k[0],k[1].bit_count()),reverse=True)[:8000]
+            by_time={}
+            for k in states:
+                if k[0] not in by_time or k[1].bit_count()>by_time[k[0]][1].bit_count(): by_time[k[0]]=k
+            states={k:states[k] for k in set(best)|set(by_time.values())}
     candidates = [key for key in states if key[0]]
     if not candidates:
         raise ValueError('本地题库暂时没有同时符合这些内容、难度和时间的题目。可增加考查内容、调整难度或延长时间。')
@@ -381,8 +407,8 @@ def assemble_exam(settings, recent=None):
     levels=DIFFICULTIES.get(settings['difficulty'], ('混合',{1,2,3,4}))[1]
     kinds=set(settings['question_types'])
     bank=selected_bank(settings)
-    eligible=[q for q in bank if q['level'] in levels and (q.get('question_kind') or 'concept') in kinds
-              and selection_objectives(q,settings['topic']) and selection_objectives(q,settings['topic']) <= wanted]
+    eligible=[q for q in bank if q['level'] in levels and (settings['difficulty'] in {'any','mixed'} or q.get('difficulty_status')!='unrated') and (q.get('question_kind') or 'concept') in kinds
+              and selection_objectives(q,settings['topic']) and bool(selection_objectives(q,settings['topic']) & wanted)]
     if settings.get('selected_ids'):
         selected=set(settings['selected_ids'])
         if not selected <= {q['id'] for q in bank}:
@@ -404,7 +430,7 @@ def assemble_exam(settings, recent=None):
     bits={key:1<<i for i,key in enumerate(sorted(CORE))}
     states={(0,0,0):((),0)}
     for question in eligible:
-        mask=sum(bits[key] for key in selection_objectives(question,settings['topic']))
+        mask=sum(bits[key] for key in selection_objectives(question,settings['topic']) & wanted)
         for (count,used,covered),(group,cost) in list(states.items()):
             if count >= settings['question_count'] or used + question['minutes'] > settings['minutes']:
                 continue
