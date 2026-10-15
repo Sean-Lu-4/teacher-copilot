@@ -12,7 +12,7 @@ from teacher_copilot import ai_questions as ai
 from teacher_copilot.gap_bank import QUESTIONS
 from teacher_copilot.review_app import ReviewStore
 
-SETTINGS=dict(topic='csa-math',contents=['ced_1_11'],difficulty='basic',minutes=10,purpose='homework')
+SETTINGS=dict(topic='csa-math',contents=['ced_1_11'],difficulty='any',minutes=10,purpose='homework')
 ENV=dict(TEACHER_COPILOT_ENABLE_AI='1',OPENAI_MODEL='test-model',OPENAI_API_KEY='test-placeholder')
 
 
@@ -20,7 +20,12 @@ def payload():
     rows=[]
     for qid in ['GM_B2','GM_B3']:
         q=next(q for q in QUESTIONS if q['id']==qid)
-        rows.append({key:deepcopy(q.get(key,'')) for key in ai.PROPERTIES})
+        row={key:deepcopy(q.get(key,'')) for key in ai.PROPERTIES}
+        n=17+len(rows)
+        row.update(question_kind='concept',code=f'int result = Math.abs(-{n});',task='Which value is stored in result?',
+                   answer=str(n),options=[str(-n),str(n),'0',str(n*2)],answer_key='B',distractors=['Wrong sign.','Not zero.','Not doubled.'],
+                   marks=1,scoring_points=[dict(criterion='Select B',points=1)],minutes=5)
+        rows.append(row)
     return dict(questions=rows)
 
 
@@ -68,7 +73,7 @@ class AITests(unittest.TestCase):
         mutations=[lambda p:p['questions'][0].update(answer=''),
                    lambda p:p['questions'][0].update(minutes=True),
                    lambda p:p['questions'][0].update(minutes=6),
-                   lambda p:p['questions'][0].update(level=4),
+                   lambda p:p['questions'][0].update(level=5),
                    lambda p:p['questions'][0].update(objectives=['ced_4_6']),
                    lambda p:p['questions'][0].update(question_kind='write',reference_solution=''),
                    lambda p:p['questions'].append(deepcopy(p['questions'][0]))]
@@ -98,7 +103,7 @@ class AITests(unittest.TestCase):
                 export=store.mutate(dict(action='export',run=state['run'],version=state['version'],format='docx',audience='student'))
             text='\n'.join(p.text for p in Document(BytesIO(base64.b64decode(export['download']))).paragraphs)
             self.assertIn('LATEST_MOCK_TITLE',text)
-            self.assertIn('模拟',text)
+            self.assertNotIn('模拟',text)
             self.assertEqual(state['generation']['output_tokens'],0)
             self.assertEqual(store.state(state['run'])['source'],'mock')
 

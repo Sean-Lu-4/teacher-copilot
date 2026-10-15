@@ -19,7 +19,7 @@ from urllib.parse import urlparse
 from .config import OUTPUT_FOLDER
 from .questions import load_questions, save_questions, revise, review, set_locked
 from .storage import atomic_json
-from .worksheets import assemble, assemble_exam, summary, paper_report, catalog, bank_data, TOPICS, navigation_settings, replace_question, validate_settings
+from .worksheets import assemble, assemble_exam, summary, paper_report, catalog, bank_data, TOPICS, navigation_settings, replace_question, validate_settings, availability_preview, selection_objectives, partial_exam
 from . import ai_questions
 
 ASSETS = Path(__file__).parent / 'review_static'
@@ -145,6 +145,7 @@ class ReviewStore:
             for record in self.state(run)['records']:
                 excluded.append(record['content'])
                 excluded.extend(e['detail']['previous_content'] for e in record['history'] if e.get('action')=='replace')
+        excluded=kwargs.pop('extra_excluded', [])+excluded
         request_id=kwargs.pop('request_id',None)
         from . import ai_usage
         def generate(record_usage):
@@ -163,6 +164,8 @@ class ReviewStore:
 
     def mutate(self, payload):
         with self.lock:
+            if payload.get('action')=='availability':
+                return availability_preview(payload.get('settings') or {})
             if payload.get('action')=='ai-limits':
                 from .ai_usage import set_limits
                 set_limits(self.root,payload.get('limits'))
@@ -199,35 +202,58 @@ class ReviewStore:
                 if mode not in {'local','mock','ai','hybrid'}:raise ValueError('请选择有效的题目来源。')
                 recent = self.recent_usage(payload.get('run'))
                 requested=payload.get('settings') or {}
-                if requested.get('purpose')=='exam':
-                    if mode=='local':
-                        settings, records = assemble_exam(requested, recent)
-                        generation=dict(source='local')
-                    else:
-                        settings=validate_settings(requested)
-                        records,generation=self.ai_records(settings,'ai' if mode=='hybrid' else mode,payload.get('run'),request_id=payload.get('request_id'))
-                elif mode=='local':
-                    settings, records = assemble(requested, recent)
+                settings=validate_settings(requested)
+                builder=assemble_exam if settings.get('purpose')=='exam' else assemble
+                if mode=='local':
+                    settings,records=builder(settings,recent)
                     generation=dict(source='local')
                 elif mode=='hybrid':
-                    settings = validate_settings(requested)
+                    if settings.get('selected_ids'):
+                        raise ValueError('自选清单请使用题库组卷；补题请先取消自选限制。')
                     try:
-                        _, records = assemble(requested, recent)
+                        _,records=builder(settings,recent)
                     except ValueError:
-                        records = []
-                    used = sum(r['content']['minutes'] for r in records)
-                    if used < settings['minutes']:
-                        covered = set().union(*(set(r['content'].get('objectives', [])) for r in records))
-                        extra, generation = self.ai_records(settings, 'ai', payload.get('run'),
-                            supplement_minutes=settings['minutes'] - used,
-                            covered_objectives=covered, request_id=payload.get('request_id'))
-                        records += extra
-                        generation['source'] = 'hybrid'
-                        generation['notice'] = f'题库题目不足，已用 AI 补足 {settings["minutes"] - used} 分钟。'
+                        records=[]
+                        if settings.get('purpose')=='exam':
+                            records=partial_exam(settings,recent)
+                    used=sum(r['content']['minutes'] for r in records)
+                    exam=settings.get('purpose')=='exam'
+                    # A fixed-size paper with all requested questions needs no extra question.
+                    needs_more=(len(records)<settings['question_count']) if exam else used<settings['minutes']
+                    if needs_more:
+                        if exam:
+                            # Reserve at least one minute for each missing question.
+                            while records and settings['minutes']-used < settings['question_count']-len(records):
+                                used-=records.pop()['content']['minutes']
+                        covered=set().union(*(selection_objectives(r['content'],settings['topic']) for r in records))
+                        kwargs={}
+                        if exam:
+                            allocated=0
+                            for r in records:
+                                marks=max(1,round(settings['total_marks']*r['content']['minutes']/settings['minutes']))
+                                marks=min(marks,settings['total_marks']-allocated-(settings['question_count']-len(records))-(len(records)-records.index(r)-1))
+                                allocated+=marks
+                                r['content']['marks']=marks
+                                from .questions import content_hash
+                                r['content']['rubric']+=f'\n本卷本题按 {marks} 分计：按原评分标准得分比例折算。'
+                                r['content_hash']=content_hash(r['content'])
+                            kwargs=dict(supplement_count=settings['question_count']-len(records),
+                                        supplement_marks=settings['total_marks']-allocated)
+                        try:
+                            if not ai_questions.availability()['free_ready']:
+                                raise ValueError('免费补题尚未启用，请先配置 OpenRouter 免费模型。')
+                            extra,generation=self.ai_records(settings,'ai',payload.get('run'),
+                                supplement_minutes=settings['minutes']-used,covered_objectives=covered,
+                                extra_excluded=[r['content'] for r in records],request_id=payload.get('request_id'),**kwargs)
+                            records+=extra
+                            generation['source']='hybrid'
+                            generation['notice']=f'保留题库题目，补充 {len(extra)} 道题。'
+                        except ValueError as exc:
+                            if not records: raise
+                            generation=dict(source='local',notice='补题未完成，已保留题库练习。'+str(exc))
                     else:
-                        generation=dict(source='local')
+                        generation=dict(source='local',notice='题库已满足题量要求，未调用 AI。')
                 else:
-                    settings=validate_settings(requested)
                     records,generation=self.ai_records(settings,mode,payload.get('run'),request_id=payload.get('request_id'))
                 reused = sum(r['content']['id'] in recent for r in records)
                 notice = (f'本次有 {reused} 道题在近期作业中使用过；满足当前内容、难度和时长的题量有限，已优先选择较少使用的题目。'
@@ -244,7 +270,7 @@ class ReviewStore:
                 if mode in {'ai','hybrid'} and generation.get('source') in {'ai','hybrid'}:
                     from .ai_usage import request_path
                     path=request_path(self.root,payload.get('request_id'))
-                    entry=json.loads(path.read_text(encoding='utf-8'));entry['run']=directory.name
+                    entry=json.loads(path.read_text(encoding='utf-8'));entry['run']=directory.name;entry['result']=[records,generation]
                     atomic_json(path,entry)
                 return self.state(directory.name)
             state = self.state(payload.get('run'))
@@ -293,7 +319,7 @@ class ReviewStore:
             actor = payload.get('actor', '')
             if action == 'replace':
                 if record['locked']:raise ValueError('这道题已锁定，请先解锁再换题。')
-                if state['source']=='local':
+                if state['source'] in {'local','hybrid'}:
                     replacement = replace_question(state['settings'], records, index, self.recent_usage())
                 else:
                     replacement_rows,usage=self.ai_records(state['settings'],state['source'],state['run'],
@@ -362,8 +388,8 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
     if host not in {'127.0.0.1', 'localhost', '::1'} and (not allowed_hosts or not allowed_origins):
         raise ValueError('公网部署必须设置允许的域名和来源：TEACHER_COPILOT_ALLOWED_HOSTS、TEACHER_COPILOT_ALLOWED_ORIGINS。')
     demo = os.getenv('TEACHER_COPILOT_PUBLIC_DEMO') == '1'
-    if demo and ai_questions.availability()['ready']:
-        raise ValueError('Public demo must run with AI disabled.')
+    if demo and ai_questions.availability()['ready'] and not ai_questions.availability()['free_ready']:
+        raise ValueError('Public demo only supports configured free AI models.')
     session_secret = secrets.token_bytes(32)
     stores = {}
     stores_lock = threading.Lock()

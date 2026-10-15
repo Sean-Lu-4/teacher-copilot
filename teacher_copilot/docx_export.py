@@ -82,7 +82,7 @@ def build_docx(plan, records, audience, language='bilingual'):
         block_start = len(document.paragraphs)
         labels = {'pending': '待审核', 'passed': '通过', 'failed': '需修改'}
         heading = document.add_paragraph(f'第 {index} 题  {q["title"]}', 'Heading 1')
-        if index > 1 and (is_exam or audience == 'teacher' or any(r['content'].get('question_kind') == 'write' for r in records)):
+        if index > 1 and (q.get('question_kind') == 'write' or records[index-2]['content'].get('question_kind') == 'write'):
             heading.paragraph_format.page_break_before = True
         paragraph((f'{q.get("marks", 0)} 分  |  ' if is_exam else '') + f'预计 {q["minutes"]} 分钟')
         if not q['code'].startswith('// AP source question'):
@@ -102,9 +102,12 @@ def build_docx(plan, records, audience, language='bilingual'):
             paragraph(q['task'])
         for key, value in q.get('options', {}).items():
             paragraph(f'{key}. {value}')
+        if not q.get('question_images'):
+            for prompt in document.paragraphs[block_start:-1]:
+                prompt.paragraph_format.keep_with_next = True
         if audience == 'student':
             document.add_paragraph('作答区', 'Heading 2')
-            count = 12 if q.get('question_kind') == 'write' else 5
+            count = 12 if q.get('question_kind') == 'write' else 1
             for _ in range(count):
                 p = paragraph('____________________________________________________________________')
                 p.paragraph_format.space_after = Pt(7)
@@ -116,7 +119,7 @@ def build_docx(plan, records, audience, language='bilingual'):
             continue
         for title, value in [('参考答案', q['answer']), ('正确选项', q.get('answer_key')),
                              ('解析步骤', q['reasoning'])]:
-            if language == 'english':
+            if language == 'english' and q.get('explanation_en'):
                 continue
             if value:
                 document.add_paragraph(title, 'Heading 2')

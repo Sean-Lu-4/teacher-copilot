@@ -334,6 +334,10 @@ def validate_settings(settings):
         raise ValueError(f'时间应为 {limit[0]} 至 {limit[1]} 分钟的整数。')
     homework=purpose in {None, 'homework'}
     normalized=dict(topic=settings['topic'], contents=list(dict.fromkeys(contents)), difficulty=difficulty, minutes=minutes)
+    kinds=settings.get('question_types', ['concept','write'])
+    if not isinstance(kinds,list) or not kinds or any(k not in EXAM_TYPES for k in kinds):
+        raise ValueError('请至少选择一种题型。')
+    normalized['question_types']=list(dict.fromkeys(kinds))
     if topics:
         normalized['topics']=topics
     if purpose=='homework':
@@ -372,7 +376,46 @@ def selected_bank(settings):
     return bank
 
 
-def assemble(settings, recent=None):
+def eligible_questions(settings):
+    wanted=set().union(*(CONTENT[c][1] for c in settings['contents']))
+    levels=DIFFICULTIES.get(settings['difficulty'],('',{1,2,3,4}))[1]
+    return [q for q in selected_bank(settings)
+            if q['level'] in levels
+            and (settings['difficulty'] in {'any','mixed'} or q.get('difficulty_status')!='unrated')
+            and q.get('question_kind','concept') in settings.get('question_types',['concept','write'])
+            and selection_objectives(q,settings['topic']) & wanted
+            and (not settings.get('selected_ids') or q['id'] in settings['selected_ids'])]
+
+
+def availability_preview(settings):
+    settings=validate_settings(settings)
+    rows=eligible_questions(settings)
+    breakdown=[]
+    for c in settings['contents']:
+        matching=[q for q in rows if selection_objectives(q,settings['topic']) & CONTENT[c][1]]
+        breakdown.append(dict(id=c,title=CONTENT[c][0],mcq=sum(bool(q.get('options')) for q in matching),
+                              frq=sum(q.get('question_kind')=='write' for q in matching)))
+    try:
+        _,records=(assemble_exam if settings.get('purpose')=='exam' else assemble)(settings)
+        error=''
+    except ValueError as exc:
+        records=partial_exam(settings) if settings.get('purpose')=='exam' else [];error=str(exc)
+    used=sum(r['content']['minutes'] for r in records)
+    return dict(count=len(rows),available_minutes=sum(q['minutes'] for q in rows),
+                planned_count=len(records),planned_minutes=used,shortfall_minutes=max(0,settings['minutes']-used),
+                contents=breakdown,error=error)
+
+
+def partial_exam(settings, recent=None):
+    partial=dict(settings,purpose='homework',minutes=min(90,settings['minutes']),
+                 difficulty='any' if settings['difficulty']=='mixed' else settings['difficulty'])
+    try:
+        return assemble(partial,recent,max_count=settings['question_count'])[1]
+    except ValueError:
+        return []
+
+
+def assemble(settings, recent=None, *, max_count=None):
     settings = validate_settings(settings)
     contents, difficulty, minutes = settings['contents'], settings['difficulty'], settings['minutes']
     homework = settings.get('purpose') == 'homework'
@@ -381,8 +424,7 @@ def assemble(settings, recent=None):
     bank = selected_bank(settings)
     version = (CSA_VERSION if settings['topic'] in GROUPS or settings['topic']=='all-csa' else
                CONDITIONALS_VERSION if settings['topic'] == 'conditionals' else METHODS_VERSION)
-    eligible = [q for q in bank if q['level'] in levels and (settings['difficulty'] in {'any','mixed'} or q.get('difficulty_status')!='unrated') and selection_objectives(q,settings['topic'])
-                and bool(selection_objectives(q,settings['topic']) & wanted)]
+    eligible = eligible_questions(settings)
     recent = recent or {}
     def reuse_cost(group):
         return sum(recent.get(eligible[i]['id'], 0) for i in group)
@@ -393,6 +435,8 @@ def assemble(settings, recent=None):
     for index, question in enumerate(eligible):
         mask = sum(bits[key] for key in selection_objectives(question,settings['topic']) & wanted)
         for (used, covered, level_mask), group in list(states.items()):
+            if max_count is not None and len(group)>=max_count:
+                continue
             total = used + question['minutes']
             if total <= minutes:
                 key = (total, covered | mask, level_mask | (1 << question['level']))
@@ -414,6 +458,7 @@ def assemble(settings, recent=None):
     chosen = sorted((eligible[i] for i in states[best]), key=lambda q: q['level'])
     records = [create_record(q, QUESTION_VERSIONS[q['id']], dict(kind='original', sources=[])) for q in chosen]
     normalized=dict(topic=settings['topic'], contents=list(dict.fromkeys(contents)), difficulty=difficulty, minutes=minutes)
+    normalized['question_types']=settings.get('question_types',['concept','write'])
     if settings.get('topics'): normalized['topics']=settings['topics']
     if homework: normalized['purpose']='homework'
     return normalized, records
@@ -509,6 +554,7 @@ def replace_question(settings, records, index, recent=None):
                 used.add(event['detail']['previous_content']['id'])
     levels=DIFFICULTIES.get(settings['difficulty'], ('混合',{1,2,3,4}))[1]
     candidates = [q for q in selected_bank(settings) if q['id'] not in used
+                  and q.get('question_kind','concept') == old['content'].get('question_kind','concept')
                   and q['level'] in levels
                   and other_minutes + q['minutes'] <= settings['minutes']
                   and required & selection_objectives(q, topic)
