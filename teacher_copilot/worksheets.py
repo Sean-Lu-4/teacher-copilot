@@ -373,7 +373,9 @@ def selected_bank(settings):
         bank = list(BANKS[settings['topic']])
     if imported_selected:
         bank.extend(q for q in imported_selected if q['id'] not in {item['id'] for item in bank})
-    return bank
+    # Default assembly uses imported PDF questions only. Explicitly picked
+    # questions remain available for teachers who chose them in the bank.
+    return [q for q in bank if q.get("source_item_id") or q["id"] in selected_ids]
 
 
 def eligible_questions(settings):

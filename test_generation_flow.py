@@ -20,6 +20,18 @@ class FlowTests(unittest.TestCase):
         self.assertEqual(d['planned_count'],len(r));self.assertTrue(all(x['content'].get('options') for x in r))
         z=availability_preview(dict(S,topic='csa-foundations',contents=['ced_1_1'],question_types=['write']))
         self.assertEqual(z['count'],0);self.assertTrue(z['error'])
+    def test_default_pool_excludes_original_questions(self):
+        from teacher_copilot.worksheets import selected_bank, BANKS, assemble_exam
+        from teacher_copilot.questions import content_hash
+        settings=validate_settings(S)
+        clone=deepcopy(selected_bank(settings)[0]);clone['id']='ORIGINAL_PRIORITY_TEST';clone.pop('source_item_id',None)
+        with patch.dict(BANKS,{'csa-math':[clone]+BANKS['csa-math']}):
+            self.assertTrue(all(q.get('source_item_id') for q in selected_bank(settings)))
+            _,records=assemble(settings)
+            self.assertTrue(all(r['content'].get('source_item_id') for r in records))
+            _,exam=assemble_exam(dict(settings,purpose='exam',minutes=45,question_count=3,total_marks=10))
+            self.assertTrue(all(r['content'].get('source_item_id') for r in exam))
+
     def test_mcq_validation_and_short_answer_rejected(self):
         r=ai.validate_result({'questions':[generated()]},validate_settings(dict(S,minutes=7)),[])
         self.assertEqual(r[0]['content']['answer_key'],'B')
