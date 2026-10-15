@@ -482,6 +482,8 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                         return self.send({'error': '尚未生成题库缺口报告。'}, 404)
                     return self.send(report_path.read_bytes(), mime=mime+'; charset=utf-8')
                 names = {'/': ('index.html', 'text/html'), '/app.js': ('app.js', 'text/javascript'), '/style.css': ('style.css', 'text/css'),
+                         '/bank-audit': ('bank-audit.html', 'text/html'),
+                         '/bank-audit.css': ('bank-audit.css', 'text/css'),
                          '/bank': ('bank.html', 'text/html'), '/bank.js': ('bank.js', 'text/javascript')}
                 names.update({'/curriculum': ('curriculum.html','text/html'),
                               '/curriculum.js': ('curriculum.js','text/javascript')})

@@ -87,6 +87,8 @@ def _load_imported_ap_questions():
         return []
     result = []
     for source in raw.get('questions', []):
+        if source.get('content_review_status', '').startswith('blocked-'):
+            continue
         if source.get('kind') not in ('MCQ', 'FRQ'):
             continue
         if source.get('kind') == 'MCQ' and not _complete_mcq(source):
@@ -96,7 +98,10 @@ def _load_imported_ap_questions():
         source_topic = source.get('topic_id')
         target_topic = source_topic if source_topic in GROUPS else 'csa-selection'
         topic_codes = [t for t in source.get('ced_topics', []) if t in LABELS]
-        objectives = [objective(t) for t in topic_codes] or [objective(GROUPS[target_topic][1][0])]
+        # Unclassified records must not silently inherit the group's first CED topic.
+        if not topic_codes:
+            continue
+        objectives = [objective(t) for t in topic_codes]
         options = source.get('options') or {}
         task_text = source.get('text', '').strip()
         # PDF extraction often leaves the answer choices in the raw stem.  The
@@ -126,7 +131,7 @@ def _load_imported_ap_questions():
             'minutes': int(source.get('minutes', 2 if source.get('kind') == 'MCQ' else 12)),
             'question_kind': ('concept' if source.get('kind') == 'MCQ' else 'write'),
             'ced_topics': topic_codes,
-            'ap_unit': str(source.get('unit', '')),
+            'ap_unit': str(source.get('classified_unit') or topic_codes[0].split('.')[0]),
             'ap_topic': source.get('topic_title') or '未命名 Topic',
             'source_item_id': source.get('id'),
         }
@@ -277,6 +282,7 @@ def bank_data():
                          topic_titles=[VISIBLE_TOPICS.get(t,t) for t in dict.fromkeys('csa-selection' if t=='csa-logic' else t for t in question.get('topic_ids',[topic]))],
                          units=question.get('units') or [GROUPS.get(topic,('', ['1.1']))[1][0].split('.')[0]]))
     return dict(version=BANK_VERSION, count=original_count, total_count=len(rows), questions=rows,
+                ced_topics=[dict(id=code,title=label) for code,label in LABELS.items()],
                 topics=[dict(id=t['id'],title=t['title']) for t in catalog()['topics']],
                 difficulties=[dict(id=k,title=v[0]) for k,v in DIFFICULTIES.items()],
                 question_types=[dict(id=k,title=v) for k,v in EXAM_TYPES.items()])

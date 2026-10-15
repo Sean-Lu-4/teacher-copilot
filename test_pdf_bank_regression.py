@@ -2,6 +2,27 @@ import unittest,json,subprocess
 from pathlib import Path
 from teacher_copilot import worksheets as w
 class PdfBankRegression(unittest.TestCase):
+ def test_completed_content_review(self):
+  from teacher_copilot.csa_curriculum import LABELS,GROUPS
+  raw=json.loads(Path('teacher_copilot/imported_bank/bank.json').read_text(encoding='utf-8'))
+  audit=json.loads(Path('teacher_copilot/imported_bank/classification_review_20261015.json').read_text(encoding='utf-8'))
+  self.assertEqual(len(audit),383);self.assertEqual(len({q['id'] for q in audit}),383)
+  self.assertEqual(raw['audit']['unreviewed_group_count'],0)
+  for q in raw['questions']:
+   self.assertTrue(q['ced_topics']);self.assertNotIn('pending',q['classification_status'])
+   self.assertTrue(all(c in LABELS for c in q['ced_topics']))
+   self.assertEqual(q['classified_unit'],q['ced_topics'][0].split('.')[0])
+   for c in q['ced_topics']:
+    self.assertTrue(any(c in GROUPS[g][1] for g in q['topic_ids']))
+  blocked={q['id'] for q in raw['questions'] if q.get('content_review_status','').startswith('blocked-')}
+  self.assertEqual(len(blocked),24)
+  self.assertFalse(blocked & {q['source_item_id'] for q in w.IMPORTED_AP})
+ def test_precise_topics_reach_api(self):
+  payload=w.bank_data();self.assertEqual(len(payload['ced_topics']),53)
+  for q in payload['questions']:
+   if q.get('source_item_id'):
+    self.assertEqual(q['ap_unit'],q['ced_topics'][0].split('.')[0])
+    self.assertEqual(set(q['units']),{c.split('.')[0] for c in q['ced_topics']})
  def test_complete_rows_and_unique_ids(self):
   rows=w.bank_data()['questions'];self.assertEqual(len(rows),len({q['id'] for q in rows}))
   for q in rows:

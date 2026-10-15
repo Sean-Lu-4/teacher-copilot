@@ -1,49 +1,95 @@
 PDF 题库核查（2026-10-15）
-已存档：Progress Check 34 份 + Question Bank 12 份，共 46 份 PDF。
-当前 D 盘原始路径不可访问；核查基于项目已保存的 PDF 副本。
-原题没有改写；646 道导入 MCQ 的题干、选项、答案均与修改前一致。
-导入文件有 646 道 MCQ 和 43 个去重后的 FRQ/共享题组。
-其中 9 道 MCQ 选项/答案键不完整，13 道 Unit 4 FRQ 缺评分指南，未开放组卷。
-可用：637 道导入 MCQ + 30 道导入 FRQ + 10 道原有完整 MCQ。
-270 道已按题干重建分类；其余分类中明确的共享情境和嵌套循环已修正。
-383 道仍沿用旧课题级分类，尚未完成逐条 CED Topic 核验；以下课题统计不等于每个细分考点均已覆盖。
-PDF 难度原本统一填 2/3，没有可靠依据，现显示“尚未标定”。
-自动组卷现可使用 PDF 题；过去只允许手选加入。
-
-课题 | MCQ | FRQ
-U1 · 算法、变量与表达式 | 52 | 0
-U1 · 输入、类型转换与赋值 | 43 | 0
-U1 · API 与文档 | 1 | 0
-U1 · 方法签名与类方法 | 22 | 0
-U1 · Math | 14 | 4
-U1 · 对象与实例方法 | 28 | 2
-U1 · String | 21 | 6
-U2 · 分支与布尔条件 | 87 | 7
-U2 · while、for 与循环算法 | 49 | 7
-U2 · 字符串算法 | 12 | 5
-U2 · 嵌套循环与运行次数 | 26 | 0
-U3 · 类设计与设计影响 | 4 | 0
-U3 · 类、构造器与方法 | 82 | 17
-U3 · 对象引用、static、作用域与 this | 18 | 0
-U4 · 数据集与数据伦理 | 13 | 0
-U4 · 一维数组 | 78 | 2
-U4 · 文本文件 | 7 | 0
-U4 · 包装类与 ArrayList | 63 | 2
-U4 · 二维数组 | 42 | 2
-U4 · 查找与排序 | 14 | 0
-U4 · 递归与递归算法 | 25 | 0
-
-缺评分指南（题号见原 PDF，保留在原始资料页）
-FINALUnit4FRQ-Topicorder_papersaver · 2
-FINALUnit4FRQ-Topicorder_papersaver · 4
-FINALUnit4FRQ-Topicorder_papersaver · 7
-FINALUnit4FRQ-Topicorder_papersaver · 8
-FINALUnit4FRQ-Topicorder_papersaver · 11
-FINALUnit4FRQ-Topicorder_papersaver · 12
-FINALUnit4FRQ-Topicorder_papersaver · 13
-FINALUnit4FRQ-Topicorder_papersaver · 14
-FINALUnit4FRQ-Topicorder_papersaver · 15
-FINALUnit4FRQ-Topicorder_papersaver · 16
-FINALUnit4FRQ-Topicorder_papersaver · 17
-FINALUnit4FRQ-Topicorder_papersaver · 18
-FINALUnit4FRQ-Topicorder_papersaver · 19
+本轮 383 道分类全部完成；全部 689 条导入记录已有具体 CED Topic。
+分类按实际考查内容，保留原 PDF 单元作为来源。
+当前可组卷：646 道导入题，另有 10 道原有 MCQ。
+缺评分指南的 FRQ：
+2 | ItemInventory / ItemInfo | Topic 4.10, 4.9, 3.5 | PDF 第 2 页
+4 | PlayerAnalysis / Player | Topic 4.10, 4.9, 3.5 | PDF 第 5 页
+7 | WordGrid | Topic 4.13, 4.12, 3.5 | PDF 第 10 页
+8 | EVDataSet / ElectricVehicle | Topic 4.10, 4.9, 3.5 | PDF 第 11 页
+11 | WordChecker | Topic 4.10, 4.9, 1.15, 3.5 | PDF 第 18 页
+12 | BoxOfCandy | Topic 4.13, 4.12, 3.6, 3.5 | PDF 第 20 页
+13 | TriviaGame | Topic 4.5, 4.4, 3.5, 3.1 | PDF 第 24 页
+14 | Payroll | Topic 4.5, 4.4, 3.5 | PDF 第 27 页
+15 | WeatherData | Topic 4.10, 4.9, 3.5 | PDF 第 29 页
+16 | Delimiters | Topic 4.10, 4.4, 3.5 | PDF 第 31 页
+17 | UserName | Topic 4.10, 3.4, 1.15 | PDF 第 35 页
+18 | GridPath | Topic 4.13, 4.11, 3.6, 3.5 | PDF 第 36 页
+19 | ExperimentalFarm | Topic 4.13, 4.12, 3.6, 3.5 | PDF 第 40 页
+内容待恢复 | question bank · Unit 2 · 第 96 题 | 原 PDF 第 65 页代码缺失，现有答案键 D 与代码运行结果 A 不符；待修复代码及答案配对。
+内容待恢复 | question bank · Unit 2 · 第 119 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 3 · 第 29 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 3 · 第 30 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 3 · 第 31 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 3 · 第 32 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 3 · 第 49 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 3 · 第 81 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 56 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 60 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 61 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 69 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 72 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 77 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 100 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 123 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 133 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 134 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 161 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 188 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 189 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 198 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 200 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+内容待恢复 | question bank · Unit 4 · 第 222 题 | 原 PDF 的图片代码、共用题干或选项尚未完整恢复，暂不参与组卷。
+1.1 算法、程序与编译 | 原始MCQ 9 可用MCQ 9 原始FRQ 0 可用FRQ 0
+1.2 变量与数据类型 | 原始MCQ 11 可用MCQ 11 原始FRQ 0 可用FRQ 0
+1.3 表达式与输出 | 原始MCQ 34 可用MCQ 33 原始FRQ 0 可用FRQ 0
+1.4 赋值与输入 | 原始MCQ 7 可用MCQ 7 原始FRQ 0 可用FRQ 0
+1.5 类型转换与取值范围 | 原始MCQ 25 可用MCQ 25 原始FRQ 0 可用FRQ 0
+1.6 复合赋值 | 原始MCQ 15 可用MCQ 15 原始FRQ 0 可用FRQ 0
+1.7 API 与程序库 | 原始MCQ 1 可用MCQ 1 原始FRQ 0 可用FRQ 0
+1.8 注释与文档 | 原始MCQ 1 可用MCQ 1 原始FRQ 0 可用FRQ 0
+1.9 方法签名 | 原始MCQ 5 可用MCQ 5 原始FRQ 0 可用FRQ 0
+1.10 调用类方法 | 原始MCQ 10 可用MCQ 10 原始FRQ 0 可用FRQ 0
+1.11 Math 运算 | 原始MCQ 16 可用MCQ 16 原始FRQ 4 可用FRQ 4
+1.12 对象与实例 | 原始MCQ 8 可用MCQ 8 原始FRQ 0 可用FRQ 0
+1.13 创建对象与保存引用 | 原始MCQ 8 可用MCQ 8 原始FRQ 0 可用FRQ 0
+1.14 调用实例方法 | 原始MCQ 28 可用MCQ 26 原始FRQ 2 可用FRQ 2
+1.15 字符串操作 | 原始MCQ 25 可用MCQ 25 原始FRQ 8 可用FRQ 6
+2.1 选择与重复的算法设计 | 原始MCQ 5 可用MCQ 5 原始FRQ 1 可用FRQ 1
+2.2 布尔表达式 | 原始MCQ 16 可用MCQ 16 原始FRQ 0 可用FRQ 0
+2.3 if 分支 | 原始MCQ 32 可用MCQ 31 原始FRQ 4 可用FRQ 4
+2.4 嵌套分支 | 原始MCQ 9 可用MCQ 9 原始FRQ 0 可用FRQ 0
+2.5 复合逻辑条件 | 原始MCQ 20 可用MCQ 20 原始FRQ 3 可用FRQ 3
+2.6 逻辑等价与对象比较 | 原始MCQ 20 可用MCQ 20 原始FRQ 0 可用FRQ 0
+2.7 while 循环 | 原始MCQ 32 可用MCQ 31 原始FRQ 1 可用FRQ 1
+2.8 for 循环 | 原始MCQ 20 可用MCQ 19 原始FRQ 0 可用FRQ 0
+2.9 选择与循环算法 | 原始MCQ 10 可用MCQ 10 原始FRQ 6 可用FRQ 6
+2.10 字符串算法 | 原始MCQ 16 可用MCQ 16 原始FRQ 5 可用FRQ 5
+2.11 嵌套循环 | 原始MCQ 31 可用MCQ 30 原始FRQ 0 可用FRQ 0
+2.12 运行次数分析 | 原始MCQ 16 可用MCQ 14 原始FRQ 0 可用FRQ 0
+3.1 抽象与程序设计 | 原始MCQ 7 可用MCQ 5 原始FRQ 1 可用FRQ 0
+3.2 程序设计的影响 | 原始MCQ 10 可用MCQ 9 原始FRQ 0 可用FRQ 0
+3.3 类的组成 | 原始MCQ 15 可用MCQ 13 原始FRQ 11 可用FRQ 11
+3.4 构造器 | 原始MCQ 21 可用MCQ 21 原始FRQ 14 可用FRQ 13
+3.5 编写方法 | 原始MCQ 16 可用MCQ 13 原始FRQ 28 可用FRQ 16
+3.6 传递与返回对象引用 | 原始MCQ 15 可用MCQ 14 原始FRQ 3 可用FRQ 0
+3.7 类变量与类方法 | 原始MCQ 8 可用MCQ 8 原始FRQ 0 可用FRQ 0
+3.8 作用域与访问权限 | 原始MCQ 28 可用MCQ 24 原始FRQ 0 可用FRQ 0
+3.9 this 的使用 | 原始MCQ 5 可用MCQ 5 原始FRQ 0 可用FRQ 0
+4.1 数据收集的伦理影响 | 原始MCQ 5 可用MCQ 5 原始FRQ 0 可用FRQ 0
+4.2 认识与使用数据集 | 原始MCQ 9 可用MCQ 9 原始FRQ 0 可用FRQ 0
+4.3 创建与访问数组 | 原始MCQ 16 可用MCQ 16 原始FRQ 0 可用FRQ 0
+4.4 遍历数组 | 原始MCQ 18 可用MCQ 18 原始FRQ 5 可用FRQ 2
+4.5 数组算法 | 原始MCQ 39 可用MCQ 31 原始FRQ 4 可用FRQ 2
+4.6 读取文本文件 | 原始MCQ 10 可用MCQ 10 原始FRQ 0 可用FRQ 0
+4.7 包装类 | 原始MCQ 5 可用MCQ 5 原始FRQ 0 可用FRQ 0
+4.8 ArrayList 操作 | 原始MCQ 26 可用MCQ 25 原始FRQ 0 可用FRQ 0
+4.9 遍历 ArrayList | 原始MCQ 12 可用MCQ 12 原始FRQ 7 可用FRQ 2
+4.10 ArrayList 算法 | 原始MCQ 26 可用MCQ 25 原始FRQ 9 可用FRQ 2
+4.11 创建与访问二维数组 | 原始MCQ 11 可用MCQ 11 原始FRQ 1 可用FRQ 0
+4.12 遍历二维数组 | 原始MCQ 16 可用MCQ 15 原始FRQ 5 可用FRQ 2
+4.13 二维数组算法 | 原始MCQ 18 可用MCQ 18 原始FRQ 6 可用FRQ 2
+4.14 查找算法 | 原始MCQ 7 可用MCQ 6 原始FRQ 0 可用FRQ 0
+4.15 排序算法 | 原始MCQ 15 可用MCQ 11 原始FRQ 0 可用FRQ 0
+4.16 递归跟踪 | 原始MCQ 30 可用MCQ 28 原始FRQ 0 可用FRQ 0
+4.17 递归查找与归并排序 | 原始MCQ 10 可用MCQ 9 原始FRQ 0 可用FRQ 0
