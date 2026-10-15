@@ -15,8 +15,19 @@ class PdfBankRegression(unittest.TestCase):
    for c in q['ced_topics']:
     self.assertTrue(any(c in GROUPS[g][1] for g in q['topic_ids']))
   blocked={q['id'] for q in raw['questions'] if q.get('content_review_status','').startswith('blocked-')}
-  self.assertEqual(len(blocked),24)
+  self.assertEqual(len(blocked),0)
   self.assertFalse(blocked & {q['source_item_id'] for q in w.IMPORTED_AP})
+ def test_restored_mcq_and_reference_contract(self):
+  b=json.loads(Path('teacher_copilot/imported_bank/bank.json').read_text(encoding='utf-8'))
+  restored=[q for q in b['questions'] if q.get('content_review_status')=='restored-from-pdf']
+  self.assertEqual(len(restored),30)
+  for q in restored:
+   self.assertTrue(w._complete_mcq(q));self.assertTrue(q['answer']);self.assertTrue(q['text'])
+  self.assertEqual(next(q for q in restored if q['id']=='MCQ-6eeb63d493d44d4c')['answer_key'],'A')
+  solutions=json.loads(Path('teacher_copilot/imported_bank/reference_solutions_20261015.json').read_text(encoding='utf-8'))
+  for q in b['questions']:
+   if q.get('reference_solution'):
+    self.assertEqual(q['reference_solution'],solutions[q['id'].rsplit('-S',1)[1]]['code'])
  def test_precise_topics_reach_api(self):
   payload=w.bank_data();self.assertEqual(len(payload['ced_topics']),53)
   for q in payload['questions']:
@@ -44,7 +55,14 @@ class PdfBankRegression(unittest.TestCase):
  def test_missing_guides_excluded(self):
   b=json.loads(Path('teacher_copilot/imported_bank/bank.json').read_text(encoding='utf-8'))
   missing={q['id'] for q in b['questions'] if q['kind']=='FRQ' and not q['answer']}
-  self.assertTrue(missing);self.assertFalse(missing & {q['source_item_id'] for q in w.IMPORTED_AP})
+  self.assertFalse(missing)
+  references=[q for q in b['questions'] if q.get('answer_provenance')=='generated-reference-not-official']
+  self.assertEqual(len(references),13)
+  for q in references:
+   self.assertTrue(q['reference_solution']);self.assertIn('非官方',q['rubric'])
+   self.assertTrue(q['question_images'])
+   for image in q['question_images']:self.assertTrue((Path('teacher_copilot/imported_bank/images')/image).is_file())
+  self.assertEqual(len(w.IMPORTED_AP),689)
  def test_frq_split_and_filter_contract(self):
   self.assertGreater(sum(q['question_kind']=='write' for q in w.IMPORTED_AP),9)
   self.assertEqual(set(w.EXAM_TYPES),{'concept','write'})

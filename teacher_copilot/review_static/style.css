@@ -167,3 +167,5 @@ nav .nav-link.active{color:#fff;background:#155eef;border-color:#155eef}
 .bank-filters label{margin-bottom:14px}.bank-filters .time span{white-space:nowrap}.bank-filters input,.bank-filters select{min-height:46px;padding:10px 12px}
 #filter-toggle{display:none}.bank-filters .hint{font-size:14px}.bank-filters #clear{margin-top:8px}
 @media(max-width:850px){.bank-layout .bank-filters{position:static;max-height:none;overflow:visible}#filter-toggle{display:block;margin:0}#filter-fields{display:none;margin-top:20px}.bank-filters.filters-open #filter-fields{display:block}}
+
+.question-page{display:block;width:100%;max-width:900px;height:auto;margin:12px auto;background:white;}

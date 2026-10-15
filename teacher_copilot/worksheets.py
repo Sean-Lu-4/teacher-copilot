@@ -117,8 +117,13 @@ def _load_imported_ap_questions():
             'origin': 'AP Progress Check / Question Bank（教师提供资料）',
             'code': '// AP source question; see the task text and linked original PDF.',
             'task': task_text,
-            'answer': source.get('answer', '').strip() or '请查看原版评分指南。',
-            'rubric': '选择题按答案键判定；FRQ 请按原版评分指南逐小问评分。',
+            'answer': ('参考答案（非官方原版）\n' + source.get('explanation_en','')) if source.get('reference_solution') else source.get('answer', '').strip() or '请查看原版评分指南。',
+            'rubric': source.get('rubric') or ('选择题按答案键判定。' if source.get('kind') == 'MCQ' else '请按原版评分指南逐小问评分。'),
+            'reference_solution': source.get('reference_solution',''),
+            'explanation_en': source.get('explanation_en',''),
+            'answer_provenance': source.get('answer_provenance','source'),
+            'question_images': source.get('question_images',[]),
+            'reference_marks': source.get('marks'),
             'intervention': '先让学生独立作答，再对照英文评分指南定位错误原因。',
             'objectives': objectives,
             'difficulty_status': 'unrated',
@@ -256,6 +261,10 @@ def bank_data():
                          options=question.get('options', {}), answer_key=question.get('answer_key',''),
                          ap_unit=question.get('ap_unit',''), ap_topic=question.get('ap_topic',''),
                          source_item_id=question.get('source_item_id',''), source_refs=question.get('_ap_sources', []),
+                         question_images=question.get('question_images',[]),
+                         reference_solution=question.get('reference_solution',''),
+                         answer_provenance=question.get('answer_provenance','source'),
+                         reference_marks=question.get('reference_marks'),
                          difficulty_status=question.get('difficulty_status','rated'),
                          classification_status=question.get('classification_status','original'),
                          ced_topics=question.get('ced_topics',[]),
@@ -275,6 +284,10 @@ def bank_data():
                          answer_key=question.get('answer_key', ''), ap_unit=question.get('ap_unit', ''),
                          ap_topic=question.get('ap_topic', ''), source_item_id=question.get('source_item_id', ''),
                          source_refs=question.get('_ap_sources', []),
+                         question_images=question.get('question_images',[]),
+                         reference_solution=question.get('reference_solution',''),
+                         answer_provenance=question.get('answer_provenance','source'),
+                         reference_marks=question.get('reference_marks'),
                          difficulty_status=question.get('difficulty_status','rated'),
                          classification_status=question.get('classification_status','original'),
                          ced_topics=question.get('ced_topics',[]),
@@ -469,6 +482,9 @@ def assemble_exam(settings, recent=None):
         marks=max(1,round(settings['total_marks']*base/total_weight)) if i < len(records)-1 else max(1,remaining)
         marks=min(marks,remaining-(len(records)-i-1))
         record['content']['marks']=marks
+        if record['content'].get('reference_marks') and marks != record['content']['reference_marks']:
+            raw_marks=record['content']['reference_marks']
+            record['content']['rubric'] += f'\n本卷分值换算 / Paper scaling: 得分 = 原始评分点得分 × {marks}/{raw_marks}。'
         record['content_hash']=content_hash(record['content'])
         remaining-=marks
     return settings,records
@@ -558,6 +574,10 @@ def paper_report(plan, records, audience):
         q = r['content']
         lines += [f"## 第 {n} 题 · {q['title']}", '', f"建议用时：{q['minutes']} 分钟" + (f" · 分值：{q['marks']} 分" if q.get('marks') else ''), '',
                   fence(q['code'], 'text' if q.get('question_kind')=='concept' else 'java'), '', fence(q['task']), '']
+        if q.get('question_images'):
+            lines = lines[:-4]
+            lines += [f'![原题第 {i+1} 页](/source-image/{filename})' for i,filename in enumerate(q['question_images'])]
+            lines += ['']
         for key, value in q.get('options', {}).items():
             lines += [f'{key}.', '', fence(value), '']
         if teacher:

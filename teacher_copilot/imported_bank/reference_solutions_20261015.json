@@ -1,0 +1,309 @@
+{
+  "2": {
+    "name": "ItemInventory",
+    "code": "public double averageWithinRange(double lower, double upper) {\n    double sum = 0.0;\n    int count = 0;\n    for (ItemInfo item : inventory) {\n        if (item.isAvailable() && item.getCost() >= lower && item.getCost() <= upper) {\n            sum += item.getCost();\n            count++;\n        }\n    }\n    return sum / count;\n}",
+    "parts": [
+      [
+        "averageWithinRange",
+        [
+          "Traverses all inventory entries without changing inventory. / 遍历全部商品且不修改原列表。",
+          "Selects available items with cost in the inclusive range. / 同时检查可售状态与包含端点的价格区间。",
+          "Accumulates the selected costs. / 正确累计符合条件的价格。",
+          "Counts exactly the selected items. / 正确统计符合条件的商品数。",
+          "Returns a floating-point average; the precondition guarantees a positive count. / 返回浮点平均数。"
+        ]
+      ]
+    ],
+    "marks": 5
+  },
+  "4": {
+    "name": "PlayerAnalysis",
+    "code": "public String playerWithClosestScore(int targetScore) {\n    Player best = playerList.get(0);\n    double bestDifference = Math.abs((double) best.getScore() - targetScore);\n    for (Player player : playerList) {\n        double difference = Math.abs((double) player.getScore() - targetScore);\n        if (difference < bestDifference) {\n            best = player;\n            bestDifference = difference;\n        }\n    }\n    return best.getID();\n}",
+    "parts": [
+      [
+        "playerWithClosestScore",
+        [
+          "Initializes a valid candidate from the nonempty list. / 从非空列表初始化候选人。",
+          "Visits all players without modifying the list. / 遍历所有玩家且不改变列表。",
+          "Computes absolute distance from targetScore. / 计算与目标分数的绝对差。",
+          "Updates the candidate and best distance together when a closer score is found. / 同步更新更接近的玩家及差值。",
+          "Returns the selected player ID; any tied closest player is acceptable. / 返回最近玩家的ID，平局任选。"
+        ]
+      ]
+    ],
+    "marks": 5
+  },
+  "7": {
+    "name": "WordGrid",
+    "code": "public int countOrderedRows() {\n    int count = 0;\n    for (int r = 0; r < grid.length; r++) {\n        boolean ordered = true;\n        for (int c = 1; c < grid[r].length; c++) {\n            if (grid[r][c].length() < grid[r][c - 1].length()) {\n                ordered = false;\n            }\n        }\n        if (ordered) { count++; }\n    }\n    return count;\n}",
+    "parts": [
+      [
+        "countOrderedRows",
+        [
+          "Visits every row. / 遍历每一行。",
+          "Checks all adjacent pairs within valid column bounds. / 在合法下标范围比较相邻字符串。",
+          "Uses string lengths and accepts equal lengths. / 比较长度并允许相等。",
+          "Counts a row once only if no decreasing adjacent pair exists. / 每个有序行只计数一次。",
+          "Returns the total without modifying grid. / 返回总数且不修改数组。"
+        ]
+      ]
+    ],
+    "marks": 5
+  },
+  "8": {
+    "name": "EVDataSet",
+    "code": "public ArrayList<String> getHighRangeVehicles(int target) {\n    ArrayList<String> result = new ArrayList<String>();\n    for (ElectricVehicle vehicle : vehicleList) {\n        if (vehicle.getRange() > target) {\n            String name = vehicle.getModelName();\n            boolean found = false;\n            for (String existing : result) {\n                if (existing.equals(name)) { found = true; }\n            }\n            if (!found) { result.add(name); }\n        }\n    }\n    return result;\n}",
+    "parts": [
+      [
+        "getHighRangeVehicles",
+        [
+          "Creates a new ArrayList<String>. / 创建新的字符串列表。",
+          "Traverses vehicleList without changing it. / 遍历且不修改原列表。",
+          "Uses the strict range > target test. / 使用严格大于条件。",
+          "Detects existing model names by string value equality. / 用字符串内容比较检查重名。",
+          "Adds each qualifying model once and returns the result. / 每个合格车型只添加一次并返回列表。"
+        ]
+      ]
+    ],
+    "marks": 5
+  },
+  "11": {
+    "name": "WordChecker",
+    "code": "public boolean isWordChain() {\n    for (int i = 1; i < wordList.size(); i++) {\n        if (wordList.get(i).indexOf(wordList.get(i - 1)) < 0) { return false; }\n    }\n    return true;\n}\npublic ArrayList<String> createList(String target) {\n    ArrayList<String> result = new ArrayList<String>();\n    for (String word : wordList) {\n        if (word.indexOf(target) == 0) {\n            result.add(word.substring(target.length()));\n        }\n    }\n    return result;\n}",
+    "parts": [
+      [
+        "Part (a): isWordChain",
+        [
+          "Traverses all adjacent pairs with valid indices. / 合法遍历所有相邻词对。",
+          "Checks that the later word contains the previous word. / 检查后词包含前词。",
+          "Returns false when any pair fails. / 任一不符合时返回false。",
+          "Returns true only after all pairs pass without modifying wordList. / 全部通过才返回true且不改原列表。"
+        ]
+      ],
+      [
+        "Part (b): createList",
+        [
+          "Creates and returns a new ArrayList<String>. / 新建并返回列表。",
+          "Visits all original words in order. / 按原顺序遍历所有词。",
+          "Selects only words beginning with target. / 只选以target开头的词。",
+          "Removes exactly the initial occurrence using substring. / 只移除开头的target。",
+          "Adds all matching suffixes, including empty strings, without modifying wordList. / 保留空后缀且不改原列表。"
+        ]
+      ]
+    ],
+    "marks": 9
+  },
+  "12": {
+    "name": "BoxOfCandy",
+    "code": "public boolean moveCandyToFirstRow(int col) {\n    if (box[0][col] != null) { return true; }\n    for (int r = 1; r < box.length; r++) {\n        if (box[r][col] != null) {\n            box[0][col] = box[r][col];\n            box[r][col] = null;\n            return true;\n        }\n    }\n    return false;\n}\npublic Candy removeNextByFlavor(String flavor) {\n    for (int r = box.length - 1; r >= 0; r--) {\n        for (int c = 0; c < box[r].length; c++) {\n            if (box[r][c] != null && box[r][c].getFlavor().equals(flavor)) {\n                Candy result = box[r][c];\n                box[r][c] = null;\n                return result;\n            }\n        }\n    }\n    return null;\n}",
+    "parts": [
+      [
+        "Part (a): moveCandyToFirstRow",
+        [
+          "Returns true without changes when row 0 already contains candy. / 首行已有糖时直接返回true。",
+          "Searches the other rows in the specified column. / 搜索该列其他行。",
+          "Moves a found reference and clears its old location. / 移动引用并清空原位置。",
+          "Returns true after moving, or false if the column is empty. / 正确返回成功或空列状态。"
+        ]
+      ],
+      [
+        "Part (b): removeNextByFlavor",
+        [
+          "Traverses rows from last to first. / 自底向上遍历行。",
+          "Traverses each row left to right. / 每行从左到右遍历。",
+          "Checks for null before accessing flavor and uses equals. / 先判空再比较口味。",
+          "Saves and returns the first matching Candy reference and clears only its location. / 返回首个匹配糖并只清空该位置。",
+          "Returns null with no changes if no match exists. / 无匹配时返回null且不修改。"
+        ]
+      ]
+    ],
+    "marks": 9
+  },
+  "13": {
+    "name": "TriviaGame",
+    "code": "public String getRating() {\n    double sum = 0.0;\n    for (TriviaQuestion question : allQuestions) { sum += question.getDifficultyLevel(); }\n    double average = (sum - getMostDifficult() - getLeastDifficult()) / (allQuestions.length - 2);\n    if (average >= 70.0) { return \"Expert\"; }\n    if (average >= 50.0) { return \"Intermediate\"; }\n    return \"Beginner\";\n}\npublic boolean isDifficultyIncreasing() {\n    for (int i = 1; i < allQuestions.length; i++) {\n        if (allQuestions[i - 1].getDifficultyLevel() > allQuestions[i].getDifficultyLevel()) { return false; }\n    }\n    return true;\n}",
+    "parts": [
+      [
+        "Part (a): getRating",
+        [
+          "Accumulates every difficulty value. / 累加所有难度。",
+          "Calls both provided extreme-value helper methods and subtracts one of each. / 调用两个辅助方法各减一个极值。",
+          "Divides by length - 2 using floating-point arithmetic. / 用浮点数计算去掉两个值后的平均数。",
+          "Returns the correct label at the 50 and 70 boundaries. / 正确处理50和70边界。"
+        ]
+      ],
+      [
+        "Part (b): isDifficultyIncreasing",
+        [
+          "Compares every adjacent pair with valid indices. / 合法比较所有相邻项。",
+          "Uses nondecreasing order, permitting equality. / 允许相等。",
+          "Returns the correct Boolean result without changing the array. / 不改数组且正确返回布尔结果。"
+        ]
+      ],
+      [
+        "Part (c): design change",
+        [
+          "Provides public double gameLength() (or compatible numeric return type) and identifies private per-question time storage. / 给出公开数值返回方法头及题目预计时间私有字段。",
+          "Explains initializing that field in TriviaQuestion constructors and adding a public accessor, so TriviaGame can total the values. / 说明构造器初始化及公开访问器供游戏累计。"
+        ]
+      ]
+    ],
+    "marks": 9
+  },
+  "14": {
+    "name": "Payroll",
+    "code": "public double computeBonusThreshold() {\n    int min = itemsSold[0];\n    int max = itemsSold[0];\n    double sum = 0.0;\n    for (int value : itemsSold) {\n        sum += value;\n        if (value < min) { min = value; }\n        if (value > max) { max = value; }\n    }\n    return (sum - min - max) / (itemsSold.length - 2);\n}\npublic void computeWages(double fixedWage, double perItemWage) {\n    double threshold = computeBonusThreshold();\n    for (int i = 0; i < itemsSold.length; i++) {\n        wages[i] = fixedWage + perItemWage * itemsSold[i];\n        if (itemsSold[i] > threshold) { wages[i] *= 1.1; }\n    }\n}",
+    "parts": [
+      [
+        "Part (a): computeBonusThreshold",
+        [
+          "Visits and sums all sales. / 遍历累加销量。",
+          "Finds the minimum. / 找到最小值。",
+          "Finds the maximum. / 找到最大值。",
+          "Removes one minimum and one maximum and divides by length - 2 with floating-point arithmetic. / 各减一个极值后计算浮点平均数。"
+        ]
+      ],
+      [
+        "Part (b): computeWages",
+        [
+          "Calls computeBonusThreshold appropriately. / 正确调用辅助方法。",
+          "Visits every employee index. / 遍历每位员工。",
+          "Computes fixedWage + perItemWage * itemsSold[i]. / 正确计算基础工资。",
+          "Applies a 10% bonus only above the threshold. / 仅严格超过阈值才加10%。",
+          "Stores each final amount at the matching wages index. / 写入对应工资位置。"
+        ]
+      ]
+    ],
+    "marks": 9
+  },
+  "15": {
+    "name": "WeatherData",
+    "code": "public void cleanData(double lower, double upper) {\n    for (int i = temperatures.size() - 1; i >= 0; i--) {\n        double value = temperatures.get(i);\n        if (value < lower || value > upper) { temperatures.remove(i); }\n    }\n}\npublic int longestHeatWave(double threshold) {\n    int longest = 0;\n    int current = 0;\n    for (double temperature : temperatures) {\n        if (temperature > threshold) {\n            current++;\n            if (current > longest) { longest = current; }\n        } else { current = 0; }\n    }\n    return longest;\n}",
+    "parts": [
+      [
+        "Part (a): cleanData",
+        [
+          "Visits all elements safely while removing. / 删除时不漏检相邻项。",
+          "Identifies values strictly outside the inclusive interval. / 识别闭区间以外的值。",
+          "Removes all and only out-of-range entries. / 只删除且删完越界值。",
+          "Preserves the order of retained entries. / 保持剩余顺序。"
+        ]
+      ],
+      [
+        "Part (b): longestHeatWave",
+        [
+          "Traverses all temperatures. / 遍历全部气温。",
+          "Counts consecutive values strictly above threshold. / 累计连续严格超过阈值的天数。",
+          "Resets the current count on other values. / 中断时清零。",
+          "Maintains the maximum, including a run ending at the last entry. / 包括末尾热浪在内更新最大值。",
+          "Returns the maximum length. / 返回最大长度。"
+        ]
+      ]
+    ],
+    "marks": 9
+  },
+  "16": {
+    "name": "Delimiters",
+    "code": "public ArrayList<String> getDelimitersList(String[] tokens) {\n    ArrayList<String> result = new ArrayList<String>();\n    for (String token : tokens) {\n        if (token.equals(openDel) || token.equals(closeDel)) { result.add(token); }\n    }\n    return result;\n}\npublic boolean isBalanced(ArrayList<String> delimiters) {\n    int balance = 0;\n    for (String delimiter : delimiters) {\n        if (delimiter.equals(openDel)) { balance++; }\n        else { balance--; }\n        if (balance < 0) { return false; }\n    }\n    return balance == 0;\n}",
+    "parts": [
+      [
+        "Part (a): getDelimitersList",
+        [
+          "Creates a new string ArrayList. / 创建字符串列表。",
+          "Traverses every token in order. / 按序遍历所有token。",
+          "Uses equals to select either delimiter. / 按内容识别开闭分隔符。",
+          "Adds only delimiters in original order and returns the list. / 仅按原序添加分隔符并返回。"
+        ]
+      ],
+      [
+        "Part (b): isBalanced",
+        [
+          "Traverses the delimiter list. / 遍历分隔符。",
+          "Correctly tracks opens and closes. / 正确统计开闭数量。",
+          "Rejects any prefix with more closes than opens. / 任意前缀闭多于开则失败。",
+          "Requires equal totals at the end. / 最后要求总数相等。",
+          "Returns the correct result, including true for an empty list. / 正确返回且接受空列表。"
+        ]
+      ]
+    ],
+    "marks": 9
+  },
+  "17": {
+    "name": "UserName",
+    "code": "public UserName(String firstName, String lastName) {\n    possibleNames = new ArrayList<String>();\n    for (int length = 1; length <= firstName.length(); length++) {\n        possibleNames.add(lastName + firstName.substring(0, length));\n    }\n}\npublic void setAvailableUserNames(String[] usedNames) {\n    for (int i = possibleNames.size() - 1; i >= 0; i--) {\n        if (isUsed(possibleNames.get(i), usedNames)) { possibleNames.remove(i); }\n    }\n}",
+    "parts": [
+      [
+        "Part (a): constructor",
+        [
+          "Initializes the instance variable possibleNames as a new list. / 初始化实例列表而非同名局部变量。",
+          "Enumerates prefix lengths from 1 through the full first name. / 枚举长度1到全长。",
+          "Extracts each prefix with valid substring bounds. / 合法提取前缀。",
+          "Concatenates lastName before each prefix. / 姓氏放在前缀前。",
+          "Adds every required username to possibleNames. / 添加所有候选名。"
+        ]
+      ],
+      [
+        "Part (b): setAvailableUserNames",
+        [
+          "Visits all candidate names without skipping after removal. / 删除后不漏检。",
+          "Calls the provided isUsed helper with the candidate and usedNames. / 正确调用给定辅助方法。",
+          "Removes every used candidate and retains every unused candidate. / 正确删除已用名并保留未用名。",
+          "Modifies possibleNames without changing usedNames. / 只修改候选列表。"
+        ]
+      ]
+    ],
+    "marks": 9
+  },
+  "18": {
+    "name": "GridPath",
+    "code": "public Location getNextLoc(int row, int col) {\n    if (row == grid.length - 1) { return new Location(row, col + 1); }\n    if (col == grid[0].length - 1) { return new Location(row + 1, col); }\n    if (grid[row + 1][col] < grid[row][col + 1]) { return new Location(row + 1, col); }\n    return new Location(row, col + 1);\n}\npublic int sumPath(int row, int col) {\n    int sum = grid[row][col];\n    while (row != grid.length - 1 || col != grid[0].length - 1) {\n        Location next = getNextLoc(row, col);\n        row = next.getRow();\n        col = next.getCol();\n        sum += grid[row][col];\n    }\n    return sum;\n}",
+    "parts": [
+      [
+        "Part (a): getNextLoc",
+        [
+          "Handles the last row by selecting the right neighbor. / 末行选择右邻。",
+          "Handles the last column by selecting the lower neighbor. / 末列选择下邻。",
+          "Compares the two valid neighboring values. / 比较有效的两个邻值。",
+          "Returns a new Location containing the selected coordinates. / 返回正确坐标对象。"
+        ]
+      ],
+      [
+        "Part (b): sumPath",
+        [
+          "Includes the starting value. / 包含起点。",
+          "Continues until both coordinates identify the bottom-right cell. / 直到右下角才停止。",
+          "Uses getNextLoc to obtain each next location. / 调用指定辅助方法。",
+          "Updates both coordinates and accumulates each visited value exactly once. / 更新两个坐标且每格只加一次。",
+          "Includes the final cell and returns the sum. / 包含终点并返回和。"
+        ]
+      ]
+    ],
+    "marks": 9
+  },
+  "19": {
+    "name": "ExperimentalFarm",
+    "code": "public Plot getHighestYield(String c) {\n    Plot best = null;\n    for (Plot[] row : farmPlots) {\n        for (Plot plot : row) {\n            if (plot.getCropType().equals(c) && (best == null || plot.getCropYield() > best.getCropYield())) {\n                best = plot;\n            }\n        }\n    }\n    return best;\n}\npublic boolean sameCrop(int col) {\n    String crop = farmPlots[0][col].getCropType();\n    for (int r = 1; r < farmPlots.length; r++) {\n        if (!farmPlots[r][col].getCropType().equals(crop)) { return false; }\n    }\n    return true;\n}",
+    "parts": [
+      [
+        "Part (a): getHighestYield",
+        [
+          "Traverses all plots. / 遍历全部地块。",
+          "Selects the requested crop using equals. / 按字符串内容匹配作物。",
+          "Tracks the highest yield among matching crops. / 跟踪匹配作物的最高产量。",
+          "Preserves a reference to a matching maximum-yield Plot. / 保留最高产量对象引用。",
+          "Returns that Plot or null if there is no match. / 正确返回对象或null。"
+        ]
+      ],
+      [
+        "Part (b): sameCrop",
+        [
+          "Uses a crop in the specified column as the reference. / 取指定列作物为基准。",
+          "Checks all rows in that column within bounds. / 合法检查该列所有行。",
+          "Compares crop types by content. / 按内容比较作物。",
+          "Returns true exactly when all match. / 全部一致才返回true。"
+        ]
+      ]
+    ],
+    "marks": 9
+  }
+}

@@ -1,0 +1,676 @@
+{
+  "date": "2026-10-15",
+  "restored_mcq": [
+    {
+      "id": "MCQ-26b36dad8a95a7a9",
+      "title": "question bank · Unit 2 · 第 73 题",
+      "sources": [
+        {
+          "document": "2078cb25665d5121b6f524b91bd4822989d4bdd4f08158bd34be2a80cc73fb58",
+          "role": "TB",
+          "page": 51
+        },
+        {
+          "document": "e9afbb22caef4d1debbba2a05475a410322377ef9447c4616ad07a75e3b20f8e",
+          "role": "SG",
+          "page": 97
+        }
+      ],
+      "answer_key": "A",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-6eeb63d493d44d4c",
+      "title": "question bank · Unit 2 · 第 96 题",
+      "sources": [
+        {
+          "document": "2078cb25665d5121b6f524b91bd4822989d4bdd4f08158bd34be2a80cc73fb58",
+          "role": "TB",
+          "page": 65
+        },
+        {
+          "document": "e9afbb22caef4d1debbba2a05475a410322377ef9447c4616ad07a75e3b20f8e",
+          "role": "SG",
+          "page": 129
+        }
+      ],
+      "answer_key": "A",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-8bd73162792be293",
+      "title": "question bank · Unit 2 · 第 119 题",
+      "sources": [
+        {
+          "document": "2078cb25665d5121b6f524b91bd4822989d4bdd4f08158bd34be2a80cc73fb58",
+          "role": "TB",
+          "page": 78
+        },
+        {
+          "document": "e9afbb22caef4d1debbba2a05475a410322377ef9447c4616ad07a75e3b20f8e",
+          "role": "SG",
+          "page": 155
+        }
+      ],
+      "answer_key": "C",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-cd52662ac7a5078d",
+      "title": "question bank · Unit 3 · 第 7 题",
+      "sources": [
+        {
+          "document": "836f19df3800ac951a9287d6edbb1641c232f2b2c77f8a13bc2e57d96dc7db52",
+          "role": "TB",
+          "page": 2
+        },
+        {
+          "document": "eca18be48ad807fb9b99693b361d65b141188a4332e129b916232b1cb7f5c881",
+          "role": "SG",
+          "page": 5
+        }
+      ],
+      "answer_key": "D",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-f26db97bd1b4f2e4",
+      "title": "question bank · Unit 3 · 第 9 题",
+      "sources": [
+        {
+          "document": "836f19df3800ac951a9287d6edbb1641c232f2b2c77f8a13bc2e57d96dc7db52",
+          "role": "TB",
+          "page": 4
+        },
+        {
+          "document": "eca18be48ad807fb9b99693b361d65b141188a4332e129b916232b1cb7f5c881",
+          "role": "SG",
+          "page": 9
+        }
+      ],
+      "answer_key": "C",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-9c208a5327bb0caa",
+      "title": "question bank · Unit 3 · 第 11 题",
+      "sources": [
+        {
+          "document": "836f19df3800ac951a9287d6edbb1641c232f2b2c77f8a13bc2e57d96dc7db52",
+          "role": "TB",
+          "page": 5
+        },
+        {
+          "document": "eca18be48ad807fb9b99693b361d65b141188a4332e129b916232b1cb7f5c881",
+          "role": "SG",
+          "page": 10
+        }
+      ],
+      "answer_key": "B",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-52092ee4bdbaa494",
+      "title": "question bank · Unit 3 · 第 29 题",
+      "sources": [
+        {
+          "document": "836f19df3800ac951a9287d6edbb1641c232f2b2c77f8a13bc2e57d96dc7db52",
+          "role": "TB",
+          "page": 15
+        },
+        {
+          "document": "eca18be48ad807fb9b99693b361d65b141188a4332e129b916232b1cb7f5c881",
+          "role": "SG",
+          "page": 31
+        }
+      ],
+      "answer_key": "A",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-bd7c4f23a43bbeb4",
+      "title": "question bank · Unit 3 · 第 30 题",
+      "sources": [
+        {
+          "document": "836f19df3800ac951a9287d6edbb1641c232f2b2c77f8a13bc2e57d96dc7db52",
+          "role": "TB",
+          "page": 16
+        },
+        {
+          "document": "eca18be48ad807fb9b99693b361d65b141188a4332e129b916232b1cb7f5c881",
+          "role": "SG",
+          "page": 33
+        }
+      ],
+      "answer_key": "A",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-5218253a52377c8b",
+      "title": "question bank · Unit 3 · 第 31 题",
+      "sources": [
+        {
+          "document": "836f19df3800ac951a9287d6edbb1641c232f2b2c77f8a13bc2e57d96dc7db52",
+          "role": "TB",
+          "page": 17
+        },
+        {
+          "document": "eca18be48ad807fb9b99693b361d65b141188a4332e129b916232b1cb7f5c881",
+          "role": "SG",
+          "page": 34
+        }
+      ],
+      "answer_key": "D",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-f149e4168be3be24",
+      "title": "question bank · Unit 3 · 第 32 题",
+      "sources": [
+        {
+          "document": "836f19df3800ac951a9287d6edbb1641c232f2b2c77f8a13bc2e57d96dc7db52",
+          "role": "TB",
+          "page": 17
+        },
+        {
+          "document": "eca18be48ad807fb9b99693b361d65b141188a4332e129b916232b1cb7f5c881",
+          "role": "SG",
+          "page": 36
+        }
+      ],
+      "answer_key": "A",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-d4597ab4f51f19cd",
+      "title": "question bank · Unit 3 · 第 49 题",
+      "sources": [
+        {
+          "document": "836f19df3800ac951a9287d6edbb1641c232f2b2c77f8a13bc2e57d96dc7db52",
+          "role": "TB",
+          "page": 31
+        },
+        {
+          "document": "eca18be48ad807fb9b99693b361d65b141188a4332e129b916232b1cb7f5c881",
+          "role": "SG",
+          "page": 62
+        }
+      ],
+      "answer_key": "A",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-5dc529b2343fc84e",
+      "title": "question bank · Unit 3 · 第 81 题",
+      "sources": [
+        {
+          "document": "836f19df3800ac951a9287d6edbb1641c232f2b2c77f8a13bc2e57d96dc7db52",
+          "role": "TB",
+          "page": 59
+        },
+        {
+          "document": "eca18be48ad807fb9b99693b361d65b141188a4332e129b916232b1cb7f5c881",
+          "role": "SG",
+          "page": 112
+        }
+      ],
+      "answer_key": "B",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-815155212ea68f4e",
+      "title": "question bank · Unit 4 · 第 54 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 52
+        }
+      ],
+      "answer_key": "C",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-74201f46e57e80b9",
+      "title": "question bank · Unit 4 · 第 56 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 55
+        }
+      ],
+      "answer_key": "C",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-7a2889ca3b537e22",
+      "title": "question bank · Unit 4 · 第 60 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 61
+        }
+      ],
+      "answer_key": "B",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-9b36e2969648d7b7",
+      "title": "question bank · Unit 4 · 第 61 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 62
+        }
+      ],
+      "answer_key": "D",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-6cce29857368438f",
+      "title": "question bank · Unit 4 · 第 62 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 62
+        }
+      ],
+      "answer_key": "B",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-5fb9617b28df7d99",
+      "title": "question bank · Unit 4 · 第 69 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 72
+        }
+      ],
+      "answer_key": "C",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-bf5eaaf8057db259",
+      "title": "question bank · Unit 4 · 第 72 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 75
+        }
+      ],
+      "answer_key": "C",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-0b74b33ce0f7f88c",
+      "title": "question bank · Unit 4 · 第 77 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 80
+        }
+      ],
+      "answer_key": "B",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-67a37e7077b6348e",
+      "title": "question bank · Unit 4 · 第 100 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 105
+        }
+      ],
+      "answer_key": "A",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-b17724be65edf29c",
+      "title": "question bank · Unit 4 · 第 123 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 135
+        }
+      ],
+      "answer_key": "C",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-a6cb66020b813890",
+      "title": "question bank · Unit 4 · 第 133 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 145
+        }
+      ],
+      "answer_key": "C",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-8f55975a9dac539f",
+      "title": "question bank · Unit 4 · 第 134 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 146
+        }
+      ],
+      "answer_key": "B",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-9699407caed65207",
+      "title": "question bank · Unit 4 · 第 161 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 174
+        }
+      ],
+      "answer_key": "C",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-83daf5bb65e9f894",
+      "title": "question bank · Unit 4 · 第 188 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 208
+        }
+      ],
+      "answer_key": "B",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-4621994f6e27db50",
+      "title": "question bank · Unit 4 · 第 189 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 210
+        }
+      ],
+      "answer_key": "A",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-c532ced197affff7",
+      "title": "question bank · Unit 4 · 第 198 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 221
+        }
+      ],
+      "answer_key": "B",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-6c887ba062418901",
+      "title": "question bank · Unit 4 · 第 200 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 222
+        }
+      ],
+      "answer_key": "C",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    },
+    {
+      "id": "MCQ-a484429b990fde83",
+      "title": "question bank · Unit 4 · 第 222 题",
+      "sources": [
+        {
+          "document": "75d8bf95ce47bca1d5aab13a464c83879439ded7a4d1197b6ded9e8b9e848207",
+          "role": "SG",
+          "page": 244
+        }
+      ],
+      "answer_key": "A",
+      "answer_provenance": "source-key-with-reviewed-explanation"
+    }
+  ],
+  "reference_frq": [
+    {
+      "id": "FRQ-764c3eaaeb638f9f-S2",
+      "title": "Unit 4 · ItemInventory",
+      "ced_topics": [
+        "4.10",
+        "4.9",
+        "3.5"
+      ],
+      "marks": 5,
+      "answer_provenance": "generated-reference-not-official",
+      "question_images": [
+        "FRQ-764c3eaaeb638f9f-S2-p2.png",
+        "FRQ-764c3eaaeb638f9f-S2-p3.png",
+        "FRQ-764c3eaaeb638f9f-S2-p4.png"
+      ]
+    },
+    {
+      "id": "FRQ-764c3eaaeb638f9f-S4",
+      "title": "Unit 4 · PlayerAnalysis",
+      "ced_topics": [
+        "4.10",
+        "4.9",
+        "3.5"
+      ],
+      "marks": 5,
+      "answer_provenance": "generated-reference-not-official",
+      "question_images": [
+        "FRQ-764c3eaaeb638f9f-S4-p5.png",
+        "FRQ-764c3eaaeb638f9f-S4-p6.png",
+        "FRQ-764c3eaaeb638f9f-S4-p7.png"
+      ]
+    },
+    {
+      "id": "FRQ-764c3eaaeb638f9f-S7",
+      "title": "Unit 4 · WordGrid",
+      "ced_topics": [
+        "4.13",
+        "4.12",
+        "3.5"
+      ],
+      "marks": 5,
+      "answer_provenance": "generated-reference-not-official",
+      "question_images": [
+        "FRQ-764c3eaaeb638f9f-S7-p10.png",
+        "FRQ-764c3eaaeb638f9f-S7-p11.png"
+      ]
+    },
+    {
+      "id": "FRQ-764c3eaaeb638f9f-S8",
+      "title": "Unit 4 · EVDataSet",
+      "ced_topics": [
+        "4.10",
+        "4.9",
+        "3.5"
+      ],
+      "marks": 5,
+      "answer_provenance": "generated-reference-not-official",
+      "question_images": [
+        "FRQ-764c3eaaeb638f9f-S8-p11.png",
+        "FRQ-764c3eaaeb638f9f-S8-p12.png"
+      ]
+    },
+    {
+      "id": "FRQ-764c3eaaeb638f9f-S11",
+      "title": "Unit 4 · WordChecker",
+      "ced_topics": [
+        "4.10",
+        "4.9",
+        "1.15",
+        "3.5"
+      ],
+      "marks": 9,
+      "answer_provenance": "generated-reference-not-official",
+      "question_images": [
+        "FRQ-764c3eaaeb638f9f-S11-p18.png",
+        "FRQ-764c3eaaeb638f9f-S11-p19.png",
+        "FRQ-764c3eaaeb638f9f-S11-p20.png"
+      ]
+    },
+    {
+      "id": "FRQ-764c3eaaeb638f9f-S12",
+      "title": "Unit 4 · BoxOfCandy",
+      "ced_topics": [
+        "4.13",
+        "4.12",
+        "3.6",
+        "3.5"
+      ],
+      "marks": 9,
+      "answer_provenance": "generated-reference-not-official",
+      "question_images": [
+        "FRQ-764c3eaaeb638f9f-S12-p20.png",
+        "FRQ-764c3eaaeb638f9f-S12-p21.png",
+        "FRQ-764c3eaaeb638f9f-S12-p22.png",
+        "FRQ-764c3eaaeb638f9f-S12-p23.png",
+        "FRQ-764c3eaaeb638f9f-S12-p24.png"
+      ]
+    },
+    {
+      "id": "FRQ-764c3eaaeb638f9f-S13",
+      "title": "Unit 4 · TriviaGame",
+      "ced_topics": [
+        "4.5",
+        "4.4",
+        "3.5",
+        "3.1"
+      ],
+      "marks": 9,
+      "answer_provenance": "generated-reference-not-official",
+      "question_images": [
+        "FRQ-764c3eaaeb638f9f-S13-p24.png",
+        "FRQ-764c3eaaeb638f9f-S13-p25.png",
+        "FRQ-764c3eaaeb638f9f-S13-p26.png",
+        "FRQ-764c3eaaeb638f9f-S13-p27.png"
+      ]
+    },
+    {
+      "id": "FRQ-764c3eaaeb638f9f-S14",
+      "title": "Unit 4 · Payroll",
+      "ced_topics": [
+        "4.5",
+        "4.4",
+        "3.5"
+      ],
+      "marks": 9,
+      "answer_provenance": "generated-reference-not-official",
+      "question_images": [
+        "FRQ-764c3eaaeb638f9f-S14-p27.png",
+        "FRQ-764c3eaaeb638f9f-S14-p28.png",
+        "FRQ-764c3eaaeb638f9f-S14-p29.png"
+      ]
+    },
+    {
+      "id": "FRQ-764c3eaaeb638f9f-S15",
+      "title": "Unit 4 · WeatherData",
+      "ced_topics": [
+        "4.10",
+        "4.9",
+        "3.5"
+      ],
+      "marks": 9,
+      "answer_provenance": "generated-reference-not-official",
+      "question_images": [
+        "FRQ-764c3eaaeb638f9f-S15-p29.png",
+        "FRQ-764c3eaaeb638f9f-S15-p30.png",
+        "FRQ-764c3eaaeb638f9f-S15-p31.png"
+      ]
+    },
+    {
+      "id": "FRQ-764c3eaaeb638f9f-S16",
+      "title": "Unit 4 · Delimiters",
+      "ced_topics": [
+        "4.10",
+        "4.4",
+        "3.5"
+      ],
+      "marks": 9,
+      "answer_provenance": "generated-reference-not-official",
+      "question_images": [
+        "FRQ-764c3eaaeb638f9f-S16-p31.png",
+        "FRQ-764c3eaaeb638f9f-S16-p32.png",
+        "FRQ-764c3eaaeb638f9f-S16-p33.png",
+        "FRQ-764c3eaaeb638f9f-S16-p34.png",
+        "FRQ-764c3eaaeb638f9f-S16-p35.png"
+      ]
+    },
+    {
+      "id": "FRQ-764c3eaaeb638f9f-S17",
+      "title": "Unit 4 · UserName",
+      "ced_topics": [
+        "4.10",
+        "3.4",
+        "1.15"
+      ],
+      "marks": 9,
+      "answer_provenance": "generated-reference-not-official",
+      "question_images": [
+        "FRQ-764c3eaaeb638f9f-S17-p35.png",
+        "FRQ-764c3eaaeb638f9f-S17-p36.png"
+      ]
+    },
+    {
+      "id": "FRQ-764c3eaaeb638f9f-S18",
+      "title": "Unit 4 · GridPath",
+      "ced_topics": [
+        "4.13",
+        "4.11",
+        "3.6",
+        "3.5"
+      ],
+      "marks": 9,
+      "answer_provenance": "generated-reference-not-official",
+      "question_images": [
+        "FRQ-764c3eaaeb638f9f-S18-p36.png",
+        "FRQ-764c3eaaeb638f9f-S18-p37.png",
+        "FRQ-764c3eaaeb638f9f-S18-p38.png",
+        "FRQ-764c3eaaeb638f9f-S18-p39.png",
+        "FRQ-764c3eaaeb638f9f-S18-p40.png"
+      ]
+    },
+    {
+      "id": "FRQ-764c3eaaeb638f9f-S19",
+      "title": "Unit 4 · ExperimentalFarm",
+      "ced_topics": [
+        "4.13",
+        "4.12",
+        "3.6",
+        "3.5"
+      ],
+      "marks": 9,
+      "answer_provenance": "generated-reference-not-official",
+      "question_images": [
+        "FRQ-764c3eaaeb638f9f-S19-p40.png",
+        "FRQ-764c3eaaeb638f9f-S19-p41.png",
+        "FRQ-764c3eaaeb638f9f-S19-p42.png"
+      ]
+    }
+  ],
+  "usable_imported": 689,
+  "total_usable": 699
+}

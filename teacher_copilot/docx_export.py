@@ -87,7 +87,19 @@ def build_docx(plan, records, audience, language='bilingual'):
         paragraph((f'{q.get("marks", 0)} 分  |  ' if is_exam else '') + f'预计 {q["minutes"]} 分钟')
         if not q['code'].startswith('// AP source question'):
             code(q['code'])
-        paragraph(q['task'])
+        if q.get('question_images'):
+            from pathlib import Path
+            import re
+            for filename in q['question_images']:
+                if not re.fullmatch(r'FRQ-[a-f0-9]{16}-S[0-9]+-p[0-9]+\.png',filename):
+                    raise ValueError('Invalid question image')
+                path=Path(__file__).parent/'imported_bank'/'images'/filename
+                from docx.image.image import Image
+                picture=Image.from_file(str(path))
+                width=min(17,22*picture.px_width/picture.px_height)
+                document.add_picture(str(path),width=Cm(width))
+        else:
+            paragraph(q['task'])
         for key, value in q.get('options', {}).items():
             paragraph(f'{key}. {value}')
         if audience == 'student':
@@ -99,7 +111,7 @@ def build_docx(plan, records, audience, language='bilingual'):
                 p.runs[0].font.color.rgb = RGBColor(180, 180, 180)
             # Keep the prompt with the start of the answer area; long prompts
             # and remaining answer lines must still be able to span pages.
-            for p in document.paragraphs[block_start:-count]:
+            for p in (document.paragraphs[block_start:-count] if not q.get('question_images') else []):
                 p.paragraph_format.keep_with_next = True
             continue
         for title, value in [('参考答案', q['answer']), ('正确选项', q.get('answer_key')),

@@ -458,6 +458,13 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                     path = ASSETS.parent / 'imported_bank' / 'bank.json'
                     if not path.exists(): return self.send({'error':'资料题库尚未导入。'},404)
                     return self.send(path.read_bytes())
+                if parsed.path.startswith('/source-image/'):
+                    import re
+                    filename=parsed.path.removeprefix('/source-image/')
+                    if not re.fullmatch(r'FRQ-[a-f0-9]{16}-S[0-9]+-p[0-9]+\.png',filename): return self.send({'error':'无效的文件。'},404)
+                    path=ASSETS.parent / 'imported_bank' / 'images' / filename
+                    if not path.is_file(): return self.send({'error':'文件不存在。'},404)
+                    return self.send(path.read_bytes(),mime='image/png')
                 if parsed.path.startswith('/source-pdf/'):
                     import re
                     filename=parsed.path.removeprefix('/source-pdf/')
