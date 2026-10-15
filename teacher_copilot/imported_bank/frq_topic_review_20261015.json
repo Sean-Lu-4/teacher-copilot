@@ -1,0 +1,1489 @@
+[
+  {
+    "id": "FRQ-2459373609e2732d",
+    "title": "Unit1 FRQPartC",
+    "before": [
+      "1.15",
+      "1.11"
+    ],
+    "after": [
+      "1.15",
+      "1.11",
+      "1.10"
+    ],
+    "added": [
+      "1.10"
+    ],
+    "removed": [],
+    "rationale": "依次调用 String 方法提取用户名，并调用 Math.random 类方法。",
+    "sources": [
+      {
+        "document": "4aee20c32beb84cafb032da1f1723dfeeced84e278e73be9009278e2c6cb436e",
+        "role": "SG",
+        "page": 1
+      },
+      {
+        "document": "cab64282dce0a3ac976264c7643327a9242e8010e0a2ec75b3e9301d98d572de",
+        "role": "TB",
+        "page": 1
+      }
+    ]
+  },
+  {
+    "id": "FRQ-00a62e501cd4dea8",
+    "title": "Unit2 FRQPartA",
+    "before": [
+      "2.5",
+      "1.15",
+      "2.3"
+    ],
+    "after": [
+      "2.5",
+      "1.15",
+      "2.3",
+      "2.2",
+      "2.6"
+    ],
+    "added": [
+      "2.2",
+      "2.6"
+    ],
+    "removed": [],
+    "rationale": "构造三个布尔判定；首尾颜色需要比较字符串内容。",
+    "sources": [
+      {
+        "document": "2988879555360c1841f7b3398e7e0ec37b5746f79f53a7cbdcdf6269ce201c31",
+        "role": "SG",
+        "page": 1
+      },
+      {
+        "document": "a680d0839bd421bb9f7429af8e201fe739a9ef64d7ede2a812e59593479627fc",
+        "role": "TB",
+        "page": 1
+      }
+    ]
+  },
+  {
+    "id": "FRQ-abac91d826c61ac9",
+    "title": "Unit2 FRQPartB",
+    "before": [
+      "2.10",
+      "1.15",
+      "2.1",
+      "1.11"
+    ],
+    "after": [
+      "2.10",
+      "1.15",
+      "2.1",
+      "2.7",
+      "2.8",
+      "2.9"
+    ],
+    "added": [
+      "2.7",
+      "2.8",
+      "2.9"
+    ],
+    "removed": [
+      "1.11"
+    ],
+    "rationale": "补齐定宽字符串、查找最长前缀及逐位统计数字；没有 Math 类方法要求，移除误标。",
+    "sources": [
+      {
+        "document": "0043c2d0977d07fe142db4059d8984f5c8e31499d24fb02a8de195c0a9cbd2d7",
+        "role": "SG",
+        "page": 1
+      },
+      {
+        "document": "9620233a7c50f2d8a1d35413e3a9445e5cc786d3671d6335cb084178fb2c9a82",
+        "role": "TB",
+        "page": 1
+      }
+    ]
+  },
+  {
+    "id": "FRQ-414a8797b527e415-S1",
+    "title": "Unit3ProgressCheckFRQPartB_papersaver · 1",
+    "before": [
+      "3.5",
+      "3.4",
+      "3.3",
+      "2.3"
+    ],
+    "after": [
+      "3.5",
+      "3.4",
+      "3.3",
+      "2.3",
+      "1.9",
+      "3.8"
+    ],
+    "added": [
+      "1.9",
+      "3.8"
+    ],
+    "removed": [],
+    "rationale": "从调用示例自行写完整 Car 类，包括方法签名与实例字段访问权限。",
+    "sources": [
+      {
+        "document": "339b89183282b6ae8514670fdab0ec6de9286f957b6c37253fd1463aca3215fc",
+        "role": "SG",
+        "page": 1
+      },
+      {
+        "document": "546df9a2d8dfee0ed1e7997da74c984c10b8f1aa4d982892c773b762fb5d4ad8",
+        "role": "TB",
+        "page": 1
+      },
+      {
+        "document": "11a5f2a756e6666aac4fa50a10044d9df7f03d84d07cf29ac3bc9f36ad9bb335",
+        "role": "SG",
+        "page": 8
+      },
+      {
+        "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+        "role": "TB",
+        "page": 1
+      }
+    ]
+  },
+  {
+    "id": "FRQ-414a8797b527e415-S2",
+    "title": "Unit3ProgressCheckFRQPartB_papersaver · 2",
+    "before": [
+      "3.5",
+      "3.4",
+      "3.3",
+      "2.3"
+    ],
+    "after": [
+      "3.5",
+      "3.4",
+      "3.3",
+      "2.3",
+      "1.9",
+      "3.8"
+    ],
+    "added": [
+      "1.9",
+      "3.8"
+    ],
+    "removed": [],
+    "rationale": "自行写完整 TrashCan 类，构造器、公开方法与私有状态。",
+    "sources": [
+      {
+        "document": "339b89183282b6ae8514670fdab0ec6de9286f957b6c37253fd1463aca3215fc",
+        "role": "SG",
+        "page": 10
+      },
+      {
+        "document": "546df9a2d8dfee0ed1e7997da74c984c10b8f1aa4d982892c773b762fb5d4ad8",
+        "role": "TB",
+        "page": 1
+      }
+    ]
+  },
+  {
+    "id": "FRQ-d841c16efb454b49-S1",
+    "title": "Unit4ProgressCheckFRQPartA · 1",
+    "before": [
+      "4.5",
+      "4.4",
+      "1.14"
+    ],
+    "after": [
+      "4.5",
+      "4.4",
+      "1.14",
+      "3.5"
+    ],
+    "added": [
+      "3.5"
+    ],
+    "removed": [],
+    "rationale": "实现 getPossibleAssemblies；通过对象访问器累计数组中的零件数量。",
+    "sources": [
+      {
+        "document": "55d6eca3c4b59cf933cf76ff50d0d3edfddeae892df4d048af441015eaf574bf",
+        "role": "SG",
+        "page": 1
+      },
+      {
+        "document": "4941e41e57c01ea19dfa7e8553870b95e57eb5fcc08dead28afe76572313661e",
+        "role": "TB",
+        "page": 1
+      },
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 7
+      }
+    ]
+  },
+  {
+    "id": "FRQ-d841c16efb454b49-S2",
+    "title": "Unit4ProgressCheckFRQPartA · 2",
+    "before": [
+      "4.5",
+      "4.4",
+      "1.14"
+    ],
+    "after": [
+      "4.5",
+      "4.4",
+      "1.14",
+      "3.5",
+      "2.2"
+    ],
+    "added": [
+      "3.5",
+      "2.2"
+    ],
+    "removed": [],
+    "rationale": "实现 hasEnoughPaint，累计表面积并返回是否足够的关系表达式。",
+    "sources": [
+      {
+        "document": "55d6eca3c4b59cf933cf76ff50d0d3edfddeae892df4d048af441015eaf574bf",
+        "role": "SG",
+        "page": 6
+      },
+      {
+        "document": "4941e41e57c01ea19dfa7e8553870b95e57eb5fcc08dead28afe76572313661e",
+        "role": "TB",
+        "page": 1
+      },
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 1
+      }
+    ]
+  },
+  {
+    "id": "FRQ-e12b4823e927b30f-S1",
+    "title": "Unit4ProgressCheckFRQPartB · 1",
+    "before": [
+      "4.10",
+      "4.9",
+      "2.5"
+    ],
+    "after": [
+      "4.10",
+      "4.9",
+      "2.5",
+      "1.14",
+      "3.5"
+    ],
+    "added": [
+      "1.14",
+      "3.5"
+    ],
+    "removed": [],
+    "rationale": "调用年龄访问器，按13至19的条件筛选并计算平均值。",
+    "sources": [
+      {
+        "document": "8d6f73071f093ea2b40887a94f9268cb1c7017f77b316848145b121ae888bd13",
+        "role": "SG",
+        "page": 1
+      },
+      {
+        "document": "ee17227ec0b7fed776c3b6766ba179815d776add75fa1296b41aa3d2147ba1d1",
+        "role": "TB",
+        "page": 1
+      },
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 3
+      }
+    ]
+  },
+  {
+    "id": "FRQ-e12b4823e927b30f-S2",
+    "title": "Unit4ProgressCheckFRQPartB · 2",
+    "before": [
+      "4.10",
+      "4.9",
+      "2.9"
+    ],
+    "after": [
+      "4.10",
+      "4.9",
+      "2.9",
+      "1.14",
+      "3.5",
+      "2.3"
+    ],
+    "added": [
+      "1.14",
+      "3.5",
+      "2.3"
+    ],
+    "removed": [],
+    "rationale": "逐场比较主客队得分，重置或延长连续获胜计数。",
+    "sources": [
+      {
+        "document": "8d6f73071f093ea2b40887a94f9268cb1c7017f77b316848145b121ae888bd13",
+        "role": "SG",
+        "page": 7
+      },
+      {
+        "document": "ee17227ec0b7fed776c3b6766ba179815d776add75fa1296b41aa3d2147ba1d1",
+        "role": "TB",
+        "page": 1
+      },
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 6
+      }
+    ]
+  },
+  {
+    "id": "FRQ-8b32f5bc1d3ab57a-S1",
+    "title": "Unit4ProgressCheckFRQPartC · 1",
+    "before": [
+      "4.13",
+      "4.12"
+    ],
+    "after": [
+      "4.13",
+      "4.12",
+      "2.11",
+      "3.6",
+      "3.5"
+    ],
+    "added": [
+      "2.11",
+      "3.6",
+      "3.5"
+    ],
+    "removed": [],
+    "rationale": "搜索指定行之后的二维座位，需遍历行列并移动、清空乘客引用。",
+    "sources": [
+      {
+        "document": "2e21be9be09d4975c5f44c0eb063c5c77b4a4b7e200d4da40a54eefeb54304d5",
+        "role": "SG",
+        "page": 1
+      },
+      {
+        "document": "a6aeac2303cb9cc9e5f4adba4b8e76ac6035a282635e5a4d3816fd45a109536a",
+        "role": "TB",
+        "page": 1
+      },
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 11
+      }
+    ]
+  },
+  {
+    "id": "FRQ-8b32f5bc1d3ab57a-S2",
+    "title": "Unit4ProgressCheckFRQPartC · 2",
+    "before": [
+      "4.13",
+      "4.12",
+      "2.7"
+    ],
+    "after": [
+      "4.13",
+      "4.12",
+      "2.7",
+      "2.6",
+      "4.11",
+      "3.5"
+    ],
+    "added": [
+      "2.6",
+      "4.11",
+      "3.5"
+    ],
+    "removed": [],
+    "rationale": "按 NE/NW/SE/SW 字符串内容选择方向，访问网格坐标直至越界。",
+    "sources": [
+      {
+        "document": "2e21be9be09d4975c5f44c0eb063c5c77b4a4b7e200d4da40a54eefeb54304d5",
+        "role": "SG",
+        "page": 10
+      },
+      {
+        "document": "a6aeac2303cb9cc9e5f4adba4b8e76ac6035a282635e5a4d3816fd45a109536a",
+        "role": "TB",
+        "page": 3
+      },
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 14
+      }
+    ]
+  },
+  {
+    "id": "FRQ-69fc5af861bea528-S1",
+    "title": "FINALUnit1-Unit2FRQ-Topicorder_papersaver · 1",
+    "before": [
+      "2.9",
+      "2.10",
+      "3.5"
+    ],
+    "after": [
+      "2.9",
+      "2.10",
+      "3.5",
+      "2.8",
+      "2.7",
+      "1.14",
+      "1.15"
+    ],
+    "added": [
+      "2.8",
+      "2.7",
+      "1.14",
+      "1.15"
+    ],
+    "removed": [],
+    "rationale": "按圈数累计 getLapTime；循环移除所有指定子串。",
+    "sources": [
+      {
+        "document": "d6170bc75b6ebf2cbdf9bd2d4778a645894789450723fc428099e32828f6dbb4",
+        "role": "SG",
+        "page": 1
+      },
+      {
+        "document": "c8a2d3bb6c8d65b04dad0a86743a33064d8ecddf201d3797cf73529212dc5b84",
+        "role": "TB",
+        "page": 1
+      }
+    ]
+  },
+  {
+    "id": "FRQ-69fc5af861bea528-S2",
+    "title": "FINALUnit1-Unit2FRQ-Topicorder_papersaver · 2",
+    "before": [
+      "2.10",
+      "3.4",
+      "3.5"
+    ],
+    "after": [
+      "2.10",
+      "3.4",
+      "3.5",
+      "2.7",
+      "1.15"
+    ],
+    "added": [
+      "2.7",
+      "1.15"
+    ],
+    "removed": [],
+    "rationale": "反复调用 getNextWord 直至 null，并提取每个单词的首字母。",
+    "sources": [
+      {
+        "document": "d6170bc75b6ebf2cbdf9bd2d4778a645894789450723fc428099e32828f6dbb4",
+        "role": "SG",
+        "page": 9
+      },
+      {
+        "document": "c8a2d3bb6c8d65b04dad0a86743a33064d8ecddf201d3797cf73529212dc5b84",
+        "role": "TB",
+        "page": 1
+      }
+    ]
+  },
+  {
+    "id": "FRQ-69fc5af861bea528-S3",
+    "title": "FINALUnit1-Unit2FRQ-Topicorder_papersaver · 3",
+    "before": [
+      "2.9",
+      "1.15"
+    ],
+    "after": [
+      "2.9",
+      "1.15",
+      "2.7"
+    ],
+    "added": [
+      "2.7"
+    ],
+    "removed": [],
+    "rationale": "循环剥离十进制数字并统计个位数出现次数。",
+    "sources": [
+      {
+        "document": "d6170bc75b6ebf2cbdf9bd2d4778a645894789450723fc428099e32828f6dbb4",
+        "role": "SG",
+        "page": 18
+      },
+      {
+        "document": "c8a2d3bb6c8d65b04dad0a86743a33064d8ecddf201d3797cf73529212dc5b84",
+        "role": "TB",
+        "page": 4
+      }
+    ]
+  },
+  {
+    "id": "FRQ-69fc5af861bea528-S4",
+    "title": "FINALUnit1-Unit2FRQ-Topicorder_papersaver · 4",
+    "before": [
+      "2.10",
+      "2.3"
+    ],
+    "after": [
+      "2.10",
+      "2.3",
+      "2.8",
+      "1.15"
+    ],
+    "added": [
+      "2.8",
+      "1.15"
+    ],
+    "removed": [],
+    "rationale": "按列宽补点，并逐个检查字符串前缀。",
+    "sources": [
+      {
+        "document": "d6170bc75b6ebf2cbdf9bd2d4778a645894789450723fc428099e32828f6dbb4",
+        "role": "SG",
+        "page": 25
+      },
+      {
+        "document": "c8a2d3bb6c8d65b04dad0a86743a33064d8ecddf201d3797cf73529212dc5b84",
+        "role": "TB",
+        "page": 5
+      }
+    ]
+  },
+  {
+    "id": "FRQ-69fc5af861bea528-S5",
+    "title": "FINALUnit1-Unit2FRQ-Topicorder_papersaver · 5",
+    "before": [
+      "2.10",
+      "1.11",
+      "3.4"
+    ],
+    "after": [
+      "2.10",
+      "1.11",
+      "3.4",
+      "2.8",
+      "2.7",
+      "1.15",
+      "3.5"
+    ],
+    "added": [
+      "2.8",
+      "2.7",
+      "1.15",
+      "3.5"
+    ],
+    "removed": [],
+    "rationale": "生成 numMoves 次随机方向并累计字符串，循环计数指定子串。",
+    "sources": [
+      {
+        "document": "d6170bc75b6ebf2cbdf9bd2d4778a645894789450723fc428099e32828f6dbb4",
+        "role": "SG",
+        "page": 33
+      },
+      {
+        "document": "c8a2d3bb6c8d65b04dad0a86743a33064d8ecddf201d3797cf73529212dc5b84",
+        "role": "TB",
+        "page": 6
+      }
+    ]
+  },
+  {
+    "id": "FRQ-69fc5af861bea528-S6",
+    "title": "FINALUnit1-Unit2FRQ-Topicorder_papersaver · 6",
+    "before": [
+      "2.9",
+      "3.5"
+    ],
+    "after": [
+      "2.9",
+      "3.5",
+      "1.11",
+      "2.5"
+    ],
+    "added": [
+      "1.11",
+      "2.5"
+    ],
+    "removed": [],
+    "rationale": "simulateOneDay 要求按概率随机模拟；多天模拟须同时限制天数与剩余食物。",
+    "sources": [
+      {
+        "document": "d6170bc75b6ebf2cbdf9bd2d4778a645894789450723fc428099e32828f6dbb4",
+        "role": "SG",
+        "page": 45
+      },
+      {
+        "document": "c8a2d3bb6c8d65b04dad0a86743a33064d8ecddf201d3797cf73529212dc5b84",
+        "role": "TB",
+        "page": 7
+      }
+    ]
+  },
+  {
+    "id": "FRQ-69fc5af861bea528-S7",
+    "title": "FINALUnit1-Unit2FRQ-Topicorder_papersaver · 7",
+    "before": [
+      "2.5",
+      "1.15"
+    ],
+    "after": [
+      "2.5",
+      "1.15",
+      "2.2",
+      "2.6",
+      "2.3"
+    ],
+    "added": [
+      "2.2",
+      "2.6",
+      "2.3"
+    ],
+    "removed": [],
+    "rationale": "生成颜色、长度和首尾相同的布尔条件，并按结果输出。",
+    "sources": [
+      {
+        "document": "d6170bc75b6ebf2cbdf9bd2d4778a645894789450723fc428099e32828f6dbb4",
+        "role": "SG",
+        "page": 53
+      },
+      {
+        "document": "c8a2d3bb6c8d65b04dad0a86743a33064d8ecddf201d3797cf73529212dc5b84",
+        "role": "TB",
+        "page": 10
+      }
+    ]
+  },
+  {
+    "id": "FRQ-69fc5af861bea528-S8",
+    "title": "FINALUnit1-Unit2FRQ-Topicorder_papersaver · 8",
+    "before": [
+      "2.9",
+      "3.5"
+    ],
+    "after": [
+      "2.10",
+      "3.5",
+      "1.15",
+      "3.1"
+    ],
+    "added": [
+      "2.10",
+      "1.15",
+      "3.1"
+    ],
+    "removed": [
+      "2.9"
+    ],
+    "rationale": "countRepeat 处理不重叠子串；设计可调整输入长度上限的接口改动。",
+    "sources": [
+      {
+        "document": "d6170bc75b6ebf2cbdf9bd2d4778a645894789450723fc428099e32828f6dbb4",
+        "role": "SG",
+        "page": 62
+      },
+      {
+        "document": "c8a2d3bb6c8d65b04dad0a86743a33064d8ecddf201d3797cf73529212dc5b84",
+        "role": "TB",
+        "page": 11
+      }
+    ]
+  },
+  {
+    "id": "FRQ-69fc5af861bea528-S9",
+    "title": "FINALUnit1-Unit2FRQ-Topicorder_papersaver · 9",
+    "before": [
+      "1.15",
+      "1.11"
+    ],
+    "after": [
+      "1.15",
+      "1.11",
+      "1.10"
+    ],
+    "added": [
+      "1.10"
+    ],
+    "removed": [],
+    "rationale": "用户名处理明确调用 Math.random 类方法与 String 实例方法。",
+    "sources": [
+      {
+        "document": "d6170bc75b6ebf2cbdf9bd2d4778a645894789450723fc428099e32828f6dbb4",
+        "role": "SG",
+        "page": 68
+      },
+      {
+        "document": "c8a2d3bb6c8d65b04dad0a86743a33064d8ecddf201d3797cf73529212dc5b84",
+        "role": "TB",
+        "page": 12
+      }
+    ]
+  },
+  {
+    "id": "FRQ-69fc5af861bea528-S10",
+    "title": "FINALUnit1-Unit2FRQ-Topicorder_papersaver · 10",
+    "before": [
+      "2.9",
+      "3.5"
+    ],
+    "after": [
+      "2.9",
+      "3.5",
+      "2.8",
+      "1.14"
+    ],
+    "added": [
+      "2.8",
+      "1.14"
+    ],
+    "removed": [],
+    "rationale": "逐分钟寻找连续空闲区间，再按时段顺序查找并调用预订辅助方法。",
+    "sources": [
+      {
+        "document": "d6170bc75b6ebf2cbdf9bd2d4778a645894789450723fc428099e32828f6dbb4",
+        "role": "SG",
+        "page": 76
+      },
+      {
+        "document": "c8a2d3bb6c8d65b04dad0a86743a33064d8ecddf201d3797cf73529212dc5b84",
+        "role": "TB",
+        "page": 13
+      }
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S1",
+    "title": "FINALUnit3FRQ-Topicorder_papersaver · 1",
+    "before": [
+      "3.3",
+      "3.4",
+      "3.5"
+    ],
+    "after": [
+      "3.3",
+      "3.4",
+      "3.5",
+      "1.9",
+      "3.8",
+      "1.15",
+      "2.10"
+    ],
+    "added": [
+      "1.9",
+      "3.8",
+      "1.15",
+      "2.10"
+    ],
+    "removed": [],
+    "rationale": "完整 Sign 类；按宽度切分字符串并拼接分号，设计方法签名和字段。",
+    "sources": [
+      {
+        "document": "11a5f2a756e6666aac4fa50a10044d9df7f03d84d07cf29ac3bc9f36ad9bb335",
+        "role": "SG",
+        "page": 1
+      },
+      {
+        "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+        "role": "TB",
+        "page": 1
+      }
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S3",
+    "title": "FINALUnit3FRQ-Topicorder_papersaver · 3",
+    "before": [
+      "3.3",
+      "3.4",
+      "3.5"
+    ],
+    "after": [
+      "3.3",
+      "3.4",
+      "3.5",
+      "1.9",
+      "3.8",
+      "1.13",
+      "1.14"
+    ],
+    "added": [
+      "1.9",
+      "3.8",
+      "1.13",
+      "1.14"
+    ],
+    "removed": [],
+    "rationale": "完整 CubePair 类；两个构造器创建并保存 Cube 对象，再调用 roll。",
+    "sources": [
+      {
+        "document": "11a5f2a756e6666aac4fa50a10044d9df7f03d84d07cf29ac3bc9f36ad9bb335",
+        "role": "SG",
+        "page": 18
+      },
+      {
+        "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+        "role": "TB",
+        "page": 2
+      }
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S4",
+    "title": "FINALUnit3FRQ-Topicorder_papersaver · 4",
+    "before": [
+      "3.3",
+      "3.4",
+      "3.5"
+    ],
+    "after": [
+      "3.3",
+      "3.4",
+      "3.5",
+      "1.9",
+      "3.8",
+      "2.3"
+    ],
+    "added": [
+      "1.9",
+      "3.8",
+      "2.3"
+    ],
+    "removed": [],
+    "rationale": "完整 CupcakeMachine 类；根据库存决定是否接单并更新状态。",
+    "sources": [
+      {
+        "document": "11a5f2a756e6666aac4fa50a10044d9df7f03d84d07cf29ac3bc9f36ad9bb335",
+        "role": "SG",
+        "page": 28
+      },
+      {
+        "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+        "role": "TB",
+        "page": 4
+      }
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S5",
+    "title": "FINALUnit3FRQ-Topicorder_papersaver · 5",
+    "before": [
+      "3.3",
+      "3.4",
+      "3.5"
+    ],
+    "after": [
+      "3.3",
+      "3.4",
+      "3.5",
+      "1.9",
+      "3.8"
+    ],
+    "added": [
+      "1.9",
+      "3.8"
+    ],
+    "removed": [],
+    "rationale": "完整 LapTracker 类；设计公开操作和私有计数状态，不把取模重置强行标成循环。",
+    "sources": [
+      {
+        "document": "11a5f2a756e6666aac4fa50a10044d9df7f03d84d07cf29ac3bc9f36ad9bb335",
+        "role": "SG",
+        "page": 39
+      },
+      {
+        "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+        "role": "TB",
+        "page": 5
+      }
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S6",
+    "title": "FINALUnit3FRQ-Topicorder_papersaver · 6",
+    "before": [
+      "3.3",
+      "3.4",
+      "3.5"
+    ],
+    "after": [
+      "3.3",
+      "3.4",
+      "3.5",
+      "1.9",
+      "3.8",
+      "2.3"
+    ],
+    "added": [
+      "1.9",
+      "3.8",
+      "2.3"
+    ],
+    "removed": [],
+    "rationale": "完整 TrashCan 类；按容量边界更新状态，补齐类访问权限考点。",
+    "sources": [
+      {
+        "document": "11a5f2a756e6666aac4fa50a10044d9df7f03d84d07cf29ac3bc9f36ad9bb335",
+        "role": "SG",
+        "page": 49
+      },
+      {
+        "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+        "role": "TB",
+        "page": 7
+      }
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S7",
+    "title": "FINALUnit3FRQ-Topicorder_papersaver · 7",
+    "before": [
+      "3.3",
+      "3.4",
+      "3.5"
+    ],
+    "after": [
+      "4.13",
+      "4.12",
+      "2.11",
+      "4.11",
+      "1.5",
+      "3.5"
+    ],
+    "added": [
+      "4.13",
+      "4.12",
+      "2.11",
+      "4.11",
+      "1.5"
+    ],
+    "removed": [
+      "3.3",
+      "3.4"
+    ],
+    "rationale": "AppleCrate.numberOfPies 实际是二维数组和相邻格检查，最后取整计算完整馅饼；没有编写构造器要求。",
+    "sources": [
+      {
+        "document": "11a5f2a756e6666aac4fa50a10044d9df7f03d84d07cf29ac3bc9f36ad9bb335",
+        "role": "SG",
+        "page": 59
+      },
+      {
+        "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+        "role": "TB",
+        "page": 8
+      }
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S8",
+    "title": "FINALUnit3FRQ-Topicorder_papersaver · 8",
+    "before": [
+      "3.3",
+      "3.4",
+      "3.5"
+    ],
+    "after": [
+      "4.13",
+      "4.12",
+      "2.11",
+      "2.6",
+      "3.5"
+    ],
+    "added": [
+      "4.13",
+      "4.12",
+      "2.11",
+      "2.6"
+    ],
+    "removed": [
+      "3.3",
+      "3.4"
+    ],
+    "rationale": "Schedule.columnWithFewest 实际逐列逐行比较预约状态并求最小列；没有编写类或构造器要求。",
+    "sources": [
+      {
+        "document": "11a5f2a756e6666aac4fa50a10044d9df7f03d84d07cf29ac3bc9f36ad9bb335",
+        "role": "SG",
+        "page": 70
+      },
+      {
+        "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+        "role": "TB",
+        "page": 10
+      }
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S9",
+    "title": "FINALUnit3FRQ-Topicorder_papersaver · 9",
+    "before": [
+      "3.3",
+      "3.4",
+      "3.5"
+    ],
+    "after": [
+      "3.3",
+      "3.4",
+      "3.5",
+      "1.9",
+      "3.8",
+      "2.3",
+      "1.15"
+    ],
+    "added": [
+      "1.9",
+      "3.8",
+      "2.3",
+      "1.15"
+    ],
+    "removed": [],
+    "rationale": "完整 Scoreboard 类；根据得分更新队伍状态，拼接比分字符串。",
+    "sources": [
+      {
+        "document": "11a5f2a756e6666aac4fa50a10044d9df7f03d84d07cf29ac3bc9f36ad9bb335",
+        "role": "SG",
+        "page": 79
+      },
+      {
+        "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+        "role": "TB",
+        "page": 11
+      }
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S10",
+    "title": "FINALUnit3FRQ-Topicorder_papersaver · 10",
+    "before": [
+      "3.3",
+      "3.4",
+      "3.5"
+    ],
+    "after": [
+      "3.3",
+      "3.4",
+      "3.5",
+      "1.9",
+      "3.8",
+      "2.3"
+    ],
+    "added": [
+      "1.9",
+      "3.8",
+      "2.3"
+    ],
+    "removed": [],
+    "rationale": "完整 AdditionPattern 类；prev 需要处理不能退回起点之前的边界。",
+    "sources": [
+      {
+        "document": "11a5f2a756e6666aac4fa50a10044d9df7f03d84d07cf29ac3bc9f36ad9bb335",
+        "role": "SG",
+        "page": 86
+      },
+      {
+        "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+        "role": "TB",
+        "page": 13
+      }
+    ]
+  },
+  {
+    "id": "FRQ-764c3eaaeb638f9f-S2",
+    "title": "Unit 4 · ItemInventory",
+    "before": [
+      "4.10",
+      "4.9",
+      "3.5"
+    ],
+    "after": [
+      "4.10",
+      "4.9",
+      "3.5",
+      "2.5",
+      "1.14"
+    ],
+    "added": [
+      "2.5",
+      "1.14"
+    ],
+    "removed": [],
+    "rationale": "同时筛选 available 与闭区间价格，调用 ItemInfo 实例方法。",
+    "sources": [
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 2
+      }
+    ]
+  },
+  {
+    "id": "FRQ-764c3eaaeb638f9f-S4",
+    "title": "Unit 4 · PlayerAnalysis",
+    "before": [
+      "4.10",
+      "4.9",
+      "3.5"
+    ],
+    "after": [
+      "4.10",
+      "4.9",
+      "3.5",
+      "1.11",
+      "1.14"
+    ],
+    "added": [
+      "1.11",
+      "1.14"
+    ],
+    "removed": [],
+    "rationale": "比较玩家分数与目标的绝对差，调用得分与ID访问器；可用 Math.abs 实现。",
+    "sources": [
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 5
+      }
+    ]
+  },
+  {
+    "id": "FRQ-764c3eaaeb638f9f-S7",
+    "title": "Unit 4 · WordGrid",
+    "before": [
+      "4.13",
+      "4.12",
+      "3.5"
+    ],
+    "after": [
+      "4.13",
+      "4.12",
+      "3.5",
+      "2.11",
+      "1.15"
+    ],
+    "added": [
+      "2.11",
+      "1.15"
+    ],
+    "removed": [],
+    "rationale": "逐行检查相邻字符串长度是否非递减，需行列嵌套遍历。",
+    "sources": [
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 10
+      }
+    ]
+  },
+  {
+    "id": "FRQ-764c3eaaeb638f9f-S8",
+    "title": "Unit 4 · EVDataSet",
+    "before": [
+      "4.10",
+      "4.9",
+      "3.5"
+    ],
+    "after": [
+      "4.10",
+      "4.9",
+      "3.5",
+      "4.8",
+      "2.6",
+      "3.6"
+    ],
+    "added": [
+      "4.8",
+      "2.6",
+      "3.6"
+    ],
+    "removed": [],
+    "rationale": "创建并返回 ArrayList，添加满足条件且未重复的车型名称；按字符串内容去重。",
+    "sources": [
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 11
+      }
+    ]
+  },
+  {
+    "id": "FRQ-764c3eaaeb638f9f-S11",
+    "title": "Unit 4 · WordChecker",
+    "before": [
+      "4.10",
+      "4.9",
+      "1.15",
+      "3.5"
+    ],
+    "after": [
+      "4.10",
+      "4.9",
+      "1.15",
+      "3.5",
+      "4.8",
+      "3.6"
+    ],
+    "added": [
+      "4.8",
+      "3.6"
+    ],
+    "removed": [],
+    "rationale": "createList 必须创建新列表并加入去前缀后的字符串，返回新对象。",
+    "sources": [
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 18
+      }
+    ]
+  },
+  {
+    "id": "FRQ-764c3eaaeb638f9f-S12",
+    "title": "Unit 4 · BoxOfCandy",
+    "before": [
+      "4.13",
+      "4.12",
+      "3.6",
+      "3.5"
+    ],
+    "after": [
+      "4.13",
+      "4.12",
+      "3.6",
+      "3.5",
+      "2.11",
+      "2.6",
+      "4.11"
+    ],
+    "added": [
+      "2.11",
+      "2.6",
+      "4.11"
+    ],
+    "removed": [],
+    "rationale": "按底行至顶行、每行从左到右查找糖果；比较口味，移动/清空指定坐标。",
+    "sources": [
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 20
+      }
+    ]
+  },
+  {
+    "id": "FRQ-764c3eaaeb638f9f-S13",
+    "title": "Unit 4 · TriviaGame",
+    "before": [
+      "4.5",
+      "4.4",
+      "3.5",
+      "3.1"
+    ],
+    "after": [
+      "4.5",
+      "4.4",
+      "3.5",
+      "3.1",
+      "2.3"
+    ],
+    "added": [
+      "2.3"
+    ],
+    "removed": [],
+    "rationale": "调整后的平均难度按50和70边界选择三个等级；设计更改保留3.1。",
+    "sources": [
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 24
+      }
+    ]
+  },
+  {
+    "id": "FRQ-764c3eaaeb638f9f-S14",
+    "title": "Unit 4 · Payroll",
+    "before": [
+      "4.5",
+      "4.4",
+      "3.5"
+    ],
+    "after": [
+      "4.5",
+      "4.4",
+      "3.5",
+      "4.3",
+      "2.3"
+    ],
+    "added": [
+      "4.3",
+      "2.3"
+    ],
+    "removed": [],
+    "rationale": "computeWages 将计算结果写回 wages[i]，并按阈值决定奖金。",
+    "sources": [
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 27
+      }
+    ]
+  },
+  {
+    "id": "FRQ-764c3eaaeb638f9f-S15",
+    "title": "Unit 4 · WeatherData",
+    "before": [
+      "4.10",
+      "4.9",
+      "3.5"
+    ],
+    "after": [
+      "4.10",
+      "4.9",
+      "3.5",
+      "4.8",
+      "2.5"
+    ],
+    "added": [
+      "4.8",
+      "2.5"
+    ],
+    "removed": [],
+    "rationale": "cleanData 必须删除范围外的列表元素，处理删除引起的索引移动。",
+    "sources": [
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 29
+      }
+    ]
+  },
+  {
+    "id": "FRQ-764c3eaaeb638f9f-S16",
+    "title": "Unit 4 · Delimiters",
+    "before": [
+      "4.10",
+      "4.4",
+      "3.5"
+    ],
+    "after": [
+      "4.10",
+      "4.4",
+      "3.5",
+      "4.8",
+      "4.9",
+      "2.6"
+    ],
+    "added": [
+      "4.8",
+      "4.9",
+      "2.6"
+    ],
+    "removed": [],
+    "rationale": "从 tokens 创建并添加分隔符列表，再遍历列表验证配对；比较分隔符字符串内容。",
+    "sources": [
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 31
+      }
+    ]
+  },
+  {
+    "id": "FRQ-764c3eaaeb638f9f-S17",
+    "title": "Unit 4 · UserName",
+    "before": [
+      "4.10",
+      "3.4",
+      "1.15"
+    ],
+    "after": [
+      "4.10",
+      "3.4",
+      "1.15",
+      "4.8",
+      "4.9",
+      "3.5",
+      "1.14"
+    ],
+    "added": [
+      "4.8",
+      "4.9",
+      "3.5",
+      "1.14"
+    ],
+    "removed": [],
+    "rationale": "构造并填充 possibleNames；遍历删除已占用名称，必须调用 isUsed。",
+    "sources": [
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 35
+      }
+    ]
+  },
+  {
+    "id": "FRQ-764c3eaaeb638f9f-S18",
+    "title": "Unit 4 · GridPath",
+    "before": [
+      "4.13",
+      "4.11",
+      "3.6",
+      "3.5"
+    ],
+    "after": [
+      "4.13",
+      "4.11",
+      "3.6",
+      "3.5",
+      "1.13",
+      "2.7"
+    ],
+    "added": [
+      "1.13",
+      "2.7"
+    ],
+    "removed": [],
+    "rationale": "getNextLoc 创建并返回 Location；sumPath 沿动态路径重复调用直到终点。",
+    "sources": [
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 36
+      }
+    ]
+  },
+  {
+    "id": "FRQ-764c3eaaeb638f9f-S19",
+    "title": "Unit 4 · ExperimentalFarm",
+    "before": [
+      "4.13",
+      "4.12",
+      "3.6",
+      "3.5"
+    ],
+    "after": [
+      "4.13",
+      "4.12",
+      "3.6",
+      "3.5",
+      "2.11",
+      "2.6"
+    ],
+    "added": [
+      "2.11",
+      "2.6"
+    ],
+    "removed": [],
+    "rationale": "搜索所有地块的指定作物最大产量，以及逐行验证同列作物字符串相同。",
+    "sources": [
+      {
+        "document": "56a7be2e890b368794a3d7df3dbe33a42b68b3d7e781875f12283d9cb1e3f151",
+        "role": "TB",
+        "page": 40
+      }
+    ]
+  }
+]
