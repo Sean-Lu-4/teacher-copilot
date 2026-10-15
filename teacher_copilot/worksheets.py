@@ -11,6 +11,17 @@ from .csa_curriculum import GROUPS, LABELS, UNITS, VERSION as CSA_VERSION, objec
 from .homework_bank import QUESTIONS as HOMEWORK, VERSION as HOMEWORK_VERSION
 from .gap_bank import QUESTIONS as GAP, VERSION as GAP_VERSION
 
+def _complete_mcq(q):
+    options = q.get('options') or {}
+    return len(options) >= 4 and q.get('answer_key') in options
+
+
+# Unverified original short-answer exercises must never enter teacher papers.
+# Keep only complete original MCQs; PDF-sourced FRQs are loaded separately.
+METHODS, CONDITIONALS, CSA, HOMEWORK, GAP = (
+    [dict(q, question_kind='concept') for q in bank if _complete_mcq(q)]
+    for bank in (METHODS, CONDITIONALS, CSA, HOMEWORK, GAP)
+)
 QUESTIONS = METHODS + CONDITIONALS + CSA + HOMEWORK + GAP
 BANK_VERSION = METHODS_VERSION + '+' + CONDITIONALS_VERSION + '+' + CSA_VERSION + '+' + HOMEWORK_VERSION + '+' + GAP_VERSION
 
@@ -40,7 +51,7 @@ BANKS = {'methods': METHODS, 'method-calls': METHODS, 'method-returns': METHODS,
 BANKS.update({key: [q for q in CSA if q['ced_topics'][0] in topics] for key, (_, topics) in GROUPS.items()})
 DIFFICULTIES = {'basic': ('基础', {1, 2}), 'advanced': ('巩固', {3}),
                 'exam': ('考试', {4})}
-EXAM_TYPES = {'trace': '代码跟踪', 'write': '编程实现', 'concept': '概念与设计'}
+EXAM_TYPES = {'concept': 'MCQ 选择题', 'write': 'FRQ 编程题'}
 CORE = set().union(*(v[1] for v in CONTENT.values()))
 
 # Legacy identifiers remain readable, but are not separate navigation entries.
@@ -76,6 +87,10 @@ def _load_imported_ap_questions():
         return []
     result = []
     for source in raw.get('questions', []):
+        if source.get('kind') not in ('MCQ', 'FRQ'):
+            continue
+        if source.get('kind') == 'MCQ' and not _complete_mcq(source):
+            continue
         source_topic = source.get('topic_id')
         target_topic = source_topic if source_topic in GROUPS else 'csa-selection'
         objective_id = objective(GROUPS[target_topic][1][0])
@@ -102,7 +117,7 @@ def _load_imported_ap_questions():
             'errors': ['忽略题目中的边界条件。', '只看最终选项，没有检查中间步骤。'],
             'level': int(source.get('level', 2)),
             'minutes': int(source.get('minutes', 2 if source.get('kind') == 'MCQ' else 12)),
-            'question_kind': source.get('question_kind') or ('concept' if source.get('kind') == 'MCQ' else 'write'),
+            'question_kind': ('concept' if source.get('kind') == 'MCQ' else 'write'),
             'ced_topics': [objective_id],
             'ap_unit': str(source.get('unit', '')),
             'ap_topic': source.get('topic_title') or '未命名 Topic',
