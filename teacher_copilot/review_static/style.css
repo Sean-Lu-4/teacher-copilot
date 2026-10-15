@@ -171,3 +171,4 @@ nav .nav-link.active{color:#fff;background:#155eef;border-color:#155eef}
 .question-page{display:block;width:100%;max-width:900px;height:auto;margin:12px auto;background:white;}
 
 .availability-card{padding:18px;margin:20px 0;background:#edf5ff;border:1px solid #b5cbed;border-radius:12px;color:#183455}.availability-card h3{margin:0 0 12px;font-size:21px}.availability-card p{font-size:16px;line-height:1.6;margin:10px 0}.availability-card small{display:block;margin:12px 0;color:#42566e}.availability-warning{color:#8b3b0d;font-weight:600}.availability-card summary{cursor:pointer;font-weight:600}
+`n@media(min-width:851px){.workspace>aside{max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}}
