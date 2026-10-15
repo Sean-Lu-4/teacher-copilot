@@ -531,9 +531,9 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                 name, mime = names[parsed.path]
                 content = (ASSETS / name).read_bytes()
                 if demo and mime == 'text/html':
-                    notice = '<p class="public-notice" role="status">公开试用：练习只保存在当前浏览器，服务重启后可能清空。完成后请及时下载 Word；AI 实时生成暂未开放。</p>'
+                    notice = '<p class="public-notice" role="status">公开试用：练习只保存在当前浏览器，服务重启后可能清空。完成后请及时下载 Word。</p>'
                     content = content.replace(b'<main>', ('<main>' + notice).encode())
-                    content = content.replace('本地题库 / AI 按需生成'.encode(), '公开试用版 · 本地题库'.encode())
+                    content = content.replace('本地题库 / AI 按需生成'.encode(), '公开试用版 · 教师工作台'.encode())
                     content = content.replace('本地题库 · 可筛选组卷'.encode(), '公开试用版 · 可筛选组卷'.encode())
                     content = content.replace('查看全课程题目审核页 →'.encode(), '查看课程范围与题库说明 →'.encode())
                     content = content.replace('有额度时可为旧题生成英文解析。'.encode(), '教师答案支持中英双语导出。'.encode())
