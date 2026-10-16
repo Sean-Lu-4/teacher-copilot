@@ -162,5 +162,42 @@ class TransportTests(unittest.TestCase):
   d=payload();d['questions'][0]['scoring_points']=[dict(criterion='遍历',criterion_en='Traverse',points=1),dict(criterion='返回',points=1)]
   with self.assertRaises(ValueError):ai.decode_generation(d)
 
+class BoundaryReviewTests(unittest.TestCase):
+ def test_corrupted_task_rejected(self):
+  d=payload();d['questions'][0]['task']='Consider the code. ndouble x = 1; Which value is printed?'
+  with self.assertRaisesRegex(ValueError,'换行'):ai.check_language_and_rubric(d)
+ def test_array_sum_requires_overflow_contract(self):
+  d=payload();q=d['questions'][0];q.update(question_kind='write',objectives=['ced_4_5'],code='public int sum(int[] arr) { /* TODO */ }',reference_solution='public int sum(int[] arr) { int total=0; for(int v:arr) total+=v; return total; }',task='Write a method to sum the array.')
+  with self.assertRaisesRegex(ValueError,'溢出'):ai.check_language_and_rubric(d)
+  q['task']='Write a method to sum an array. Its length is between 0 and 100 and element values are between -100 and 100.'
+  q['scoring_points']=[dict(criterion='正确累加',points=1),dict(criterion='返回结果',points=1)]
+  q['rubric']='接受等价正确解法。'
+  ai.check_language_and_rubric(d)
+
+ def test_unrestricted_double_claim_rejected(self):
+  d=payload();q=d['questions'][0];q.update(code='double r = Math.sqrt(Math.abs(x-y));',task='Assume x and y are doubles. Which statement is always true?')
+  with self.assertRaisesRegex(ValueError,'double'):ai.check_language_and_rubric(d)
+  q['task']='Assume x and y are finite doubles between -100 and 100. Which statement is always true?'
+  ai.check_language_and_rubric(d)
+ def test_int_abs_min_boundary_requires_domain(self):
+  d=payload();q=d['questions'][0];q['task']='For any int x, which statement is always true?'
+  with self.assertRaisesRegex(ValueError,'MIN_VALUE'):ai.check_language_and_rubric(d)
+  q['task']='For int x between -10 and 10, which statement is always true?'
+  ai.check_language_and_rubric(d)
+ def test_empty_or_malformed_review_retries_same_questions(self):
+  for malformed in [None,'', '{}']:
+   bad=NS(status='completed',output=[],output_text=malformed,usage=NS(input_tokens=5,output_tokens=7))
+   with patch.dict('os.environ',ENV,clear=True),patch.object(ai,'model_response',side_effect=[response(payload()),bad,response(review())]) as call:
+    rows,meta=ai.generate(SETTINGS,'ai')
+   self.assertEqual([c.kwargs['name'] for c in call.call_args_list],['worksheet','question_review','question_review'])
+   a=json.loads(call.call_args_list[1].kwargs['prompt'])['questions']
+   b=json.loads(call.call_args_list[2].kwargs['prompt'])['questions']
+   self.assertEqual(a,b);self.assertEqual(len(rows),2)
+ def test_repeated_empty_review_never_accepts_draft(self):
+  bad=NS(status='completed',output=[],output_text=None,usage=NS(input_tokens=5,output_tokens=7))
+  with patch.dict('os.environ',ENV,clear=True),patch.object(ai,'model_response',side_effect=[response(payload()),bad,bad]) as call:
+   with self.assertRaisesRegex(ValueError,'仍未通过'):ai.generate(SETTINGS,'ai')
+  self.assertEqual(call.call_count,3)
+
 if __name__=='__main__':unittest.main()
 
