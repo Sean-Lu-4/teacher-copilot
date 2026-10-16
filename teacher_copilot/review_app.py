@@ -248,6 +248,8 @@ class ReviewStore:
                             records+=extra
                             generation['source']='hybrid'
                             generation['notice']=f'保留题库题目，补充 {len(extra)} 道题。'
+                            if generation.get('remaining_minutes'):
+                                generation['notice']+=f"仍缺约 {generation['remaining_minutes']} 分钟，已保留通过检查的题目，可稍后继续补充。"
                         except ValueError as exc:
                             if not records: raise
                             generation=dict(source='local',notice='补题未完成，已保留题库练习。'+str(exc))

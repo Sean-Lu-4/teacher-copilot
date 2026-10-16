@@ -112,7 +112,18 @@ def check_language_and_rubric(data, *, homework=False):
         if 'ced_1_11' in q['objectives'] and not re.search(r'Math\.(?:abs|pow|sqrt|random)\s*\(',q['code']+' '+q['task']+' '+q['reference_solution']):
             raise ValueError('1.11 Math 运算题必须实际考查 Math.abs/pow/sqrt/random 方法，不能只考阶乘或整数除法。')
         from .java_syntax import check_java_syntax
+        if q['question_kind']=='concept':
+            try:
+                check_java_syntax(q['code'])
+            except ValueError as exc:
+                if '组件不可用' in str(exc):raise
+                # Intentional syntax-error questions still require semantic review.
+                if not (re.search(r'compil|syntax error', q['task'], re.I) and
+                        re.search(r'(?:does not|will not|cannot|fails to) compile|compilation (?:error|fails)|syntax error', q['options'][ord(q['answer_key'])-65], re.I)):
+                    raise
         if q['question_kind']=='write':
+            if any(re.search(r'方法签名|复制.*声明|method signature|copy.*declaration', p['criterion'], re.I) for p in q['scoring_points']):
+                raise ValueError('FRQ 不得为已提供的方法签名或声明单独给分；请按算法行为评分。')
             check_java_syntax(q['code'],method_required=True)
             check_java_syntax(q['reference_solution'],method_required=True)
         if re.search(r'[\u4e00-\u9fff]',q['task']) or not re.search(r'[A-Za-z]{3}',q['task']):
@@ -288,7 +299,9 @@ def validate_result(data, settings, excluded, *, replacement=None, supplement_mi
         records.append(create_record(q,VERSION,dict(kind='original',sources=[])))
     covered=set().union(*(set(r['content']['objectives']) for r in records))
     required_count = supplement_count if supplement_count is not None else settings.get('question_count') if settings.get('purpose')=='exam' and not replacement else None
-    if (sum(r['content']['minutes'] for r in records)!=target or not required<=covered or
+    partial_allowed = supplement_minutes is not None and settings.get('purpose')!='exam' and not replacement
+    duration = sum(r['content']['minutes'] for r in records)
+    if ((duration>target if partial_allowed else duration!=target) or (not partial_allowed and not required<=covered) or
             (replacement and len(records)!=1) or (required_count and len(records)!=required_count)):
         raise ValueError('AI 结果未满足时长或考查覆盖要求；未保存，请重新生成。')
     if settings.get('purpose')=='exam':
@@ -345,7 +358,7 @@ def generate(settings, mode, excluded=(), recent=None, *, replacement=None, reco
         'Never provide an unclosed class or a lone class header as reference_solution or code. Use complete Java syntax. For homework MCQ use exactly 1 mark. Each FRQ scoring point is 1 mark. '
         'Do not use placeholders such as See reference solution as the answer. English explanation must match Chinese scoring and answer exactly. '
         'options must contain only option content, without A)/B)/C)/D) prefixes; the application adds labels. '
-        'Use the top-level total_minutes as the budget for NEW questions only, not settings.minutes. Never pad minutes to fit an implausible task. '
+        'Use the top-level total_minutes as the budget for NEW questions only, not settings.minutes. Never pad minutes to fit an implausible task. A homework supplement may use less than the budget; estimate honest times. Use JSON escaped newlines in Java; never literal n separators. Prefer block comments /* TODO */ over line comments in skeletons. '
         'Keep explanations concise, omit unnecessary prose, and return complete JSON. Do not execute code or request tools.')
     totals=dict(input_tokens=0,output_tokens=0)
     unknown=set()
@@ -385,6 +398,17 @@ def generate(settings, mode, excluded=(), recent=None, *, replacement=None, reco
             raise ValueError('AI 返回内容不是有效 JSON。') from None
 
     feedback=''
+    accepted=[]
+    reviews=[]
+    partial_allowed=supplement_minutes is not None and settings.get('purpose')!='exam' and not replacement
+    original_budget=request['total_minutes']
+    covered_so_far=set(covered_objectives)
+    def finish():
+        return accepted,dict(source='ai',model=availability()['model'],
+            **{k:None if k in unknown else v for k,v in totals.items()},
+            content_review={'batches':reviews},attempts=attempt+1,
+            remaining_minutes=original_budget-sum(r['content']['minutes'] for r in accepted),
+            missing_objectives=sorted(wanted-covered_so_far),partial_reason=feedback)
     data=None
     for attempt in range(2):
         try:
@@ -399,21 +423,35 @@ def generate(settings, mode, excluded=(), recent=None, *, replacement=None, reco
                     if isinstance(q,dict):
                         for field in ('code','reference_solution'):
                             if isinstance(q.get(field),str):q[field]=normalize_code_newlines(q[field])
-            result=validate_result(data,settings,list(excluded)+examples,replacement=replacement,
-                supplement_minutes=supplement_minutes,covered_objectives=covered_objectives,
+            result=validate_result(data,settings,list(excluded)+examples+[r['content'] for r in accepted],replacement=replacement,
+                supplement_minutes=request['total_minutes'] if partial_allowed else supplement_minutes,covered_objectives=covered_so_far,
                 supplement_count=supplement_count,supplement_marks=supplement_marks)
             check_language_and_rubric(data,homework=settings.get('purpose')!='exam')
             review=call_json(REVIEW_INSTRUCTIONS,dict(requirements={k:v for k,v in request.items() if k not in {'examples','avoid'}},questions=data['questions']),
                 REVIEW_SCHEMA,'question_review',REVIEW_LIMIT)
             check_review(review,len(result))
             for record in result: record['generation_mode']='ai'
+            if partial_allowed:
+                accepted.extend(result);reviews.append(review)
+                covered_so_far.update(o for r in result for o in r['content']['objectives'])
+                remaining=original_budget-sum(r['content']['minutes'] for r in accepted)
+                if remaining==0:return finish()
+                request['total_minutes']=remaining
+                request['settings']=dict(settings,minutes=remaining)
+                request['required_objectives']=sorted(wanted-covered_so_far)
+                request['avoid'].extend({k:r['content'][k] for k in ('code','task')} for r in result)
+                feedback='';data=None
+                continue
             return result,dict(source='ai',model=availability()['model'],
                 **{k:None if k in unknown else v for k,v in totals.items()},
                 content_review=review,attempts=attempt+1)
         except RuntimeError as exc:
+            if accepted:
+                feedback=str(exc);return finish()
             raise ValueError(str(exc)) from None
         except ValueError as exc:
             feedback=str(exc)
+    if accepted:return finish()
     raise ValueError('补题经过一次修正后仍未通过检查，未加入练习。'+feedback)
 
 

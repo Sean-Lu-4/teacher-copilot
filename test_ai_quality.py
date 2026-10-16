@@ -85,5 +85,45 @@ class QualityTests(unittest.TestCase):
   with self.assertRaisesRegex(ValueError,'Math'):ai.check_language_and_rubric(d)
   d=payload();d['questions'][0]['explanation_en']='The absolute value is positive.'
   with self.assertRaises(ValueError):ai.check_language_and_rubric(d)
+class SupplementRegressionTests(unittest.TestCase):
+ def single(self,index=0,minutes=2):
+  q=payload()['questions'][index];q['minutes']=minutes
+  return {'questions':[q]}
+ def approval(self):
+  return {'reviews':[review()['reviews'][0]]}
+ def test_mcq_broken_code_cannot_pass(self):
+  d=self.single();d['questions'][0]['code']='class X { void f(){ // comment swallows closing braces }} Math.abs(-3);'
+  with self.assertRaises(ValueError):ai.check_language_and_rubric(d)
+ def test_intentional_compile_error_requires_explicit_task_and_key(self):
+  d=self.single();q=d['questions'][0];q.update(code='int n = Math.abs( ;',task='Which statement about compilation is correct?')
+  with self.assertRaises(ValueError):ai.check_language_and_rubric(d)
+  q['options'][1]='The code compiles.'
+  with self.assertRaises(ValueError):ai.check_language_and_rubric(d)
+  q['options'][1]='The code does not compile.'
+  ai.check_language_and_rubric(d)
+ def test_frq_supplied_signature_not_scored(self):
+  d=self.single();q=d['questions'][0];q.update(question_kind='write',scoring_points=[dict(criterion='方法签名正确',points=1)])
+  with self.assertRaisesRegex(ValueError,'签名'):ai.check_language_and_rubric(d)
+ def test_short_valid_batch_kept_then_remaining_gap_requested(self):
+  seq=[response(self.single()),response(self.approval()),response(self.single(1)),response(self.approval())]
+  with patch.dict('os.environ',ENV,clear=True),patch.object(ai,'model_response',side_effect=seq) as call:
+   rows,meta=ai.generate(SETTINGS,'ai',supplement_minutes=4)
+  self.assertEqual(len(rows),2);self.assertEqual(meta['remaining_minutes'],0)
+  req=json.loads(call.call_args_list[2].kwargs['prompt'])
+  self.assertEqual(req['total_minutes'],2);self.assertEqual(req['settings']['minutes'],2)
+  self.assertTrue(any('17' in x['code'] for x in req['avoid']))
+ def test_later_service_failure_preserves_accepted_question(self):
+  with patch.dict('os.environ',ENV,clear=True),patch.object(ai,'model_response',side_effect=[response(self.single()),response(self.approval()),RuntimeError('private')]) as call:
+   rows,meta=ai.generate(SETTINGS,'ai',supplement_minutes=4)
+  self.assertEqual(len(rows),1);self.assertEqual(meta['remaining_minutes'],2)
+  self.assertEqual(call.call_count,3);self.assertNotIn('private',meta['partial_reason'])
+ def test_duplicate_second_batch_preserves_first_only(self):
+  seq=[response(self.single()),response(self.approval()),response(self.single())]
+  with patch.dict('os.environ',ENV,clear=True),patch.object(ai,'model_response',side_effect=seq):
+   rows,meta=ai.generate(SETTINGS,'ai',supplement_minutes=4)
+  self.assertEqual(len(rows),1);self.assertEqual(meta['remaining_minutes'],2)
+ def test_non_supplement_duration_stays_exact(self):
+  with self.assertRaises(ValueError):ai.validate_result(self.single(),SETTINGS,[])
+
 if __name__=='__main__':unittest.main()
 
