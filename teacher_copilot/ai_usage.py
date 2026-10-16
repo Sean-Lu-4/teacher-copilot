@@ -71,6 +71,6 @@ def call(root, request_id, operation, model, reserve, callback, details=None):
         atomic_json(path,row)
         return result
     except Exception:
-        row.update(status='failed',error='请求失败，未自动重试。请查看页面提示；未知用量仍预留额度。')
+        row.update(status='failed',error='请求未完成。请查看页面提示；生成最多修正一次，未知用量仍预留额度。')
         atomic_json(path,row)
         raise

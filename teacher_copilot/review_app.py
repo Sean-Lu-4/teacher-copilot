@@ -155,7 +155,7 @@ class ReviewStore:
         if not ai_questions.availability()['ready']:
             raise ValueError('实时生成未启用，请使用本地题库。')
         return ai_usage.call(self.root,request_id,'replace' if kwargs.get('replacement') else 'generate',
-            ai_questions.availability()['model'],ai_questions.output_limit(settings,kwargs.get('replacement')),
+            ai_questions.availability()['model'],ai_questions.request_output_limit(settings,kwargs.get('replacement')),
             generate,dict(settings=settings,run=current))
 
     def ai_usage(self):

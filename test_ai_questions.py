@@ -23,8 +23,9 @@ def payload():
         row={key:deepcopy(q.get(key,'')) for key in ai.PROPERTIES}
         n=17+len(rows)
         row.update(question_kind='concept',code=f'int result = Math.abs(-{n});',task='Which value is stored in result?',
-                   answer=str(n),options=[str(-n),str(n),'0',str(n*2)],answer_key='B',distractors=['Wrong sign.','Not zero.','Not doubled.'],
-                   marks=1,scoring_points=[dict(criterion='Select B',points=1)],minutes=5)
+                   answer=f'绝对值为 {n}。',options=[str(-n),str(n),'0',str(n*2)],answer_key='B',distractors=['Wrong sign.','Not zero.','Not doubled.'],
+                   marks=1,scoring_points=[dict(criterion='选择 B 得分，其他选项不得分',points=1)],minutes=5,
+                   reasoning=['绝对值非负。'],errors=['误保留负号。'],intervention='复习绝对值。',explanation_en='B. Absolute value is nonnegative. Award 1 point only for B.')
         rows.append(row)
     return dict(questions=rows)
 
@@ -37,6 +38,9 @@ class FakeClient:
     def __exit__(self,*args):pass
     def create(self,**kwargs):
         self.calls.append((self.options,kwargs))
+        if kwargs.get('text',{}).get('format',{}).get('name')=='question_review':
+            data=json.loads(kwargs['input'])
+            return NS(status='completed',output=[],output_text=json.dumps(dict(reviews=[dict(index=i,approved=True,solution_check='Absolute value matches B.',issues=[]) for i in range(len(data['questions']))])),usage=NS(input_tokens=10,output_tokens=20))
         return self.response
 
 
@@ -60,13 +64,13 @@ class AITests(unittest.TestCase):
     def test_structured_request_bounded_and_pending(self):
         with patch.dict('os.environ',ENV,clear=True):
             records,meta=ai.generate(SETTINGS,'ai',client_factory=FakeClient)
-        self.assertEqual(meta['output_tokens'],200)
+        self.assertEqual(meta['output_tokens'],220)
         self.assertTrue(all(r['validation']['technical_review']=='pending' for r in records))
         options,request=FakeClient.calls[0]
         self.assertEqual(options['max_retries'],0)
-        self.assertEqual(options['timeout'],45)
+        self.assertEqual(options['timeout'],90)
         self.assertFalse(request['store'])
-        self.assertEqual(request['max_output_tokens'],6000)
+        self.assertEqual(request['max_output_tokens'],12000)
         self.assertTrue(request['text']['format']['strict'])
 
     def test_reject_bad_content(self):
@@ -111,6 +115,8 @@ class AITests(unittest.TestCase):
         """Failed paid attempts must remain counted across process restarts."""
         with tempfile.TemporaryDirectory() as root,patch.dict('os.environ',ENV,clear=True):
             store=ReviewStore(root)
+            from teacher_copilot.ai_usage import set_limits
+            set_limits(store.root,dict(daily_requests=10,daily_output_tokens=1000000))
             request=dict(action='generate',source='ai',settings=SETTINGS,request_id=str(uuid.uuid4()))
             with patch.object(ai,'generate',side_effect=ValueError('failed')) as call:
                 with self.assertRaises(ValueError):store.mutate(request)
@@ -140,7 +146,7 @@ class AITests(unittest.TestCase):
             state=store.mutate(dict(action='generate',source='ai',settings=SETTINGS,
                                     request_id=str(uuid.uuid4())))
             self.assertEqual(state['source'],'ai')
-            self.assertEqual(len(FakeClient.calls),1)
+            self.assertEqual(len(FakeClient.calls),2)
             self.assertEqual(state['summary']['minutes'],10)
             state=store.mutate(dict(action='revise',run=state['run'],version=state['version'],
                 id=state['records'][0]['content']['id'],actor='Teacher',reason='Acceptance',

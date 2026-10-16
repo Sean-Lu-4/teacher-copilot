@@ -10,9 +10,9 @@ from teacher_copilot.questions import create_record
 S=dict(topic='csa-math',contents=['ced_1_11'],difficulty='any',minutes=20,purpose='homework',question_types=['concept'])
 def generated(minutes=7):
     return dict(title='Math result',code='int result = Math.abs(-17);',task='Which value is stored in result?',
-        answer='17',rubric='正确选择 B 得 1 分；其他答案得 0 分。',intervention='Review absolute value.',reference_solution='',prerequisites='Math.abs',
-        explanation_en='B. The absolute value of -17 is 17. Award 1 point for B.',objectives=['ced_1_11'],reasoning=['Absolute value is nonnegative.'],errors=['Confusing sign.'],
-        scoring_points=[dict(criterion='Select B',points=1)],level=2,minutes=minutes,question_kind='concept',marks=1,options=['-17','17','0','34'],answer_key='B',distractors=['Sign is incorrect.','Not zero.','Not doubled.'])
+        answer='绝对值为 17。',rubric='正确选择 B 得 1 分；其他答案得 0 分。',intervention='复习绝对值。',reference_solution='',prerequisites='Math.abs',
+        explanation_en='B. The absolute value of -17 is 17. Award 1 point for B.',objectives=['ced_1_11'],reasoning=['绝对值非负。'],errors=['混淆正负号。'],
+        scoring_points=[dict(criterion='选择 B 得分，其他选项不得分',points=1)],level=2,minutes=minutes,question_kind='concept',marks=1,options=['-17','17','0','34'],answer_key='B',distractors=['Sign is incorrect.','Not zero.','Not doubled.'])
 class FlowTests(unittest.TestCase):
     def test_availability_matches_actual_and_empty_type(self):
         d=availability_preview(S);_,r=assemble(S)
@@ -69,7 +69,10 @@ class FlowTests(unittest.TestCase):
     def test_exam_hybrid_keeps_bank_and_fills_exact_count_marks(self):
         from types import SimpleNamespace
         def response(factory,**kw):
-            req=json.loads(kw['prompt']);count=req['question_count'];minutes=req['total_minutes'];marks=req['total_marks'];rows=[]
+            req=json.loads(kw['prompt'])
+            if kw['name']=='question_review':
+                return SimpleNamespace(status='completed',output=[],output_text=json.dumps(dict(reviews=[dict(index=i,approved=True,solution_check='Test-only review fixture.',issues=[]) for i in range(len(req['questions']))])),usage=SimpleNamespace(input_tokens=1,output_tokens=1))
+            count=req['question_count'];minutes=req['total_minutes'];marks=req['total_marks'];rows=[]
             self.assertEqual(count,4)
             for i in range(count):
                 q=generated(minutes//count+(i<minutes%count));q['code']=f'int result = Math.abs(-{31+i});'
