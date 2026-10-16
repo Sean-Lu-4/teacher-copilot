@@ -125,5 +125,42 @@ class SupplementRegressionTests(unittest.TestCase):
  def test_non_supplement_duration_stays_exact(self):
   with self.assertRaises(ValueError):ai.validate_result(self.single(),SETTINGS,[])
 
+class TransportTests(unittest.TestCase):
+ def test_review_distinguishes_student_starter_from_answer(self):
+  q=dict(question_kind='write',code='/* TODO */',reference_solution='return 1;')
+  row=ai.review_questions([q])[0]
+  self.assertNotIn('code',row);self.assertEqual(row['student_skeleton'],'/* TODO */')
+  self.assertEqual(row['reference_solution'],'return 1;');self.assertIn('code',q)
+
+ def test_schema_requests_lines_and_bilingual_points(self):
+  schema=ai.generation_schema(dict(SETTINGS,question_types=['write']),dict(question_count=1,total_minutes=8,allowed_objectives=['ced_1_11']))
+  item=schema['properties']['questions']['items']
+  self.assertNotIn('code',item['properties']);self.assertIn('code_lines',item['required'])
+  self.assertIn('criterion_en',item['properties']['scoring_points']['items']['required'])
+ def test_lines_preserve_identifiers_and_literal_escapes(self):
+  d=payload();q=d['questions'][0];q.pop('code');q['code_lines']=['int n = 2;',r'String s = "\n";', 'int result = Math.abs(-n);']
+  out=ai.decode_generation(d)['questions'][0]
+  self.assertEqual(out['code'], '\n'.join(q['code_lines']))
+  self.assertIn('Scoring: Award 1 point(s) for selecting B',out['explanation_en'])
+ def test_ambiguous_or_multiline_transport_rejected(self):
+  for lines in [['int n=1;\nint m=2;'], 'int n=1;']:
+   d=payload();d['questions'][0].pop('code');d['questions'][0]['code_lines']=lines
+   with self.assertRaises(ValueError):ai.decode_generation(d)
+  d=payload();d['questions'][0]['code_lines']=['int n=1;']
+  with self.assertRaises(ValueError):ai.decode_generation(d)
+ def test_frq_english_scoring_matches_points_and_equivalence(self):
+  d=payload();q=d['questions'][0];q['question_kind']='write'
+  q['scoring_points']=[dict(criterion='遍历数组',criterion_en='Traverse every array element',points=1),dict(criterion='返回总和',criterion_en='Return the sum',points=1)]
+  out=ai.decode_generation(d)['questions'][0]
+  self.assertIn('1 point(s): Return the sum',out['explanation_en'])
+  self.assertIn('Equivalent correct solutions',out['explanation_en'])
+  self.assertNotIn('criterion_en',out['scoring_points'][0])
+ def test_missing_english_explanation_not_hidden_by_scoring(self):
+  d=payload();d['questions'][0]['explanation_en']=''
+  with self.assertRaises(ValueError):ai.decode_generation(d)
+ def test_partial_english_rubric_rejected(self):
+  d=payload();d['questions'][0]['scoring_points']=[dict(criterion='遍历',criterion_en='Traverse',points=1),dict(criterion='返回',points=1)]
+  with self.assertRaises(ValueError):ai.decode_generation(d)
+
 if __name__=='__main__':unittest.main()
 
