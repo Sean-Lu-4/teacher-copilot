@@ -1,0 +1,49 @@
+/* Shared visual system for all CSA Studio screens. Loaded after page layouts. */
+:root{--ink:#193647;--muted:#506775;--line:#d9e3e7;--green:#087e80;--success:#087e80;font-family:system-ui,"Segoe UI","Microsoft YaHei",sans-serif;font-size:16px;line-height:1.65;color:var(--ink);background:#f4f7f8}
+body{background:#f4f7f8;color:var(--ink);font:16px/1.65 system-ui,"Segoe UI","Microsoft YaHei",sans-serif}
+header{position:relative;background:#fff;border-bottom:1px solid var(--line);padding:18px max(24px,calc((100vw - 1360px)/2));gap:24px;box-shadow:none}
+.brand,.logo{font-size:26px;font-weight:750;color:var(--ink);line-height:1.3;text-decoration:none;white-space:nowrap}
+.brand span,.logo small{display:block;margin:5px 0 0;font-size:12px;letter-spacing:1px;font-weight:500;color:var(--muted)}
+.logo b{color:var(--green)}
+header nav{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+header nav a,header nav .nav-link{font-size:16px;line-height:1.5;font-weight:650;color:var(--ink);background:transparent;border:1px solid transparent;border-radius:8px;padding:9px 14px;min-height:44px;box-shadow:none;text-decoration:none}
+header nav a:hover{background:#edf5f4;color:#075e61}
+header nav .nav-link.active,header nav a.active,header nav a[aria-current=page]{color:#075e61;background:#e6f3f1;border-color:#c8e3de;box-shadow:none}
+main{max-width:1360px;padding:32px 24px 48px;margin:auto}
+h1,.intro h1,.page-title h1{font-size:clamp(28px,2.7vw,38px);line-height:1.3;letter-spacing:-.6px;margin:8px 0 12px;color:var(--ink)}
+h2{font-size:23px;line-height:1.4}h3{font-size:19px;line-height:1.45}
+p{font-size:16px;line-height:1.7;color:var(--muted);margin:8px 0 16px}
+.hint,.muted,.badge,.history-note,footer{font-size:14px;line-height:1.6;color:var(--muted)}
+.eyebrow,.tag{font-size:12px;color:#087577;letter-spacing:1.5px}
+.intro{padding:0 0 24px;margin-bottom:28px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;box-shadow:none;overflow:visible}
+.intro::after{display:none}.intro p{max-width:900px}.intro-stats{gap:8px;margin:14px 0 0}.intro-stats span,.intro-stats span:last-child{font-size:13px;min-height:28px;background:#edf4f4;color:var(--muted);border:0;padding:4px 10px}
+.workspace{grid-template-columns:minmax(300px,360px) minmax(0,1fr);gap:28px}.bank-layout{grid-template-columns:290px minmax(0,1fr);gap:28px}
+aside,.bank-layout .bank-filters{padding:22px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 4px 16px #19364705}
+.workspace>aside,.bank-layout .bank-filters{position:sticky;top:min(16px,calc(100dvh - var(--sidebar-height,100dvh) - 16px));align-self:start;max-height:none;overflow:visible;overscroll-behavior:auto;scrollbar-gutter:auto}
+.section-title{padding-bottom:16px;margin-bottom:20px;border-bottom:1px solid var(--line)}.section-title .step{display:grid;place-items:center;flex:0 0 28px;height:28px;padding:0;font-size:13px;background:#e6f3f1;color:#087577;box-shadow:none}
+label,legend,.choice-group legend{font-size:15px;font-weight:650;margin-bottom:10px}.choice-group legend small{font-size:12px}.choice-group{margin-bottom:20px}.topic-group{padding-top:18px}
+input,select,textarea,.bank-filters input,.bank-filters select{font:inherit;font-size:16px;line-height:1.45;color:var(--ink);padding:10px 12px;min-height:44px;border:1px solid #bdcdd4;border-radius:8px;background:#fff}
+input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px #087e8015}
+input[type=checkbox],input[type=radio]{min-height:0;accent-color:var(--green)}
+button,.button{font-family:inherit;font-size:15px;line-height:1.5;min-height:44px;padding:10px 15px;border-radius:8px;border-color:#bdcdd4;color:var(--ink);background:#fff;box-shadow:none}
+button:hover,.secondary:hover{background:#edf5f4;border-color:#86b9b3;filter:none}
+.primary,button.primary,#selection-panel .bank-use{background:#087e80;border-color:#087e80;color:#fff;box-shadow:none}
+button.primary:hover,#selection-panel .bank-use:hover{background:#07686a;border-color:#07686a}
+.choice-toggle,.choice-toggle[aria-expanded=true]{font-size:15px;background:#fff;color:var(--ink);border-color:#bdcdd4}.choice-toggle::after{color:var(--green)}
+.choice-options{grid-template-columns:1fr;max-height:none;overflow:visible}.choice-option{font-size:15px;min-height:44px;padding:9px 12px;margin:0}.choice-option:hover{transform:none}.choice-option:has(input:checked){background:#eaf5f2;border-color:#70aba4;color:#075e61;box-shadow:none}
+.choice-group .selected-chips{padding:8px;background:#f4f8f8;border-color:var(--line);gap:6px}.selected-chip{font-size:13px;background:#eaf5f2;color:#075e61;border-color:#c8e3de}.selected-chip button{color:#075e61}
+.selection-help{background:transparent;border:0;padding:0}.availability-card{background:#f1f7f6;border-color:#c8e3de;padding:16px}.availability-card h3{font-size:17px}.availability-card p{font-size:14px}
+#empty{min-height:340px;padding:40px 28px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:none}
+#empty h2{font-size:23px}#empty ol{font-size:15px;line-height:1.9;margin:14px auto}#empty .hint{font-size:14px;max-width:420px;margin:auto}
+.paper-icon{width:64px;height:64px;flex-shrink:0;aspect-ratio:1;border-radius:14px;font-size:30px;color:#087577;background:#e6f3f1;box-shadow:none;margin-bottom:20px}
+#preview,.bank-card,.practice-box,.admin-card{border:1px solid var(--line);border-radius:14px;box-shadow:none;padding:24px}.bank-card:hover{transform:none;box-shadow:none}.bank-card h2,.paper-header h2{font-size:23px}.bank-toolbar{background:#fff;border-color:var(--line);gap:14px;flex-wrap:wrap}.bank-toolbar strong{font-size:15px}
+#selection-panel{background:#edf6f4;border-color:#a8cdc6;box-shadow:none}.bank-pick{background:#edf6f4;border-color:#a8cdc6;color:#075e61}
+.question pre,.bank-card pre,pre,textarea.code{font-family:Consolas,"Cascadia Code",monospace;font-size:15px;line-height:1.7;background:#f4f7f8;color:var(--ink);border-color:var(--line)}
+.answer{background:#f0f8f5;border-color:#c8e3de}.answer summary,.bank-card summary,.teacher-tools summary{color:#086c69;font-size:16px}.answer p,.answer li{font-size:16px;color:#304f57}.english-explanation{background:#f0f8f5;border-color:#087e80;color:var(--ink)}.english-explanation strong{color:#086c69}
+.public-notice{font-size:13px;padding:8px 20px;background:#edf5f3;color:#42655f;border-color:var(--line)}
+.hero{padding:12px 0}.hero h1{font-size:clamp(32px,3.5vw,48px)}.role-grid{margin-top:28px}.role{border-radius:16px;padding:28px;box-shadow:none}.role h2{font-size:28px}.role p{color:#c6e6e8}.teacher p{color:var(--muted)}.stats{gap:14px;margin:22px 0 28px}.stat{padding:18px}.stat strong{font-size:28px}.unit{padding:16px}.unit-grid{gap:12px}.filters{gap:16px}.practice-box{margin-top:24px}
+:focus-visible{outline:3px solid #bd8a35;outline-offset:3px}
+.time span{white-space:nowrap;flex-shrink:0}.time input{min-width:0}.role h2{color:inherit}.teacher-tools{background:#f8faf9;border-color:var(--line)}.qtop .buttons .lock-control{background:#edf5f4;color:#075e61;border-color:#c8e3de}
+@media(max-width:1000px){header{flex-wrap:wrap;padding:16px 24px;gap:16px}.workspace,.bank-layout{grid-template-columns:280px minmax(0,1fr);gap:20px}.qtop{flex-wrap:wrap}.qtop .buttons{justify-content:flex-start}.bank-toolbar .hint{display:none}}
+@media(max-width:850px){header{padding:16px 20px}header nav{width:100%;gap:4px}header nav a,header nav .nav-link{font-size:14px;padding:8px 10px}.brand span{display:block}main{padding:24px 16px 36px}.workspace,.bank-layout{grid-template-columns:1fr;gap:20px}.workspace>aside,.bank-layout .bank-filters{position:static;top:auto;max-height:none;overflow:visible}.intro{padding-bottom:20px}.intro-stats{display:flex}.intro-stats span{justify-content:flex-start}#empty{min-height:260px;padding:28px 20px}#preview,.bank-card,.practice-box{padding:18px}.library-toolbar{flex-wrap:wrap}.role-grid,.features{grid-template-columns:1fr}.stats,.unit-grid{grid-template-columns:1fr 1fr}.filters label{min-width:0;flex-basis:100%}}
+@media print{body{background:#fff}main{padding:0}header,aside,footer{display:none!important}.workspace{display:block}#preview{border:0;padding:0}}

@@ -519,7 +519,7 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                     if not report_path.is_file():
                         return self.send({'error': '尚未生成题库缺口报告。'}, 404)
                     return self.send(report_path.read_bytes(), mime=mime+'; charset=utf-8')
-                names = {'/': ('index.html' if parse_qs(parsed.query).get('run') or parse_qs(parsed.query).get('picked') else 'home.html', 'text/html'), '/teacher': ('index.html','text/html'), '/practice': ('practice.html','text/html'), '/practice.js': ('practice.js','text/javascript'), '/learn.css': ('learn.css','text/css'), '/app.js': ('app.js', 'text/javascript'), '/style.css': ('style.css', 'text/css'),
+                names = {'/': ('index.html' if parse_qs(parsed.query).get('run') or parse_qs(parsed.query).get('picked') else 'home.html', 'text/html'), '/teacher': ('index.html','text/html'), '/practice': ('practice.html','text/html'), '/practice.js': ('practice.js','text/javascript'), '/learn.css': ('learn.css','text/css'), '/studio.css': ('studio.css','text/css'), '/layout.js': ('layout.js','text/javascript'), '/app.js': ('app.js', 'text/javascript'), '/style.css': ('style.css', 'text/css'),
                          '/bank-audit': ('bank-audit.html', 'text/html'),
                          '/bank-audit.css': ('bank-audit.css', 'text/css'),
                          '/bank': ('bank.html', 'text/html'), '/bank.js': ('bank.js', 'text/javascript')}
