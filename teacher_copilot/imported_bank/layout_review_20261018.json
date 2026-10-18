@@ -1,0 +1,402 @@
+[
+  {
+    "id": "FRQ-00a62e501cd4dea8",
+    "document": "a680d0839bd421bb9f7429af8e201fe739a9ef64d7ede2a812e59593479627fc",
+    "clips": [
+      [
+        1,
+        67,
+        762.0
+      ],
+      [
+        2,
+        67,
+        762.0
+      ]
+    ],
+    "images": [
+      "FRQ-00a62e501cd4dea8-S0-p1.png",
+      "FRQ-00a62e501cd4dea8-S0-p2.png"
+    ]
+  },
+  {
+    "id": "FRQ-abac91d826c61ac9",
+    "document": "9620233a7c50f2d8a1d35413e3a9445e5cc786d3671d6335cb084178fb2c9a82",
+    "clips": [
+      [
+        1,
+        67,
+        762.0
+      ],
+      [
+        2,
+        67,
+        762.0
+      ],
+      [
+        3,
+        67,
+        762.0
+      ]
+    ],
+    "images": [
+      "FRQ-abac91d826c61ac9-S0-p1.png",
+      "FRQ-abac91d826c61ac9-S0-p2.png",
+      "FRQ-abac91d826c61ac9-S0-p3.png"
+    ]
+  },
+  {
+    "id": "FRQ-414a8797b527e415-S1",
+    "document": "546df9a2d8dfee0ed1e7997da74c984c10b8f1aa4d982892c773b762fb5d4ad8",
+    "clips": [
+      [
+        1,
+        75.8,
+        762.0
+      ],
+      [
+        2,
+        67,
+        144.1
+      ]
+    ],
+    "images": [
+      "FRQ-414a8797b527e415-S1-p1.png",
+      "FRQ-414a8797b527e415-S1-p2.png"
+    ]
+  },
+  {
+    "id": "FRQ-414a8797b527e415-S2",
+    "document": "546df9a2d8dfee0ed1e7997da74c984c10b8f1aa4d982892c773b762fb5d4ad8",
+    "clips": [
+      [
+        2,
+        144.1,
+        762.0
+      ],
+      [
+        3,
+        67,
+        762.0
+      ]
+    ],
+    "images": [
+      "FRQ-414a8797b527e415-S2-p2.png",
+      "FRQ-414a8797b527e415-S2-p3.png"
+    ]
+  },
+  {
+    "id": "FRQ-8b32f5bc1d3ab57a-S1",
+    "document": "a6aeac2303cb9cc9e5f4adba4b8e76ac6035a282635e5a4d3816fd45a109536a",
+    "clips": [
+      [
+        1,
+        75.8,
+        762.0
+      ],
+      [
+        2,
+        67,
+        762.0
+      ],
+      [
+        3,
+        67,
+        762.0
+      ],
+      [
+        4,
+        67,
+        222.8
+      ]
+    ],
+    "images": [
+      "FRQ-8b32f5bc1d3ab57a-S1-p1.png",
+      "FRQ-8b32f5bc1d3ab57a-S1-p2.png",
+      "FRQ-8b32f5bc1d3ab57a-S1-p3.png",
+      "FRQ-8b32f5bc1d3ab57a-S1-p4.png"
+    ]
+  },
+  {
+    "id": "FRQ-8b32f5bc1d3ab57a-S2",
+    "document": "a6aeac2303cb9cc9e5f4adba4b8e76ac6035a282635e5a4d3816fd45a109536a",
+    "clips": [
+      [
+        4,
+        222.8,
+        762.0
+      ],
+      [
+        5,
+        67,
+        762.0
+      ],
+      [
+        6,
+        67,
+        762.0
+      ]
+    ],
+    "images": [
+      "FRQ-8b32f5bc1d3ab57a-S2-p4.png",
+      "FRQ-8b32f5bc1d3ab57a-S2-p5.png",
+      "FRQ-8b32f5bc1d3ab57a-S2-p6.png"
+    ]
+  },
+  {
+    "id": "FRQ-69fc5af861bea528-S2",
+    "document": "c8a2d3bb6c8d65b04dad0a86743a33064d8ecddf201d3797cf73529212dc5b84",
+    "clips": [
+      [
+        2,
+        588.1,
+        762.0
+      ],
+      [
+        3,
+        67,
+        762.0
+      ],
+      [
+        4,
+        67,
+        762.0
+      ],
+      [
+        5,
+        67,
+        248.3
+      ]
+    ],
+    "images": [
+      "FRQ-69fc5af861bea528-S2-p2.png",
+      "FRQ-69fc5af861bea528-S2-p3.png",
+      "FRQ-69fc5af861bea528-S2-p4.png",
+      "FRQ-69fc5af861bea528-S2-p5.png"
+    ]
+  },
+  {
+    "id": "FRQ-69fc5af861bea528-S4",
+    "document": "c8a2d3bb6c8d65b04dad0a86743a33064d8ecddf201d3797cf73529212dc5b84",
+    "clips": [
+      [
+        5,
+        736.6,
+        762.0
+      ],
+      [
+        6,
+        67,
+        762.0
+      ],
+      [
+        7,
+        67,
+        279.8
+      ]
+    ],
+    "images": [
+      "FRQ-69fc5af861bea528-S4-p5.png",
+      "FRQ-69fc5af861bea528-S4-p6.png",
+      "FRQ-69fc5af861bea528-S4-p7.png"
+    ]
+  },
+  {
+    "id": "FRQ-69fc5af861bea528-S7",
+    "document": "c8a2d3bb6c8d65b04dad0a86743a33064d8ecddf201d3797cf73529212dc5b84",
+    "clips": [
+      [
+        11,
+        156.1,
+        762.0
+      ],
+      [
+        12,
+        67,
+        187.6
+      ]
+    ],
+    "images": [
+      "FRQ-69fc5af861bea528-S7-p11.png",
+      "FRQ-69fc5af861bea528-S7-p12.png"
+    ]
+  },
+  {
+    "id": "FRQ-69fc5af861bea528-S8",
+    "document": "c8a2d3bb6c8d65b04dad0a86743a33064d8ecddf201d3797cf73529212dc5b84",
+    "clips": [
+      [
+        12,
+        187.6,
+        762.0
+      ],
+      [
+        13,
+        67,
+        366.1
+      ]
+    ],
+    "images": [
+      "FRQ-69fc5af861bea528-S8-p12.png",
+      "FRQ-69fc5af861bea528-S8-p13.png"
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S1",
+    "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+    "clips": [
+      [
+        1,
+        74.3,
+        762.0
+      ],
+      [
+        2,
+        67,
+        635.3
+      ]
+    ],
+    "images": [
+      "FRQ-906422c04f2fa6d6-S1-p1.png",
+      "FRQ-906422c04f2fa6d6-S1-p2.png"
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S3",
+    "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+    "clips": [
+      [
+        3,
+        718.6,
+        762.0
+      ],
+      [
+        4,
+        67,
+        762.0
+      ],
+      [
+        5,
+        67,
+        442.6
+      ]
+    ],
+    "images": [
+      "FRQ-906422c04f2fa6d6-S3-p3.png",
+      "FRQ-906422c04f2fa6d6-S3-p4.png",
+      "FRQ-906422c04f2fa6d6-S3-p5.png"
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S4",
+    "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+    "clips": [
+      [
+        5,
+        442.6,
+        762.0
+      ],
+      [
+        6,
+        67,
+        620.3
+      ]
+    ],
+    "images": [
+      "FRQ-906422c04f2fa6d6-S4-p5.png",
+      "FRQ-906422c04f2fa6d6-S4-p6.png"
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S5",
+    "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+    "clips": [
+      [
+        6,
+        620.3,
+        762.0
+      ],
+      [
+        7,
+        67,
+        762.0
+      ],
+      [
+        8,
+        67,
+        260.3
+      ]
+    ],
+    "images": [
+      "FRQ-906422c04f2fa6d6-S5-p6.png",
+      "FRQ-906422c04f2fa6d6-S5-p7.png",
+      "FRQ-906422c04f2fa6d6-S5-p8.png"
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S6",
+    "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+    "clips": [
+      [
+        8,
+        260.3,
+        762.0
+      ],
+      [
+        9,
+        67,
+        421.6
+      ]
+    ],
+    "images": [
+      "FRQ-906422c04f2fa6d6-S6-p8.png",
+      "FRQ-906422c04f2fa6d6-S6-p9.png"
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S9",
+    "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+    "clips": [
+      [
+        12,
+        636.8,
+        762.0
+      ],
+      [
+        13,
+        67,
+        762.0
+      ],
+      [
+        14,
+        67,
+        288.1
+      ]
+    ],
+    "images": [
+      "FRQ-906422c04f2fa6d6-S9-p12.png",
+      "FRQ-906422c04f2fa6d6-S9-p13.png",
+      "FRQ-906422c04f2fa6d6-S9-p14.png"
+    ]
+  },
+  {
+    "id": "FRQ-906422c04f2fa6d6-S10",
+    "document": "20c74d610d36047e3b463e4fe080cd04ee9494ac64e126054650e18473f9eea1",
+    "clips": [
+      [
+        14,
+        288.1,
+        762.0
+      ],
+      [
+        15,
+        67,
+        762.0
+      ]
+    ],
+    "images": [
+      "FRQ-906422c04f2fa6d6-S10-p14.png",
+      "FRQ-906422c04f2fa6d6-S10-p15.png"
+    ]
+  }
+]

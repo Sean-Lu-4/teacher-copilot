@@ -24,8 +24,10 @@ function render(){
  const q=current,r=record(q),mcq=q.question_kind==='concept';
  box.append(node('p',`${units(q).map(u=>'Unit '+u).join(' / ')} · ${mcq?'MCQ':'FRQ'} · 预计 ${q.minutes} 分钟`,'muted'),node('h2',q.title));
  if(q.code&&!q.code.startsWith('// AP source question'))box.append(node('pre',q.code));
- box.append(node('div',q.task,'task'));
- for(const file of q.question_images||[]){const img=node('img');img.src='/source-image/'+encodeURIComponent(file);img.alt='题目图示';img.className='question-image';box.append(img);}
+ if(q.question_images?.length){
+  for(const file of q.question_images){const link=node('a');link.href='/source-image/'+encodeURIComponent(file);link.target='_blank';link.rel='noopener';link.title='打开原题大图';const img=node('img');img.src=link.href;img.alt=q.title+' 原题（含表格和图示）';img.className='question-image';link.append(img);box.append(link);}
+  const transcript=node('details');transcript.append(node('summary','题目文字'),node('div',q.task,'task'));box.append(transcript);
+ }else box.append(node('div',q.task,'task'));
  if(mcq){const group=node('fieldset');group.append(node('legend','选择一个答案'));for(const [key,text] of Object.entries(q.options)){const label=node('label',undefined,'option'),input=node('input');input.type='radio';input.name='choice';input.value=key;input.disabled=revealed;label.append(input,node('span',`${key}. ${text}`));group.append(label);}box.append(group);}
  else{const label=node('label','你的 Java 代码');label.htmlFor='draft';const area=node('textarea');area.id='draft';area.spellcheck=false;area.value=r.draft||'';area.placeholder='在这里写下你的实现…';area.oninput=()=>{progress[q.id]={...record(q),draft:area.value};save();};box.append(label,area);}
  $('actions').append(button(mcq?'提交答案':'查看参考答案',()=>{

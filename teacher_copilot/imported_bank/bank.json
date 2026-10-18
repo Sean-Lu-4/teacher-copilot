@@ -3451,7 +3451,12 @@
         ],
         "rationale": "构造三个布尔判定；首尾颜色需要比较字符串内容。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-00a62e501cd4dea8-S0-p1.png",
+        "FRQ-00a62e501cd4dea8-S0-p2.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-abac91d826c61ac9",
@@ -3514,7 +3519,13 @@
         ],
         "rationale": "补齐定宽字符串、查找最长前缀及逐位统计数字；没有 Math 类方法要求，移除误标。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-abac91d826c61ac9-S0-p1.png",
+        "FRQ-abac91d826c61ac9-S0-p2.png",
+        "FRQ-abac91d826c61ac9-S0-p3.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "MCQ-827f67188358b98a",
@@ -6124,7 +6135,12 @@
         ],
         "rationale": "从调用示例自行写完整 Car 类，包括方法签名与实例字段访问权限。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-414a8797b527e415-S1-p1.png",
+        "FRQ-414a8797b527e415-S1-p2.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-414a8797b527e415-S2",
@@ -6188,7 +6204,12 @@
         ],
         "rationale": "自行写完整 TrashCan 类，构造器、公开方法与私有状态。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-414a8797b527e415-S2-p2.png",
+        "FRQ-414a8797b527e415-S2-p3.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "MCQ-be857962aefd2cac",
@@ -8286,7 +8307,14 @@
         ],
         "rationale": "搜索指定行之后的二维座位，需遍历行列并移动、清空乘客引用。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-8b32f5bc1d3ab57a-S1-p1.png",
+        "FRQ-8b32f5bc1d3ab57a-S1-p2.png",
+        "FRQ-8b32f5bc1d3ab57a-S1-p3.png",
+        "FRQ-8b32f5bc1d3ab57a-S1-p4.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-8b32f5bc1d3ab57a-S2",
@@ -8355,7 +8383,13 @@
         ],
         "rationale": "按 NE/NW/SE/SW 字符串内容选择方向，访问网格坐标直至越界。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-8b32f5bc1d3ab57a-S2-p4.png",
+        "FRQ-8b32f5bc1d3ab57a-S2-p5.png",
+        "FRQ-8b32f5bc1d3ab57a-S2-p6.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "MCQ-2e245e45745c0710",
@@ -17763,7 +17797,14 @@
         ],
         "rationale": "反复调用 getNextWord 直至 null，并提取每个单词的首字母。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-69fc5af861bea528-S2-p2.png",
+        "FRQ-69fc5af861bea528-S2-p3.png",
+        "FRQ-69fc5af861bea528-S2-p4.png",
+        "FRQ-69fc5af861bea528-S2-p5.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-69fc5af861bea528-S3",
@@ -17879,7 +17920,13 @@
         ],
         "rationale": "按列宽补点，并逐个检查字符串前缀。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-69fc5af861bea528-S4-p5.png",
+        "FRQ-69fc5af861bea528-S4-p6.png",
+        "FRQ-69fc5af861bea528-S4-p7.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-69fc5af861bea528-S5",
@@ -18067,7 +18114,12 @@
         ],
         "rationale": "生成颜色、长度和首尾相同的布尔条件，并按结果输出。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-69fc5af861bea528-S7-p11.png",
+        "FRQ-69fc5af861bea528-S7-p12.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-69fc5af861bea528-S8",
@@ -18127,7 +18179,12 @@
         ],
         "rationale": "countRepeat 处理不重叠子串；设计可调整输入长度上限的接口改动。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-69fc5af861bea528-S8-p12.png",
+        "FRQ-69fc5af861bea528-S8-p13.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-69fc5af861bea528-S9",
@@ -26494,7 +26551,12 @@
         ],
         "rationale": "完整 Sign 类；按宽度切分字符串并拼接分号，设计方法签名和字段。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-906422c04f2fa6d6-S1-p1.png",
+        "FRQ-906422c04f2fa6d6-S1-p2.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-906422c04f2fa6d6-S3",
@@ -26560,7 +26622,13 @@
         ],
         "rationale": "完整 CubePair 类；两个构造器创建并保存 Cube 对象，再调用 roll。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-906422c04f2fa6d6-S3-p3.png",
+        "FRQ-906422c04f2fa6d6-S3-p4.png",
+        "FRQ-906422c04f2fa6d6-S3-p5.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-906422c04f2fa6d6-S4",
@@ -26624,7 +26692,12 @@
         ],
         "rationale": "完整 CupcakeMachine 类；根据库存决定是否接单并更新状态。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-906422c04f2fa6d6-S4-p5.png",
+        "FRQ-906422c04f2fa6d6-S4-p6.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-906422c04f2fa6d6-S5",
@@ -26685,7 +26758,13 @@
         ],
         "rationale": "完整 LapTracker 类；设计公开操作和私有计数状态，不把取模重置强行标成循环。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-906422c04f2fa6d6-S5-p6.png",
+        "FRQ-906422c04f2fa6d6-S5-p7.png",
+        "FRQ-906422c04f2fa6d6-S5-p8.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-906422c04f2fa6d6-S6",
@@ -26749,7 +26828,12 @@
         ],
         "rationale": "完整 TrashCan 类；按容量边界更新状态，补齐类访问权限考点。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-906422c04f2fa6d6-S6-p8.png",
+        "FRQ-906422c04f2fa6d6-S6-p9.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-906422c04f2fa6d6-S7",
@@ -26942,7 +27026,13 @@
         ],
         "rationale": "完整 Scoreboard 类；根据得分更新队伍状态，拼接比分字符串。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-906422c04f2fa6d6-S9-p12.png",
+        "FRQ-906422c04f2fa6d6-S9-p13.png",
+        "FRQ-906422c04f2fa6d6-S9-p14.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-906422c04f2fa6d6-S10",
@@ -27006,7 +27096,12 @@
         ],
         "rationale": "完整 AdditionPattern 类；prev 需要处理不能退回起点之前的边界。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-906422c04f2fa6d6-S10-p14.png",
+        "FRQ-906422c04f2fa6d6-S10-p15.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "MCQ-0a7ecc7a51a39f09",
