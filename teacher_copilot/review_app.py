@@ -519,7 +519,7 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                     if not report_path.is_file():
                         return self.send({'error': '尚未生成题库缺口报告。'}, 404)
                     return self.send(report_path.read_bytes(), mime=mime+'; charset=utf-8')
-                names = {'/': ('index.html', 'text/html'), '/app.js': ('app.js', 'text/javascript'), '/style.css': ('style.css', 'text/css'),
+                names = {'/': ('index.html' if parse_qs(parsed.query).get('run') or parse_qs(parsed.query).get('picked') else 'home.html', 'text/html'), '/teacher': ('index.html','text/html'), '/practice': ('practice.html','text/html'), '/practice.js': ('practice.js','text/javascript'), '/learn.css': ('learn.css','text/css'), '/app.js': ('app.js', 'text/javascript'), '/style.css': ('style.css', 'text/css'),
                          '/bank-audit': ('bank-audit.html', 'text/html'),
                          '/bank-audit.css': ('bank-audit.css', 'text/css'),
                          '/bank': ('bank.html', 'text/html'), '/bank.js': ('bank.js', 'text/javascript')}
@@ -532,8 +532,8 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                     return self.send({'error': '页面不存在。'}, 404)
                 name, mime = names[parsed.path]
                 content = (ASSETS / name).read_bytes()
-                if demo and mime == 'text/html':
-                    notice = '<p class="public-notice" role="status">公开试用：练习只保存在当前浏览器，服务重启后可能清空。完成后请及时下载 Word。</p>'
+                if demo and name in {'index.html','library.html'}:
+                    notice = '<p class="public-notice" role="status">完成组卷后请下载保存，试用期间在线练习记录可能被清理。</p>'
                     content = content.replace(b'<main>', ('<main>' + notice).encode())
                     content = content.replace('本地题库 / AI 按需生成'.encode(), '公开试用版 · 教师工作台'.encode())
                     content = content.replace('本地题库 · 可筛选组卷'.encode(), '公开试用版 · 可筛选组卷'.encode())
