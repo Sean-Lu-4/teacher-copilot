@@ -1,0 +1,283 @@
+{
+  "AP-FRQ764c3eaaeb638f9fS2": {
+    "class_name": "ItemInventory",
+    "fields": "ArrayList<ItemInfo> inventory;",
+    "cases": [
+      {
+        "label": "包含区间两端，只计算可售商品",
+        "setup": "ItemInventory x=new ItemInventory();x.inventory=new ArrayList<>(List.of(new ItemInfo(10,true),new ItemInfo(20,true),new ItemInfo(15,false),new ItemInfo(100,true)));",
+        "condition": "x.averageWithinRange(10,20)==15 && x.inventory.size()==4"
+      },
+      {
+        "label": "单个商品与相等边界",
+        "setup": "ItemInventory x=new ItemInventory();x.inventory=new ArrayList<>(List.of(new ItemInfo(20,true)));",
+        "condition": "x.averageWithinRange(20,20)==20"
+      },
+      {
+        "label": "保留小数平均值",
+        "setup": "ItemInventory x=new ItemInventory();x.inventory=new ArrayList<>(List.of(new ItemInfo(1,true),new ItemInfo(2,true)));",
+        "condition": "x.averageWithinRange(1,2)==1.5"
+      }
+    ],
+    "reference_key": "2"
+  },
+  "AP-FRQ764c3eaaeb638f9fS4": {
+    "class_name": "PlayerAnalysis",
+    "fields": "ArrayList<Player> playerList;",
+    "cases": [
+      {
+        "label": "选择差值最小的玩家",
+        "setup": "PlayerAnalysis x=new PlayerAnalysis();x.playerList=new ArrayList<>(List.of(new Player(\"A\",10),new Player(\"B\",20)));",
+        "condition": "x.playerWithClosestScore(19).equals(\"B\")"
+      },
+      {
+        "label": "并列最近时接受任一玩家",
+        "setup": "PlayerAnalysis x=new PlayerAnalysis();x.playerList=new ArrayList<>(List.of(new Player(\"A\",10),new Player(\"B\",20)));",
+        "condition": "List.of(\"A\",\"B\").contains(x.playerWithClosestScore(15))"
+      },
+      {
+        "label": "仅有一个玩家",
+        "setup": "PlayerAnalysis x=new PlayerAnalysis();x.playerList=new ArrayList<>(List.of(new Player(\"A\",10)));",
+        "condition": "x.playerWithClosestScore(30).equals(\"A\")"
+      }
+    ],
+    "reference_key": "4"
+  },
+  "AP-FRQ764c3eaaeb638f9fS7": {
+    "class_name": "WordGrid",
+    "fields": "String[][] grid;",
+    "cases": [
+      {
+        "label": "统计所有长度不递减的行",
+        "setup": "WordGrid x=new WordGrid();x.grid=new String[][]{{\"a\",\"b\"},{\"aa\",\"b\"},{\"a\",\"bb\"}};",
+        "condition": "x.countOrderedRows()==2"
+      },
+      {
+        "label": "全部不符合条件",
+        "setup": "WordGrid x=new WordGrid();x.grid=new String[][]{{\"aa\",\"b\"},{\"aaa\",\"bb\"}};",
+        "condition": "x.countOrderedRows()==0"
+      },
+      {
+        "label": "每行只有一个元素",
+        "setup": "WordGrid x=new WordGrid();x.grid=new String[][]{{\"aa\"},{\"b\"}};",
+        "condition": "x.countOrderedRows()==2"
+      }
+    ],
+    "reference_key": "7"
+  },
+  "AP-FRQ764c3eaaeb638f9fS8": {
+    "class_name": "EVDataSet",
+    "fields": "ArrayList<ElectricVehicle> vehicleList;",
+    "cases": [
+      {
+        "label": "阈值判断与重复型号去重",
+        "setup": "EVDataSet x=new EVDataSet();x.vehicleList=new ArrayList<>(List.of(new ElectricVehicle(\"A\",150),new ElectricVehicle(\"A\",160),new ElectricVehicle(\"B\",100),new ElectricVehicle(\"C\",200)));",
+        "condition": "x.getHighRangeVehicles(100).equals(List.of(\"A\",\"C\"))"
+      },
+      {
+        "label": "等于阈值不入选",
+        "setup": "EVDataSet x=new EVDataSet();x.vehicleList=new ArrayList<>(List.of(new ElectricVehicle(\"A\",200)));",
+        "condition": "x.getHighRangeVehicles(200).isEmpty()"
+      }
+    ],
+    "reference_key": "8"
+  },
+  "AP-FRQ764c3eaaeb638f9fS11": {
+    "class_name": "WordChecker",
+    "fields": "ArrayList<String> wordList;",
+    "cases": [
+      {
+        "label": "isWordChain：有效词链",
+        "setup": "WordChecker x=new WordChecker();x.wordList=new ArrayList<>(List.of(\"cat\",\"bobcat\",\"bobcatcat\"));",
+        "condition": "x.isWordChain()"
+      },
+      {
+        "label": "isWordChain：拒绝无效词链",
+        "setup": "WordChecker x=new WordChecker();x.wordList=new ArrayList<>(List.of(\"catch\",\"bobcat\",\"cat\",\"at\"));",
+        "condition": "!x.isWordChain()"
+      },
+      {
+        "label": "createList：前缀、空后缀与原列表不变",
+        "setup": "WordChecker x=new WordChecker();x.wordList=new ArrayList<>(List.of(\"catch\",\"bobcat\",\"cat\",\"at\"));",
+        "condition": "x.createList(\"cat\").equals(List.of(\"ch\",\"\")) && x.wordList.equals(List.of(\"catch\",\"bobcat\",\"cat\",\"at\"))"
+      }
+    ],
+    "reference_key": "11"
+  },
+  "AP-FRQ764c3eaaeb638f9fS12": {
+    "class_name": "BoxOfCandy",
+    "fields": "Candy[][] box;",
+    "cases": [
+      {
+        "label": "移动糖果并清空原位置",
+        "setup": "BoxOfCandy x=new BoxOfCandy();Candy c=new Candy(\"lime\");x.box=new Candy[][]{{null,null},{c,null}};",
+        "condition": "x.moveCandyToFirstRow(0) && x.box[0][0]==c && x.box[1][0]==null"
+      },
+      {
+        "label": "空列与首行已有糖果",
+        "setup": "BoxOfCandy x=new BoxOfCandy();x.box=new Candy[][]{{new Candy(\"lime\"),null},{null,null}};",
+        "condition": "x.moveCandyToFirstRow(0) && !x.moveCandyToFirstRow(1)"
+      },
+      {
+        "label": "按顺序移除指定口味",
+        "setup": "BoxOfCandy x=new BoxOfCandy();Candy low=new Candy(\"lime\");x.box=new Candy[][]{{new Candy(\"lime\"),null},{null,low}};",
+        "condition": "x.removeNextByFlavor(\"lime\")==low && x.box[1][1]==null && x.removeNextByFlavor(\"none\")==null"
+      }
+    ],
+    "reference_key": "12"
+  },
+  "AP-FRQ764c3eaaeb638f9fS13": {
+    "class_name": "TriviaGame",
+    "fields": "TriviaQuestion[] allQuestions; int getMostDifficult(){return Arrays.stream(allQuestions).mapToInt(x->x.getDifficultyLevel()).max().getAsInt();} int getLeastDifficult(){return Arrays.stream(allQuestions).mapToInt(x->x.getDifficultyLevel()).min().getAsInt();}",
+    "cases": [
+      {
+        "label": "难度均值的分级边界",
+        "setup": "TriviaGame x=new TriviaGame();x.allQuestions=new TriviaQuestion[]{new TriviaQuestion(0),new TriviaQuestion(50),new TriviaQuestion(100)};",
+        "condition": "x.getRating().equals(\"Intermediate\") && x.isDifficultyIncreasing()"
+      },
+      {
+        "label": "较高难度与相等难度",
+        "setup": "TriviaGame x=new TriviaGame();x.allQuestions=new TriviaQuestion[]{new TriviaQuestion(80),new TriviaQuestion(80),new TriviaQuestion(80)};",
+        "condition": "x.getRating().equals(\"Expert\") && x.isDifficultyIncreasing()"
+      },
+      {
+        "label": "低难度与非递增序列",
+        "setup": "TriviaGame x=new TriviaGame();x.allQuestions=new TriviaQuestion[]{new TriviaQuestion(20),new TriviaQuestion(10),new TriviaQuestion(5)};",
+        "condition": "x.getRating().equals(\"Beginner\") && !x.isDifficultyIncreasing()"
+      }
+    ],
+    "reference_key": "13"
+  },
+  "AP-FRQ764c3eaaeb638f9fS14": {
+    "class_name": "Payroll",
+    "fields": "int[] itemsSold; double[] wages;",
+    "cases": [
+      {
+        "label": "去除最高最低后的平均阈值",
+        "setup": "Payroll x=new Payroll();x.itemsSold=new int[]{1,2,3,4};x.wages=new double[4];",
+        "condition": "x.computeBonusThreshold()==2.5"
+      },
+      {
+        "label": "基本工资、佣金与奖励",
+        "setup": "Payroll x=new Payroll();x.itemsSold=new int[]{1,2,3,4};x.wages=new double[4];x.computeWages(10,2);",
+        "condition": "x.wages[0]==12 && Math.abs(x.wages[2]-17.6)<0.00001"
+      },
+      {
+        "label": "相同销量",
+        "setup": "Payroll x=new Payroll();x.itemsSold=new int[]{3,3,3};",
+        "condition": "x.computeBonusThreshold()==3"
+      }
+    ],
+    "reference_key": "14"
+  },
+  "AP-FRQ764c3eaaeb638f9fS15": {
+    "class_name": "WeatherData",
+    "fields": "ArrayList<Double> temperatures;",
+    "cases": [
+      {
+        "label": "删除连续越界值，保留边界",
+        "setup": "WeatherData x=new WeatherData();x.temperatures=new ArrayList<>(List.of(1.0,2.0,5.0,6.0,10.0,11.0));x.cleanData(5,10);",
+        "condition": "x.temperatures.equals(List.of(5.0,6.0,10.0))"
+      },
+      {
+        "label": "尾部最长热浪",
+        "setup": "WeatherData x=new WeatherData();x.temperatures=new ArrayList<>(List.of(9.0,9.0,5.0,9.0,9.0,9.0));",
+        "condition": "x.longestHeatWave(5)==3"
+      },
+      {
+        "label": "没有超过阈值的温度",
+        "setup": "WeatherData x=new WeatherData();x.temperatures=new ArrayList<>(List.of(5.0,4.0));",
+        "condition": "x.longestHeatWave(5)==0"
+      }
+    ],
+    "reference_key": "15"
+  },
+  "AP-FRQ764c3eaaeb638f9fS16": {
+    "class_name": "Delimiters",
+    "fields": "String openDel=\"(\";String closeDel=\")\";",
+    "cases": [
+      {
+        "label": "提取分隔符并保持顺序",
+        "setup": "Delimiters x=new Delimiters();",
+        "condition": "x.getDelimitersList(new String[]{\"(\",\"x\",\")\"}).equals(List.of(\"(\",\")\"))"
+      },
+      {
+        "label": "空序列和合法嵌套",
+        "setup": "Delimiters x=new Delimiters();",
+        "condition": "x.isBalanced(new ArrayList<>()) && x.isBalanced(new ArrayList<>(List.of(\"(\",\"(\",\")\",\")\")))"
+      },
+      {
+        "label": "顺序错误与未闭合",
+        "setup": "Delimiters x=new Delimiters();",
+        "condition": "!x.isBalanced(new ArrayList<>(List.of(\")\",\"(\"))) && !x.isBalanced(new ArrayList<>(List.of(\"(\")))"
+      }
+    ],
+    "reference_key": "16"
+  },
+  "AP-FRQ764c3eaaeb638f9fS17": {
+    "class_name": "UserName",
+    "fields": "ArrayList<String> possibleNames; boolean isUsed(String n,String[] a){return Arrays.asList(a).contains(n);}",
+    "cases": [
+      {
+        "label": "构造所有前缀用户名",
+        "setup": "UserName x=new UserName(\"john\",\"smith\");",
+        "condition": "x.possibleNames.equals(List.of(\"smithj\",\"smithjo\",\"smithjoh\",\"smithjohn\"))"
+      },
+      {
+        "label": "删除相邻已使用用户名",
+        "setup": "UserName x=new UserName(\"john\",\"smith\");x.setAvailableUserNames(new String[]{\"smithj\",\"smithjo\",\"smithjohn\"});",
+        "condition": "x.possibleNames.equals(List.of(\"smithjoh\"))"
+      },
+      {
+        "label": "所有用户名已使用",
+        "setup": "UserName x=new UserName(\"a\",\"b\");x.setAvailableUserNames(new String[]{\"ba\"});",
+        "condition": "x.possibleNames.isEmpty()"
+      }
+    ],
+    "reference_key": "17"
+  },
+  "AP-FRQ764c3eaaeb638f9fS18": {
+    "class_name": "GridPath",
+    "fields": "int[][] grid;",
+    "cases": [
+      {
+        "label": "下一位置：普通格与边界",
+        "setup": "GridPath x=new GridPath();x.grid=new int[][]{{1,5,9},{2,4,8},{3,6,7}};",
+        "condition": "x.getNextLoc(0,0).equals(new Location(1,0)) && x.getNextLoc(2,0).equals(new Location(2,1)) && x.getNextLoc(0,2).equals(new Location(1,2))"
+      },
+      {
+        "label": "路径求和包含终点",
+        "setup": "GridPath x=new GridPath();x.grid=new int[][]{{1,5,9},{2,4,8},{3,6,7}};",
+        "condition": "x.sumPath(0,0)==19"
+      },
+      {
+        "label": "从终点出发",
+        "setup": "GridPath x=new GridPath();x.grid=new int[][]{{1,5,9},{2,4,8},{3,6,7}};",
+        "condition": "x.sumPath(2,2)==7"
+      }
+    ],
+    "reference_key": "18"
+  },
+  "AP-FRQ764c3eaaeb638f9fS19": {
+    "class_name": "ExperimentalFarm",
+    "fields": "Plot[][] farmPlots;",
+    "cases": [
+      {
+        "label": "返回指定作物最高产量地块",
+        "setup": "ExperimentalFarm x=new ExperimentalFarm();Plot corn=new Plot(\"corn\",30);x.farmPlots=new Plot[][]{{corn,new Plot(\"pea\",5)},{new Plot(\"corn\",10),new Plot(\"wheat\",8)}};",
+        "condition": "x.getHighestYield(\"corn\")==corn"
+      },
+      {
+        "label": "未找到作物返回 null",
+        "setup": "ExperimentalFarm x=new ExperimentalFarm();x.farmPlots=new Plot[][]{{new Plot(\"pea\",5)}};",
+        "condition": "x.getHighestYield(\"none\")==null"
+      },
+      {
+        "label": "同一列的作物比较",
+        "setup": "ExperimentalFarm x=new ExperimentalFarm();x.farmPlots=new Plot[][]{{new Plot(\"corn\",30),new Plot(\"pea\",5)},{new Plot(\"corn\",10),new Plot(\"wheat\",8)}};",
+        "condition": "x.sameCrop(0) && !x.sameCrop(1)"
+      }
+    ],
+    "reference_key": "19"
+  }
+}

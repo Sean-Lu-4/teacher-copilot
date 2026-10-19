@@ -279,3 +279,14 @@ py verify_java_bank.py --jdk .cache/java/jdk-21.0.12.1+1 --output outputs/bank30
 2026-10-16 本地输出修复：生成接口使用 code_lines/reference_solution_lines 逐行传输 Java，程序以真实换行拼接；不猜测替换代码中的字母 n。MCQ 英文计分由答案键和分值生成；FRQ 每个评分点要求 criterion_en，与中文点数一起组成英文评分说明，仍经独立内容审核。英文答案解释不能为空，不能用自动附加的评分说明冒充解释。复核请求将 FRQ 学生骨架标为 student_skeleton，与 reference_solution 明确区分，避免把待完成代码当成答案。
 
 2026-10-16 本地边界与复核修复：拦截未限定浮点输入的全称断言、未处理最小整数边界的绝对值断言、题干损坏的换行标记，以及未声明溢出约束的典型整数数组累加题。复核返回空正文、无效 JSON 或缺题号时，在原两轮上限内重审同一已验证草稿，不重新生成或自动放行；明确内容不合格时才请求修正题目。以上规则是针对已观察问题的检查，不能替代人工语义验收。PDF 优先与免费模型设置不变；没有部署。
+
+
+## 学生 Java 运行试用（2026-10-19）
+
+- 公开试用模式 `TEACHER_COPILOT_PUBLIC_DEMO=1` 默认连接 Judge0 CE 公共演示接口；不是付费服务，也没有可用性承诺。生产长期使用应配置自己的服务。
+- `CSA_JAVA_RUNNER_URL` 可覆盖服务地址（仅 HTTPS）；显式设置为空可关闭。`CSA_JAVA_LANGUAGE_ID` 默认 91（Java 17）。私有实例用 `CSA_JAVA_RUNNER_KEY`；RapidAPI 用 `CSA_JAVA_RAPIDAPI_KEY`。密钥只放环境变量。
+- 当前 14/43 道导入 FRQ 支持运行：13 道 Unit 4 方法/构造器题有 38 项功能测试；Bead Sequence 题有 4 组功能测试（21 个字符串样例）和 8 个参考评分点。其余题只提供语法检查和原评分指南，不能宣称全题库自动判分。
+- 编辑器接受方法/构造器；Bead Sequence 接受按 A–D 顺序填写的代码片段。系统提供题目声明的字段和辅助类。运行只发送代码与测试包装，不发送网站密钥、身份或浏览器学习记录。
+- 每个网站进程最多 2 个并发运行、UTC 每日最多 100 次提交，重启会重置额度；相同提交缓存 5 分钟。CPU 2 秒、墙钟 5 秒、内存 256 MiB、输出文件 64 KiB，关闭网络。网站本身不执行学生 Java。
+- 编译失败、超时和服务故障不判零分。功能通过率不是 AP 分数；Bead Sequence 的参考得分只对已有测试和代码结构证据给出提示，其他分值保留待复核，不替代教师按完整评分指南判分。功能测试不保证所有输入正确，也不是防作弊考试系统。
+- 本地自动检查：`python -m unittest test_java_grading test_student_check test_student_portal test_generation_flow -q`。已实测正确答案、不同循环写法、边界错误、类型错误及死循环终止。

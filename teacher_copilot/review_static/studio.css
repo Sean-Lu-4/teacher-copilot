@@ -106,3 +106,38 @@ button:disabled{box-shadow:none}
 @media(max-width:700px){.launch-hero{grid-template-columns:1fr;gap:30px;padding:8px 0 24px}.launch-copy h1{font-size:34px;margin:14px 0}.launch-copy>p{font-size:16px;margin-bottom:20px}.launch-actions{gap:10px}.launch-actions .cta{flex:1;padding:12px 14px;font-size:16px}.hero-facts{gap:10px;margin-top:20px;font-size:12px}.hero-facts span+span{padding-left:10px}.path-panel{padding:20px}.learning-routes{grid-template-columns:1fr}.route-card{padding:24px}.study-tabs button{font-size:16px;padding:10px 16px}.notebook-filters{grid-template-columns:1fr;gap:12px;padding:16px}#mistake-list{grid-template-columns:1fr}.mistake-card{padding:20px}.notebook-heading{padding:22px}.notebook-heading h1{font-size:24px}.intro,.page-title{padding-left:16px}.stats{gap:10px}.stat{padding:16px}.stat span{font-size:13px}.stat strong{font-size:27px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 @media(max-width:700px){header nav{flex-wrap:nowrap;overflow-x:auto;gap:2px;min-width:0}header nav a,header nav .nav-link{flex-shrink:0;white-space:nowrap;padding:8px 5px;font-size:14px}}
+/* FRQ evidence stays distinct from automatic correctness claims. */
+.code-feedback { margin-top:24px; padding:24px; border:1px solid #b7d7d1; border-radius:16px; background:#f2faf8; scroll-margin-top:20px; }
+.code-feedback h3 { margin:0 0 14px; }
+.code-feedback h3:not(:first-child) { margin-top:24px; }
+.score-point { padding:20px; margin:16px 0; border:1px solid #d3dfdc; border-radius:12px; background:#fff; }
+.score-point h4 { margin:0 0 10px; font-size:18px; }
+.score-point label { display:block; margin-top:14px; }
+.score-point select,.score-point input { display:block; width:100%; box-sizing:border-box; margin-top:6px; min-height:44px; }
+.score-point pre { white-space:pre-wrap; font-family:inherit; }
+.score-total { font-weight:700; }
+.code-feedback.has-errors { background:#fff7f5;border-color:#e4aaa0; }
+.code-feedback.needs-review { background:#fffaf0;border-color:#ddc68e; }
+.checked-code { overflow-x:auto;background:#fff;border:1px solid #e1d4d1;border-radius:10px;margin:16px 0; }
+.checked-line { display:flex;gap:14px;min-width:max-content;padding:5px 12px;font:15px/1.6 Consolas,monospace; }
+.checked-line code { white-space:pre;font:inherit; }
+.line-number { color:#667784;min-width:2ch;text-align:right;user-select:none; }
+.error-line { background:#ffe2dc;border-left:4px solid #b52e22;padding-left:8px; }
+.line-flag { color:#9a241b;font:600 14px/1.7 system-ui; }
+.scoring-details { margin-top:20px;border-top:1px solid #d9dfe0;padding-top:14px; }
+.scoring-details summary { cursor:pointer;font-weight:600; }
+.option.choice-correct { background:#e5f6ed;border:2px solid #218553; }
+.option.choice-wrong { background:#fff0ed;border:2px solid #c24b3b; }
+.choice-verdict { margin-left:auto;white-space:nowrap;font-size:14px; }
+.choice-correct .choice-verdict { color:#13653b; }
+.choice-wrong .choice-verdict { color:#9e2e22; }
+.answer details { margin:12px 0; }
+@media(max-width:600px){.option{flex-wrap:wrap}.choice-verdict{width:100%;margin-left:0}.code-feedback{padding:16px}.score-point{padding:14px}}
+.test-result { padding:12px 16px;margin:10px 0;border-radius:8px;border-left:4px solid; }
+.test-result p { margin:4px 0 0; }
+.test-pass { background:#e5f6ed;border-color:#218553; }
+.test-fail { background:#fff0ed;border-color:#c24b3b; }
+.test-pending { background:#fff8e7;border-color:#b68b21; }
+.code-feedback.verified-code { background:#f0faf4;border-color:#7db995; }
+.score-evidence { display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 14px;margin:6px 0;border-radius:8px; }
+.score-evidence button { padding:4px 10px;min-height:36px;margin-left:auto; }

@@ -294,6 +294,9 @@ def bank_data():
                          topics=list(dict.fromkeys('csa-selection' if t=='csa-logic' else t for t in question.get('topic_ids',[topic]))),
                          topic_titles=[VISIBLE_TOPICS.get(t,t) for t in dict.fromkeys('csa-selection' if t=='csa-logic' else t for t in question.get('topic_ids',[topic]))],
                          units=question.get('units') or [GROUPS.get(topic,('', ['1.1']))[1][0].split('.')[0]]))
+    from .java_grading import PROFILES
+    for row in rows:
+        row['java_check_supported'] = row['id'] in PROFILES
     return dict(version=BANK_VERSION, count=original_count, total_count=len(rows), questions=rows,
                 ced_topics=[dict(id=code,title=label) for code,label in LABELS.items()],
                 topics=[dict(id=t['id'],title=t['title']) for t in catalog()['topics']],

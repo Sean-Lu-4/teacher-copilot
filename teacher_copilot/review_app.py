@@ -565,6 +565,16 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                 return
             if self.headers.get('X-Review-Token') != token:
                 return self.send({'error': '请从练习页面提交。'}, 403)
+            if self.path == '/api/student/check':
+                try:
+                    size = int(self.headers.get('Content-Length', '0'))
+                    if not 0 < size <= 90000:
+                        raise ValueError('提交内容过大或为空。')
+                    from .student_check import check_submission
+                    payload = json.loads(self.rfile.read(size))
+                    return self.send(check_submission(payload, bank_data()['questions']))
+                except (ValueError, TypeError, KeyError) as exc:
+                    return self.send({'error': str(exc)}, 400)
             if self.path != '/api/action':
                 return self.send({'error': '页面不存在。'}, 404)
             try:
