@@ -47,3 +47,62 @@ button.primary:hover,#selection-panel .bank-use:hover{background:#07686a;border-
 @media(max-width:1000px){header{flex-wrap:wrap;padding:16px 24px;gap:16px}.workspace,.bank-layout{grid-template-columns:280px minmax(0,1fr);gap:20px}.qtop{flex-wrap:wrap}.qtop .buttons{justify-content:flex-start}.bank-toolbar .hint{display:none}}
 @media(max-width:850px){header{padding:16px 20px}header nav{width:100%;gap:4px}header nav a,header nav .nav-link{font-size:14px;padding:8px 10px}.brand span{display:block}main{padding:24px 16px 36px}.workspace,.bank-layout{grid-template-columns:1fr;gap:20px}.workspace>aside,.bank-layout .bank-filters{position:static;top:auto;max-height:none;overflow:visible}.intro{padding-bottom:20px}.intro-stats{display:flex}.intro-stats span{justify-content:flex-start}#empty{min-height:260px;padding:28px 20px}#preview,.bank-card,.practice-box{padding:18px}.library-toolbar{flex-wrap:wrap}.role-grid,.features{grid-template-columns:1fr}.stats,.unit-grid{grid-template-columns:1fr 1fr}.filters label{min-width:0;flex-basis:100%}}
 @media print{body{background:#fff}main{padding:0}header,aside,footer{display:none!important}.workspace{display:block}#preview{border:0;padding:0}}
+
+/* Learning and teaching share one action hierarchy. */
+[hidden]{display:none!important}
+header nav a:focus-visible,.cta:focus-visible,.route-card:focus-visible{outline:3px solid #a86f13;outline-offset:4px}
+header nav .nav-link.active{background:#123f52;color:#fff;border-color:#123f52}
+.brand{letter-spacing:-.5px}.brand span{letter-spacing:1px}
+button.primary,.cta.primary{background:#087a72;border-color:#087a72;box-shadow:0 4px 12px #087a721f}
+button.primary:hover,.cta.primary:hover{background:#06675f;border-color:#06675f;box-shadow:0 6px 16px #087a722b}
+button:disabled{box-shadow:none}
+.intro,.page-title{border-left:4px solid #d3aa61;padding-left:22px}
+.intro{border-bottom:0;margin-bottom:24px;padding-bottom:10px}
+.intro h1,.page-title h1{font-weight:750}
+.bank-card,.question,.mistake-card{min-width:0;overflow-wrap:anywhere}
+.bank-card h2,.question h3,.mistake-card h3{overflow-wrap:anywhere}
+.question .task,.bank-task{line-height:1.8}
+.bank-card .bank-pick{border-color:#7fafaa;background:#e6f3f0;color:#075c56}
+.bank-toolbar{box-shadow:0 2px 8px #19364706}
+.question-image{display:block;width:100%;height:auto;margin:16px auto;cursor:zoom-in}
+.launch-hero{display:grid;grid-template-columns:1.2fr 1fr;gap:52px;align-items:center;padding:36px 0 44px}
+.launch-copy h1{font-size:clamp(34px,3.8vw,52px);line-height:1.22;letter-spacing:-1.2px;margin:20px 0}
+.launch-copy>p{font-size:18px;max-width:480px;margin-bottom:26px}
+.launch-actions{display:flex;flex-wrap:wrap;gap:12px}
+.cta{display:inline-flex;align-items:center;justify-content:center;gap:24px;min-height:50px;padding:12px 24px;border:1px solid #aabfc8;border-radius:10px;font-size:17px;font-weight:700;color:#193647;background:#fff;text-decoration:none;transition:background .15s,box-shadow .15s}
+.cta.primary{color:#fff}.cta:hover{background:#eaf4f2}
+.hero-facts{display:flex;gap:18px;flex-wrap:wrap;margin-top:26px;font-size:13px;color:#4a626d}
+.hero-facts span+span{border-left:1px solid #c9d6db;padding-left:18px}
+.path-panel{border:1px solid #d1e0e0;border-radius:20px;background:#fff;padding:24px;box-shadow:0 16px 38px #19364708}
+.panel-heading h2{margin:6px 0 20px;font-size:22px}
+.path-panel>a{display:flex;align-items:center;gap:16px;padding:16px 8px;text-decoration:none;color:var(--ink);border-top:1px solid #e3ebee;border-radius:6px}
+.path-panel>a:hover{background:#edf6f3}.path-panel>a>span:nth-child(2){flex:1}.path-panel strong,.path-panel small{display:block}.path-panel small{color:var(--muted);font-size:13px;margin-top:3px}
+.unit-index{font-size:14px;font-weight:750;color:#087a72;min-width:30px}
+.learning-routes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;padding:12px 0 20px}
+.route-card{display:flex;flex-direction:column;align-items:start;text-decoration:none;background:#fff;color:var(--ink);padding:28px;border:1px solid var(--line);border-radius:16px;transition:border-color .15s,box-shadow .15s}
+.route-card h2{font-size:23px;margin:14px 0 6px}.route-card p{font-size:15px;margin-bottom:22px}.route-card strong{margin-top:auto;color:#08736c;font-size:15px}.route-card:hover{border-color:#6da69c;box-shadow:0 8px 24px #1936470d}
+.notebook-route{background:#173e50;border-color:#173e50}.notebook-route h2,.notebook-route strong{color:#fff}.notebook-route p,.notebook-route .eyebrow{color:#cce2e2}
+.landing-note{margin-top:16px;color:var(--muted);font-size:14px;text-align:center}
+.study-tabs{display:flex;gap:8px;border-bottom:1px solid #ccdce0;margin:0 0 26px;padding-bottom:12px}
+.study-tabs button{border-color:transparent;background:transparent;font-size:18px;padding:11px 20px;color:#48606b}
+.study-tabs button[aria-pressed=true]{background:#173e50;color:#fff;box-shadow:0 3px 10px #173e5014}
+#mistake-count{display:inline-block;min-width:25px;margin-left:7px;border-radius:6px;padding:0 6px;background:#eff6f5;color:#0a6d67;font-size:14px}
+.stats .stat{border-radius:12px;border-top:3px solid #a4cbc2}.stats .stat strong{color:#173e50;margin-top:4px}
+.unit{transition:border-color .15s,background .15s}.unit:hover{background:#edf6f3;border-color:#76aaa1}.unit[aria-pressed=true]{box-shadow:0 3px 12px #087a7210}.unit:first-child{border-radius:8px}
+.notebook-heading{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:26px;background:#173e50;border-radius:16px;color:#fff}
+.notebook-heading h1{font-size:27px;margin:6px 0 10px;color:#fff}.notebook-heading p,.notebook-heading .eyebrow{color:#cce2e2;margin:0}.notebook-heading button{flex-shrink:0;background:#fff;color:#135c57;border-color:#fff;box-shadow:none}.notebook-heading button:hover{background:#d9eee8;color:#135c57;border-color:#d9eee8}
+#notebook-summary{font-size:15px;margin:18px 0;color:#3f5a65}
+.notebook-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;background:white;padding:20px;border:1px solid var(--line);border-radius:12px;margin:18px 0}
+.notebook-filters label{margin:0}
+#mistake-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.mistake-card{padding:24px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.mistake-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.mistake-card h3{margin:16px 0 10px;font-size:21px;line-height:1.5}.mistake-excerpt{font-size:15px;color:#4c6470}
+.state-pill{font-size:12px;padding:4px 9px;border-radius:6px;white-space:nowrap}.state-pill.pending{color:#77510b;background:#fff1d4}.state-pill.mastered{color:#0c665a;background:#e4f5ed}
+.review-notes{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}.review-notes summary{font-size:14px;font-weight:650;color:#08736c;cursor:pointer}.review-notes label{display:block;font-size:14px;margin-top:14px}.review-notes textarea{font:15px/1.6 system-ui,"Microsoft YaHei",sans-serif;min-height:110px;resize:vertical}
+.notebook-empty{grid-column:1/-1;padding:44px 24px;text-align:center;background:#fff;border:1px dashed #b5ccc9;border-radius:14px}.notebook-empty h3{font-size:23px}
+.notebook-mode .page-title,.notebook-mode #stats{display:none}.notebook-mode .study-tabs{margin-bottom:20px}.notebook-mode .notebook-heading{padding:22px}.notebook-mode .notebook-heading h1{font-size:24px}.notebook-mode #notebook-summary{margin:12px 0}.notebook-mode .notebook-filters{margin:12px 0 20px}
+#practice-area{scroll-margin-top:20px}.option:hover{border-color:#78afa5;background:#f7fbf9}
+@media(max-width:950px){.launch-hero{gap:28px}.learning-routes{gap:14px}.route-card{padding:22px}.notebook-heading{align-items:start;flex-direction:column}}
+@media(max-width:700px){.launch-hero{grid-template-columns:1fr;gap:30px;padding:8px 0 24px}.launch-copy h1{font-size:34px;margin:14px 0}.launch-copy>p{font-size:16px;margin-bottom:20px}.launch-actions{gap:10px}.launch-actions .cta{flex:1;padding:12px 14px;font-size:16px}.hero-facts{gap:10px;margin-top:20px;font-size:12px}.hero-facts span+span{padding-left:10px}.path-panel{padding:20px}.learning-routes{grid-template-columns:1fr}.route-card{padding:24px}.study-tabs button{font-size:16px;padding:10px 16px}.notebook-filters{grid-template-columns:1fr;gap:12px;padding:16px}#mistake-list{grid-template-columns:1fr}.mistake-card{padding:20px}.notebook-heading{padding:22px}.notebook-heading h1{font-size:24px}.intro,.page-title{padding-left:16px}.stats{gap:10px}.stat{padding:16px}.stat span{font-size:13px}.stat strong{font-size:27px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+@media(max-width:700px){header nav{flex-wrap:nowrap;overflow-x:auto;gap:2px;min-width:0}header nav a,header nav .nav-link{flex-shrink:0;white-space:nowrap;padding:8px 5px;font-size:14px}}
