@@ -1,6 +1,10 @@
 import json,subprocess,pathlib,sys
 sys.path.insert(0,str(pathlib.Path(__file__).resolve().parents[1]))
-from teacher_copilot.java_grading import PROFILES,build_source
+from teacher_copilot.java_grading import PROFILES,build_source,_interpret
+from teacher_copilot.java_score_evidence import evidence
+from teacher_copilot.student_check import scoring_points
+from teacher_copilot.worksheets import bank_data
+questions={q['id']:q for q in bank_data()['questions']}
 from test_java_grading import GOOD
 refs=json.load(open('tools/java_reference_fixtures.json',encoding='utf8'))
 old=json.load(open('teacher_copilot/imported_bank/reference_solutions_20261015.json',encoding='utf8'))
@@ -20,7 +24,18 @@ def run(id,p,code,should_pass=True):
  failed=r.returncode!=0 or ':FAIL' in r.stdout or ':ERROR' in r.stdout
  expected=len(p.get('cases',p.get('examples',[])))
  count=len([x for x in r.stdout.splitlines() if x.startswith('VERIFY:') and (x.endswith(':PASS') or x.endswith(':FAIL') or ':ERROR:' in x)])
- report.append(dict(id=id,ok=(not failed if should_pass else failed) and count==expected,expected_cases=expected,stdout=r.stdout,stderr=r.stderr,variant='correct' if should_pass else 'intentional_error'))
+ entry=dict(id=id,ok=(not failed if should_pass else failed) and count==expected,expected_cases=expected,stdout=r.stdout,stderr=r.stderr,variant='correct' if should_pass else 'intentional_error')
+ qid=id.split(' ')[0].split(':')[0]
+ part=int(id.split(' ')[0].split(':')[1]) if ':' in id.split(' ')[0] else None
+ runtime_profile=dict(p)
+ if p.get('kind')=='snippet':runtime_profile['cases']=[dict(label=e['label']) for e in p['examples']]
+ result=_interpret(runtime_profile,code,dict(status=dict(id=3),stdout=r.stdout,stderr=r.stderr),'VERIFY',0)
+ rows=result.get('score_evidence') or evidence(qid,code,result,scoring_points(questions[qid]),part)
+ rows=[row for row in rows if row.get('applicable',True)]
+ entry['earned']=sum(row['points'] for row in rows if row['status']=='earned')
+ entry['pending']=[dict(id=row['id'],criterion=row['label']) for row in rows if row['status']!='earned']
+ entry['earned_ids']=[row['id'] for row in rows if row['status']=='earned']
+ report.append(entry)
 for id,code in refs.items():
  p=PROFILES[id]
  if p.get('kind')=='parts':
@@ -32,5 +47,18 @@ for id,a,b in mutants:
  code=refs[id]
  if a not in code:raise AssertionError(a)
  run(id+' mutation '+a,PROFILES[id],code.replace(a,b),False)
+for variant in json.load(open('tools/java_equivalent_fixtures.json',encoding='utf8')):
+ id=variant['id'];p=PROFILES[id];part=variant.get('part')
+ if part is not None:p=p['parts'][part]
+ run(id+(':'+str(part) if part is not None else '')+' alternative '+variant['name'],p,variant['code'])
+ baseline=next(row for row in report if row['id']==id+(':'+str(part) if part is not None else ''))
+ report[-1]['ok'] &= set(baseline['earned_ids']) <= set(report[-1].get('earned_ids',[]))
+for variant in json.load(open('tools/java_scoring_mutants.json',encoding='utf8')):
+ id=variant['id']
+ run(id+' scoring_mutant '+variant['name'],PROFILES[id],variant['code'],False)
+ points=scoring_points(questions[id])
+ forbidden={points[i]['id'] for i in variant['withheld']}
+ report[-1]['ok'] &= not (forbidden & set(report[-1].get('earned_ids',[])))
 pathlib.Path('tmp/frq-expanded-acceptance.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf8')
 sys.stdout.reconfigure(encoding='utf8');print('Runs',len(report),'passed',sum(r['ok'] for r in report));print(json.dumps([r for r in report if not r['ok']],ensure_ascii=False,indent=2))
+if not all(row['ok'] for row in report):sys.exit(1)

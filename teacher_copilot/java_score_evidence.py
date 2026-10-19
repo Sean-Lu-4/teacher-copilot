@@ -19,9 +19,17 @@ def evidence(question_id, code, result, points, part=None):
     import tree_sitter_java
     from .java_grading import PROFILES
     profile = PROFILES[question_id]
+    if profile.get('kind') == 'parts' and type(part) is int and 0 <= part < len(profile['parts']):
+        # Each imported statement part has three distinct rubric points. Other
+        # parts were not submitted; they are not pending points in this answer.
+        for index, row in enumerate(rows):
+            row['applicable'] = index // 3 == part
     whole = profile.get('kind') == 'class'
-    source = code if whole else 'class X {\n' + code + '\n}'
+    snippet = profile.get('kind') in {'parts', 'email'}
+    source = code if whole else ('class X { void answer() {\n' if snippet else 'class X {\n') + code + ('\n}}' if snippet else '\n}')
     tree = Parser(Language(tree_sitter_java.language())).parse(source.encode())
+    if tree.root_node.has_error:
+        return rows
     methods = {}
     stack = [tree.root_node]
     while stack:
@@ -36,11 +44,58 @@ def evidence(question_id, code, result, points, part=None):
             if label:
                 rows[index]['label'] = label
     cases = result.get('cases', [])
+    def reachable_nodes(method):
+        # Follow student helper methods, so extracting a helper does not lose a
+        # point. Never inspect comments or unrelated, uncalled methods.
+        visited = set()
+        pending = [method]
+        while pending:
+            current = pending.pop()
+            if current.start_byte in visited:
+                continue
+            visited.add(current.start_byte)
+            nodes = [current]
+            while nodes:
+                node = nodes.pop()
+                yield node
+                if node.type == 'method_invocation':
+                    name = node.child_by_field_name('name').text.decode()
+                    obj = node.child_by_field_name('object')
+                    if name in methods and (obj is None or obj.text == b'this'):
+                        pending.append(methods[name])
+                # Local/anonymous classes have their own execution context.
+                if node.type not in {'class_declaration', 'class_body', 'lambda_expression'}:
+                    nodes.extend(node.named_children)
+    def call_evidence(method, required):
+        found, lines = set(), set()
+        for node in reachable_nodes(method):
+            if node.type == 'method_invocation' and node.child_by_field_name('name').text.decode() in required:
+                found.add(node.child_by_field_name('name').text.decode())
+                lines.add(max(1, node.start_point.row + (1 if whole else 0)))
+        return sorted(lines) if set(required) <= found else []
     for rule in RULES.get(question_id, []):
         method = methods.get(rule['method'])
-        if method and all(i < len(cases) and cases[i]['status'] == 'passed' for i in rule['cases']):
+        if method and rule['cases'] and all(0 <= i < len(cases) and cases[i]['status'] == 'passed' for i in rule['cases']):
             line = method.start_point.row + (1 if whole else 0)
-            award(rule['index'], [max(1,line)], '该方法通过对应边界和功能测试；这是参考得分依据，不是官方评分。', rule['label'])
+            lines = call_evidence(method, rule['calls']) if rule.get('calls') else [max(1,line)]
+            if not lines:
+                continue
+            if rule.get('any_calls'):
+                lines = sorted({line for name in rule['any_calls'] for line in call_evidence(method, [name])})
+            if rule.get('creates'):
+                lines = [max(1,n.start_point.row+(1 if whole else 0)) for n in reachable_nodes(method)
+                         if n.type=='object_creation_expression' and n.child_by_field_name('type').text.decode().split('<')[0].split('.')[-1] == rule['creates']]
+            if rule.get('operator'):
+                lines = [max(1,n.start_point.row+(1 if whole else 0)) for n in reachable_nodes(method)
+                         if n.type=='binary_expression' and n.child_by_field_name('operator').text.decode()==rule['operator']]
+            if rule.get('accumulator'):
+                from .java_rubric_structure import accumulation_lines
+                lines = [max(1,line+(1 if whole else 0)) for line in accumulation_lines(reachable_nodes(method), **rule['accumulator'])]
+            if rule.get('null_check'):
+                from .java_rubric_structure import null_comparison_lines
+                lines = [max(1,line+(1 if whole else 0)) for line in null_comparison_lines(reachable_nodes(method))] or call_evidence(method, ['isNull']) or call_evidence(method, ['nonNull'])
+            if lines:
+                award(rule['index'], lines, rule.get('reason', '该方法通过对应边界和功能测试；这是参考得分依据，不是官方评分。'), rule.get('label'))
     if whole and not tree.root_node.has_error:
         declarations = [n for n in tree.root_node.named_children if n.type == 'class_declaration']
         if len(declarations) == 1:
@@ -84,16 +139,33 @@ def evidence(question_id, code, result, points, part=None):
                 ctor_public=all('public' in next((n.text.decode().split() for n in c.named_children if n.type=='modifiers'), []) for c in members if c.type=='constructor_declaration')
                 if lines and index is not None and ctor_public and (name!='Sign' or private_only):
                     award(index,lines,'构造参数已存入实例字段，且初始状态、连续操作与对象独立性测试通过。','构造器正确初始化实例变量')
-    # Printed statement problems are checked one part at a time. Only observable
-    # final-output criteria are awarded; internal loop/substring points remain
-    # pending. No points from a different part can leak into this result.
-    if profile.get('kind') == 'parts' and isinstance(part, int) and all(c['status']=='passed' for c in cases) and cases:
+    # Each statement subproblem has its own inputs, output and rubric indices.
+    # Equivalent arithmetic/string implementations are accepted by behavior.
+    if profile.get('kind') == 'parts' and type(part) is int and 0 <= part < len(profile['parts']) and len(cases) == len(profile['parts'][part]['examples']) and all(c['status']=='passed' for c in cases) and cases:
         mapping = {
-            'AP-FRQ69fc5af861bea528S3': {0:2,1:5},
-            'AP-FRQ69fc5af861bea528S4': {0:2,1:5},
-            'AP-FRQabac91d826c61ac9': {0:2,1:5,2:8,3:11},
+            'AP-FRQ69fc5af861bea528S3': {0:[0,1,2],1:[3,4,5]},
+            'AP-FRQ69fc5af861bea528S4': {0:[0,1,2],1:[3,5]},
+            'AP-FRQabac91d826c61ac9': {0:[0,1,2],1:[3,5],2:[6,7,8],3:[9,10,11]},
         }
-        index = mapping.get(question_id, {}).get(part)
-        if index is not None:
-            award(index, [], '所选小问通过全部输出样例和边界测试。', '所选小问输出正确')
+        for index in mapping.get(question_id, {}).get(part, []):
+            award(index, [], '所选小问在不同长度、边界及格式样例中表现正确，不要求固定变量名或同一种算法。')
+        prefix_index = {'AP-FRQ69fc5af861bea528S4': (1,4), 'AP-FRQabac91d826c61ac9': (1,4)}.get(question_id)
+        if prefix_index and part == prefix_index[0]:
+            lines = []
+            for name in ('contains', 'indexOf', 'startsWith', 'regionMatches', 'equals'):
+                lines.extend(call_evidence(methods['answer'], [name]))
+            if lines:
+                award(prefix_index[1], sorted(set(lines)), '字符串匹配调用与前缀边界测试均通过。')
+    if profile.get('kind') == 'email' and len(cases) == 3:
+        # These tests inspect actual String values, not student variable names.
+        # Randomness/uniformity points cannot be inferred from valid output.
+        for case, indices in ((0,[1,2]),(1,[3,4])):
+            if cases[case]['status'] == 'passed':
+                for index in indices:
+                    # This source question explicitly requires substring for
+                    # extracting names/initials. Correct output alone is not
+                    # enough to satisfy a mandated API requirement.
+                    if index in {1,3} and not call_evidence(methods['answer'], ['substring']):
+                        continue
+                    award(index, [], '不同姓名长度与边界样例均生成了题目要求的用户名。')
     return rows

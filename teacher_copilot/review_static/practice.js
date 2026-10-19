@@ -82,11 +82,12 @@ async function checkCode(q){
   panel.append(node('h3',executed?(auto.status==='passed'?'✓ 当前功能测试通过':'需要修改'):failed?'需要修改':passed?'语法检查通过，答案待检查':'暂时无法检查'),node('p',executed?auto.message:failed?'先修改下面标出的代码行，再检查一次。':(auto.message||'还没有运行代码，暂时不能判断答案对错或自动给分。')));
   if(auto.practice_score){panel.append(node('strong',`功能检查：${auto.practice_score.earned} / ${auto.practice_score.possible} 项通过`),node('p','这是功能测试结果，不是 AP 官方得分。','muted'));}
   for(const test of auto.cases||[]){const row=node('div',undefined,'test-result '+(test.status==='passed'?'test-pass':'test-fail'));row.append(node('strong',(test.status==='passed'?'✓ ':'✕ ')+test.label),node('p',test.reason));if(test.detail)row.append(node('pre',test.detail));panel.append(row);}
-  if(auto.score_evidence?.length){
-   const earned=auto.score_evidence.filter(p=>p.status==='earned').reduce((n,p)=>n+p.points,0),pending=auto.score_evidence.filter(p=>p.status!=='earned').reduce((n,p)=>n+p.points,0);
-   panel.append(node('h3',pending?`参考得分：已找到 ${earned} 分依据 · ${pending} 分待复核`:`参考得分：${earned} / ${earned} 分`),node('p',auto.score_evidence.some(p=>p.provenance==='reference')?'依据参考评分建议与测试估计；原题缺正式评分指南，未确认的分值待复核。':'依据原评分指南与当前测试估计，未验证的部分不按零分处理。','muted'));
+  const applicableScores=(auto.score_evidence||[]).filter(p=>p.applicable!==false);
+  if(applicableScores.length){
+   const earned=applicableScores.filter(p=>p.status==='earned').reduce((n,p)=>n+p.points,0),pending=applicableScores.filter(p=>p.status!=='earned').reduce((n,p)=>n+p.points,0);
+   panel.append(node('h3',pending?`参考得分：已找到 ${earned} 分依据 · ${pending} 分待复核`:`参考得分：${earned} / ${earned} 分`),node('p',applicableScores.some(p=>p.provenance==='reference')?'依据参考评分建议与测试估计；原题缺正式评分指南，未确认的分值待复核。':'依据原评分指南与当前测试估计，未验证的部分不按零分处理。','muted'));
    const pendingDetails=node('details',undefined,'pending-score-details');pendingDetails.append(node('summary',`${pending} 分待复核 · 查看评分点`));
-   for(const point of auto.score_evidence){const row=node('div',undefined,'score-evidence '+(point.status==='earned'?'test-pass':'test-pending'));row.append(node('strong',`${point.status==='earned'?'✓':'待复核'} ${point.label} · ${point.status==='earned'?'+1 分':'1 分待确认'}`),node('span',point.status==='earned'?'':'部分分待复核','muted'));row.title=point.reason;
+   for(const point of applicableScores){const row=node('div',undefined,'score-evidence '+(point.status==='earned'?'test-pass':'test-pending'));row.append(node('strong',`${point.status==='earned'?'✓':'待复核'} ${point.label} · ${point.status==='earned'?'+1 分':'1 分待确认'}`),node('span',point.status==='earned'?'':'部分分待复核','muted'));row.title=point.reason;
     for(const line of point.lines||[])row.append(button('第 '+line+' 行',()=>{const area=$('draft'),lines=area.value.split('\n'),start=lines.slice(0,line-1).reduce((n,l)=>n+l.length+1,0);area.focus();area.setSelectionRange(start,start+(lines[line-1]||'').length);}));(point.status==='earned'?panel:pendingDetails).append(row);}
    if(pending)panel.append(pendingDetails);
   }

@@ -1,0 +1,66 @@
+[
+  {
+    "id": "AP-FRQd841c16efb454b49S1",
+    "name": "while loop and renamed locals",
+    "code": "public int getPossibleAssemblies(){int wheels=0,axles=0,i=0;while(i<shelfArray.length){wheels=wheels+shelfArray[i].getNumWheels();axles=axles+shelfArray[i].getNumAxles();i++;}if(wheels/2<axles)return wheels/2;return axles;}"
+  },
+  {
+    "id": "AP-FRQd841c16efb454b49S2",
+    "name": "reverse traversal",
+    "code": "public boolean hasEnoughPaint(int gallons){double sum=0;for(int i=surfaceArray.length-1;i>=0;i--)sum+=surfaceArray[i].getLength()*surfaceArray[i].getWidth();return sum<=400.0*gallons;}"
+  },
+  {
+    "id": "AP-FRQe12b4823e927b30fS1",
+    "name": "helper method and while loop",
+    "code": "private int years(GameAccount entry){return entry.getAge();} public double avgTeenAccounts(){double total=0;int count=0,index=0;while(index<allPlayers.size()){int age=years(allPlayers.get(index++));if(age<13||age>19)continue;total+=age;count++;}return total/count;}"
+  },
+  {
+    "id": "AP-FRQe12b4823e927b30fS2",
+    "name": "indexed traversal and conditional maximum",
+    "code": "public int getLongestHomeWinStreak(){int longest=0,current=0;for(int i=0;i<allGames.size();i++){Game match=allGames.get(i);if(match.getAwayScore()>=match.getHomeScore())current=0;else current=current+1;if(current>longest)longest=current;}return longest;}"
+  },
+  {
+    "id": "AP-FRQ69fc5af861bea528S8",
+    "name": "substring traversal instead of indexOf",
+    "code": "public static int countRepeat(String largeStr,String smallStr){int result=0;for(int pos=0;pos<=largeStr.length()-smallStr.length();){if(largeStr.substring(pos,pos+smallStr.length()).equals(smallStr)){result++;pos+=smallStr.length();}else pos++;}return result;}"
+  },
+  {
+    "id": "AP-FRQ69fc5af861bea528S10",
+    "name": "nested search of each possible start",
+    "code": "public int findFreeBlock(int period,int duration){for(int start=0;start+duration<=60;start++){boolean free=true;for(int offset=0;offset<duration;offset++)if(!isMinuteFree(period,start+offset))free=false;if(free)return start;}return -1;} public boolean makeAppointment(int first,int last,int duration){int period=first;while(period<=last){int start=findFreeBlock(period,duration);if(start!=-1){reserveBlock(period,start,duration);return true;}period++;}return false;}"
+  },
+  {
+    "id": "AP-FRQ69fc5af861bea528S3",
+    "part": 0,
+    "name": "digit string instead of arithmetic",
+    "code": "String digits=String.valueOf(downloads);char last=digits.charAt(digits.length()-1);int matches=0;for(int pos=0;pos<digits.length()-1;pos++)if(digits.charAt(pos)==last)matches++;System.out.print(matches==1?\"exactly once\":\"not exactly once\");"
+  },
+  {
+    "id": "AP-FRQ69fc5af861bea528S3",
+    "part": 1,
+    "name": "split instead of substring",
+    "code": "String[] pieces=songInfo.split(\"-\",3);System.out.print(pieces[2]+\" by \"+pieces[0]);"
+  },
+  {
+    "id": "AP-FRQ69fc5af861bea528S4",
+    "part": 1,
+    "name": "decreasing prefix search",
+    "code": "int length=text.length();while(length>0&&otherText.indexOf(text.substring(0,length))<0)length--;System.out.print(length);"
+  },
+  {
+    "id": "AP-FRQ69fc5af861bea528S4",
+    "part": 0,
+    "name": "StringBuilder instead of repeated printing",
+    "code": "if(text.length()>colWidth)System.out.print(text);else{int padding=colWidth-text.length();StringBuilder result=new StringBuilder(\"|\");int i=0;while(i<padding/2){result.append(\".\");i++;}result.append(text);while(i<padding){result.append(\".\");i++;}result.append(\"|\");System.out.print(result);}"
+  },
+  {
+    "id": "AP-FRQ906422c04f2fa6d6S9",
+    "name": "integer active team instead of boolean",
+    "code": "public class Scoreboard { private String home,away;private int homeScore,awayScore,team; public Scoreboard(String one,String two){home=one;away=two;}public void recordPlay(int points){if(points==0){team=1-team;return;}if(team==0)homeScore+=points;else awayScore+=points;}public String getScore(){return homeScore+\"-\"+awayScore+\"-\"+(team==0?home:away);} }"
+  },
+  {
+    "id": "AP-FRQ2459373609e2732d",
+    "name": "arbitrary username names with required String APIs",
+    "code": "int cut=email.indexOf(\".\");int end=email.indexOf(\"@\");String given=email.substring(0,cut);String family=email.substring(cut+1,end);String one=given+\"_\"+family;String two=given.substring(0,1)+\"_\"+family;int g=(int)(Math.random()*given.length()),f=(int)(Math.random()*(family.length()-2));String three=given.substring(g,g+1)+\"_\"+family.substring(f,f+3);"
+  }
+]

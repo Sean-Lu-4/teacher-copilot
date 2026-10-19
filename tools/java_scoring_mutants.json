@@ -1,0 +1,73 @@
+[
+  {
+    "id": "AP-FRQe12b4823e927b30fS1",
+    "name": ">=13 -> >13",
+    "code": "public double avgTeenAccounts(){int sum=0,n=0;for(GameAccount a:allPlayers)if(a.getAge()>13&&a.getAge()<=19){sum+=a.getAge();n++;}return (double)sum/n;}",
+    "withheld": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "id": "AP-FRQd841c16efb454b49S2",
+    "name": "n*400>=area -> n*400>area",
+    "code": "public boolean hasEnoughPaint(int n){double area=0;for(Surface s:surfaceArray)area+=s.getWidth()*s.getLength();return n*400>area;}",
+    "withheld": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "id": "AP-FRQe12b4823e927b30fS2",
+    "name": "g.getHomeScore()>g.getAwayScore() -> g.getHomeScore()>=g.getAwayScore()",
+    "code": "public int getLongestHomeWinStreak(){int best=0,n=0;for(Game g:allGames){if(g.getHomeScore()>=g.getAwayScore())n++;else n=0;best=Math.max(best,n);}return best;}",
+    "withheld": [
+      0,
+      1,
+      2,
+      4
+    ]
+  },
+  {
+    "id": "AP-FRQ8b32f5bc1d3ab57aS1",
+    "name": "chart[br][bc]=null; -> ",
+    "code": "public void upgrade(int r,int c){int br=-1,bc=-1,best=-1;for(int i=r+1;i<chart.length;i++)for(int j=0;j<chart[i].length;j++)if(chart[i][j]!=null&&chart[i][j].getRating()>best){best=chart[i][j].getRating();br=i;bc=j;}chart[r][c]=chart[br][bc];}",
+    "withheld": [
+      0,
+      1,
+      2,
+      4,
+      5
+    ]
+  },
+  {
+    "id": "AP-FRQ69fc5af861bea528S10",
+    "name": "m<60 -> m<59",
+    "code": "public int findFreeBlock(int p,int d){int n=0;for(int m=0;m<59;m++){if(isMinuteFree(p,m))n++;else n=0;if(n==d)return m-d+1;}return -1;}public boolean makeAppointment(int s,int e,int d){for(int p=s;p<=e;p++){int m=findFreeBlock(p,d);if(m>=0){reserveBlock(p,m,d);return true;}}return false;}",
+    "withheld": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  {
+    "id": "AP-FRQ69fc5af861bea528S6",
+    "name": "simulateOneDay(n); -> simulateOneDay(1);",
+    "code": "public void simulateOneDay(int n){if(Math.random()<.95){int each=(int)(Math.random()*41)+10;currentFood=Math.max(0,currentFood-n*each);}else currentFood=0;}public int simulateManyDays(int n,int days){int d=0;while(d<days&&currentFood>0){simulateOneDay(1);d++;}return d;}",
+    "withheld": [
+      4,
+      5,
+      6,
+      7,
+      8
+    ]
+  }
+]

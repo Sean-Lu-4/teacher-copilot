@@ -117,4 +117,4 @@ def check_submission(payload, questions):
                 compilation=dict(status='passed' if automatic['status'] in {'passed','failed','runtime_error','timeout'} else 'compile_error' if automatic['status']=='compile_error' else 'unavailable', message=automatic['message']),
                 tests=dict(status='unavailable' if automatic['status']=='unsupported' else automatic['status'], cases=automatic.get('cases', [])),
                 scoring_points=points, score=None,
-                message='以下得分点来自题目评分指南，请逐项对照。语法检查不会自动判分。')
+                message='已自动检查可验证的得分点；未确认部分供教师复核，不计为错误。')

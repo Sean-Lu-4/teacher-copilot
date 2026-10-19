@@ -609,7 +609,10 @@
           }
         ]
       }
-    ]
+    ],
+    "private_fields": {
+      "int": 1
+    }
   },
   "AP-FRQ906422c04f2fa6d6S7": {
     "class_name": "AppleCrate",
@@ -747,7 +750,7 @@
       },
       {
         "label": "独立检查多天模拟的调用与提前结束",
-        "setup": "Feeder x=new Feeder(){public void simulateOneDay(int n){currentFood=Math.max(0,currentFood-100);}};x.currentFood=250;int a=x.simulateManyDays(10,5);x.currentFood=1000;int b=x.simulateManyDays(10,2);",
+        "setup": "Feeder x=new Feeder(){public void simulateOneDay(int n){if(n!=10)throw new IllegalArgumentException();currentFood=Math.max(0,currentFood-100);}};x.currentFood=250;int a=x.simulateManyDays(10,5);x.currentFood=1000;int b=x.simulateManyDays(10,2);",
         "condition": "a==3&&b==2&&x.currentFood==800"
       }
     ],
