@@ -75,6 +75,15 @@ def evidence(question_id, code, result, points, part=None):
             needed = profile.get('private_fields')
             if needed and private_only and all(counts.get(t,0)>=n for t,n in needed.items()) and all(c['status']=='passed' for c in cases):
                 award(1, [f.start_point.row+1 for f in fields], '已核对私有非静态字段及对象独立性测试。', '实例字段与对象独立性')
+            if cases and len(cases)==len(profile['cases']) and all(c['status']=='passed' for c in cases):
+                from .java_initialization import initialization_lines
+                lines=initialization_lines(cls)
+                name=profile['class_name']
+                index={'Car':3,'TrashCan':3,'CubePair':3,'CupcakeMachine':3,
+                       'LapTracker':3,'AdditionPattern':3,'Sign':1,'Scoreboard':2}.get(name)
+                ctor_public=all('public' in next((n.text.decode().split() for n in c.named_children if n.type=='modifiers'), []) for c in members if c.type=='constructor_declaration')
+                if lines and index is not None and ctor_public and (name!='Sign' or private_only):
+                    award(index,lines,'构造参数已存入实例字段，且初始状态、连续操作与对象独立性测试通过。','构造器正确初始化实例变量')
     # Printed statement problems are checked one part at a time. Only observable
     # final-output criteria are awarded; internal loop/substring points remain
     # pending. No points from a different part can leak into this result.
