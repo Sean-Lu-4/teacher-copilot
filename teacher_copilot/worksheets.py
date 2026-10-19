@@ -297,6 +297,10 @@ def bank_data():
     from .java_grading import PROFILES
     for row in rows:
         row['java_check_supported'] = row['id'] in PROFILES
+        java_profile = PROFILES.get(row['id'], {})
+        row['java_input_kind'] = java_profile.get('kind', 'methods')
+        row['java_parts'] = [{'label': p['label'], 'args': p['args']} for p in java_profile.get('parts', [])]
+        row['java_check_note'] = java_profile.get('note', '')
     return dict(version=BANK_VERSION, count=original_count, total_count=len(rows), questions=rows,
                 ced_topics=[dict(id=code,title=label) for code,label in LABELS.items()],
                 topics=[dict(id=t['id'],title=t['title']) for t in catalog()['topics']],

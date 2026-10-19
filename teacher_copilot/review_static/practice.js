@@ -31,7 +31,17 @@ function render(){
   const transcript=node('details');transcript.append(node('summary','题目文字'),node('div',q.task,'task'));box.append(transcript);
  }else box.append(node('div',q.task,'task'));
  if(mcq){const group=node('fieldset');group.append(node('legend','选择一个答案'));for(const [key,text] of Object.entries(q.options)){const label=node('label',undefined,'option'),input=node('input');input.type='radio';input.name='choice';input.value=key;input.disabled=revealed;label.append(input,node('span',`${key}. ${text}`));group.append(label);}box.append(group);}
- else{const label=node('label','你的 Java 代码');label.htmlFor='draft';const area=node('textarea');area.id='draft';area.maxLength=20000;area.spellcheck=false;area.value=r.draft||'';area.placeholder=q.id==='AP-FRQ00a62e501cd4dea8'?'按顺序填写 A–D 四段代码，不需要外层 class 或方法。':'填写题目要求的方法或构造器；无需重复给定的字段、辅助类或 main。';area.oninput=()=>{progress[q.id]={...record(q),draft:area.value,frqReview:null};save();document.getElementById('code-feedback')?.remove();};box.append(label,area,node('p',q.java_check_supported?'本题支持编译与运行检查。检查时仅提交代码到 Judge0 运行服务。':'本题暂支持语法检查，答案请对照评分指南。','muted'));}
+ else{
+  const parts=q.java_parts||[],selected=Math.min(Number.isInteger(r.javaPart)&&r.javaPart>=0?r.javaPart:0,Math.max(0,parts.length-1));
+  if(parts.length){const label=node('label','检查哪一小问'),select=node('select');select.id='java-part';parts.forEach((p,i)=>select.append(new Option(p.label,String(i))));select.value=String(selected);select.onchange=()=>{progress[q.id]={...record(q),javaPart:Number(select.value)};save();revealed=false;render();};label.append(select);box.append(label,node('p','已提供变量：'+parts[selected].args,'muted'));}
+  if(parts.length&&r.draft){const old=node('details');old.append(node('summary','查看之前保存的整题草稿'),node('pre',r.draft));box.append(old);}
+  const label=node('label','你的 Java 代码');label.htmlFor='draft';const area=node('textarea');area.id='draft';area.maxLength=20000;area.spellcheck=false;
+  area.value=parts.length?(r.partDrafts?.[selected]||''):(r.draft||'');
+  area.placeholder=q.java_input_kind==='class'?'填写题目要求的完整类，包括字段、构造器和方法。':['fragment','email','parts'].includes(q.java_input_kind)?'填写本题或所选小问的代码片段；不需要外层 class 或方法。':'填写题目要求的方法或构造器；无需重复给定的字段、辅助类或 main。';
+  area.oninput=()=>{const previous=record(q);progress[q.id]={...previous,...(parts.length?{partDrafts:{...previous.partDrafts,[selected]:area.value}}:{draft:area.value}),frqReview:null};save();document.getElementById('code-feedback')?.remove();};
+  box.append(label,area,node('p',q.java_check_supported?'检查时仅提交代码到免费 Java 运行服务；服务繁忙时可稍后重试。':'本题暂支持语法检查，答案请对照评分指南。','muted'));
+  if(q.java_check_note)box.append(node('p',q.java_check_note,'muted'));
+ }
  $('actions').append(button(mcq?'提交答案':'查看参考答案',()=>{
   if(mcq){const selected=document.querySelector('input[name=choice]:checked');if(!selected){$('notice').textContent='请先选择一个答案。';return;}const correct=selected.value===q.answer_key;progress[q.id]=CSAProgress.submit(record(q),correct,selected.value);save();dashboard();showAnswer(correct?'回答正确':'这道题还需要巩固');}
   else{if(!$('draft').value.trim()){$('notice').textContent='请先写下你的解题尝试，再对照参考答案。';return;}showAnswer('对照评分标准，检查自己的实现');}
@@ -54,16 +64,16 @@ function showAnswer(message){if(revealed)return;revealed=true;if(storageOK)$('no
 let checkingCode=false;
 async function checkCode(q){
  if(checkingCode)return;
- const code=$('draft')?.value||'';
+ const code=$('draft')?.value||'',part=$('java-part')?Number($('java-part').value):null;
  if(!code.trim()){$('notice').textContent='请先写下你的 Java 代码。';return;}
  checkingCode=true;const pendingButtons=[...document.querySelectorAll('#actions button')].filter(b=>b.textContent==='检查代码');pendingButtons.forEach(b=>{b.disabled=true;b.textContent='正在检查…';});$('notice').textContent='正在编译和检查代码，请稍候…';
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),65000);
  try{
   const stateResponse=await fetch('/api/state',{signal:controller.signal});if(!stateResponse.ok)throw Error('暂时无法连接检查服务。');
   const state=await stateResponse.json();
-  const response=await fetch('/api/student/check',{method:'POST',headers:{'Content-Type':'application/json','X-Review-Token':state.token},body:JSON.stringify({question_id:q.id,code}),signal:controller.signal});
+  const response=await fetch('/api/student/check',{method:'POST',headers:{'Content-Type':'application/json','X-Review-Token':state.token},body:JSON.stringify({question_id:q.id,code,part}),signal:controller.signal});
   const result=await response.json();if(!response.ok)throw Error(result.error||'检查失败，请稍后重试。');
-  if(current?.id!==q.id||$('draft')?.value!==code)return;
+  if(current?.id!==q.id||$('draft')?.value!==code||($('java-part')?Number($('java-part').value):null)!==part)return;
   document.getElementById('code-feedback')?.remove();
   const panel=node('section',undefined,'code-feedback');panel.id='code-feedback';
   const auto=result.automatic||{},executed=['passed','failed','compile_error','runtime_error','timeout'].includes(auto.status),failed=executed?auto.status!=='passed':result.syntax.status==='failed',passed=result.syntax.status==='passed';
@@ -74,14 +84,16 @@ async function checkCode(q){
   for(const test of auto.cases||[]){const row=node('div',undefined,'test-result '+(test.status==='passed'?'test-pass':'test-fail'));row.append(node('strong',(test.status==='passed'?'✓ ':'✕ ')+test.label),node('p',test.reason));if(test.detail)row.append(node('pre',test.detail));panel.append(row);}
   if(auto.score_evidence?.length){
    const earned=auto.score_evidence.filter(p=>p.status==='earned').reduce((n,p)=>n+p.points,0),pending=auto.score_evidence.filter(p=>p.status!=='earned').reduce((n,p)=>n+p.points,0);
-   panel.append(node('h3',`参考得分：已找到 ${earned} 分依据 · ${pending} 分待复核`),node('p','依据原评分指南与当前测试估计，未验证的部分不按零分处理。','muted'));
+   panel.append(node('h3',`参考得分：已找到 ${earned} 分依据 · ${pending} 分待复核`),node('p',auto.score_evidence.some(p=>p.provenance==='reference')?'依据参考评分建议与测试估计；原题缺正式评分指南，未确认的分值待复核。':'依据原评分指南与当前测试估计，未验证的部分不按零分处理。','muted'));
+   const pendingDetails=node('details',undefined,'pending-score-details');pendingDetails.append(node('summary',`${pending} 分待复核 · 查看评分点`));
    for(const point of auto.score_evidence){const row=node('div',undefined,'score-evidence '+(point.status==='earned'?'test-pass':'test-pending'));row.append(node('strong',`${point.status==='earned'?'✓':'待复核'} ${point.label} · ${point.status==='earned'?'+1 分':'1 分待确认'}`),node('span',point.status==='earned'?'':'部分分待复核','muted'));row.title=point.reason;
-    for(const line of point.lines||[])row.append(button('第 '+line+' 行',()=>{const area=$('draft'),lines=area.value.split('\n'),start=lines.slice(0,line-1).reduce((n,l)=>n+l.length+1,0);area.focus();area.setSelectionRange(start,start+(lines[line-1]||'').length);}));panel.append(row);}
+    for(const line of point.lines||[])row.append(button('第 '+line+' 行',()=>{const area=$('draft'),lines=area.value.split('\n'),start=lines.slice(0,line-1).reduce((n,l)=>n+l.length+1,0);area.focus();area.setSelectionRange(start,start+(lines[line-1]||'').length);}));(point.status==='earned'?panel:pendingDetails).append(row);}
+   if(pending)panel.append(pendingDetails);
   }
   if(auto.detail){const detail=node('details');detail.append(node('summary','查看编译 / 运行提示'),node('pre',auto.detail));panel.append(detail);}
   const preview=node('div',undefined,'checked-code'),errorLines=new Set(result.syntax.diagnostics.map(e=>e.line));
   code.split('\n').forEach((text,index)=>{const line=node('div',undefined,errorLines.has(index+1)?'checked-line error-line':'checked-line');line.append(node('span',String(index+1),'line-number'),node('code',text||' '));if(errorLines.has(index+1))line.append(node('span','← 检查此处','line-flag'));preview.append(line);});
-  if(failed)panel.append(preview);
+  if(failed){const codeDetails=node('details');codeDetails.append(node('summary','查看带行号的代码'),preview);panel.append(codeDetails);}
   for(const error of result.syntax.diagnostics){panel.append(button(`第 ${error.line} 行：${error.message}`,()=>{
    const area=$('draft'),lines=area.value.split('\n'),start=lines.slice(0,error.line-1).reduce((n,line)=>n+line.length+1,0);area.focus();area.setSelectionRange(start,start+(lines[error.line-1]||'').length);
   }));}

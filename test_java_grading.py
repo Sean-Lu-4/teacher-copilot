@@ -16,7 +16,7 @@ else System.out.println("Not acceptable");'''
 class GradingTests(unittest.TestCase):
     def test_all_reference_methods_wrap(self):
         refs=json.loads(Path('teacher_copilot/imported_bank/reference_solutions_20261015.json').read_text(encoding='utf8'))
-        for profile in grading.PROFILES.values():
+        for profile in [p for p in grading.PROFILES.values() if p.get("reference_key") or p is bead_grading.PROFILE]:
             code=GOOD if profile.get('kind')=='fragment' else refs[profile['reference_key']]['code']
             source,offset=grading.build_source(profile,code,'marker')
             self.assertIn(code,source)

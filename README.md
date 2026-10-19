@@ -285,8 +285,8 @@ py verify_java_bank.py --jdk .cache/java/jdk-21.0.12.1+1 --output outputs/bank30
 
 - 公开试用模式 `TEACHER_COPILOT_PUBLIC_DEMO=1` 默认连接 Judge0 CE 公共演示接口；不是付费服务，也没有可用性承诺。生产长期使用应配置自己的服务。
 - `CSA_JAVA_RUNNER_URL` 可覆盖服务地址（仅 HTTPS）；显式设置为空可关闭。`CSA_JAVA_LANGUAGE_ID` 默认 91（Java 17）。私有实例用 `CSA_JAVA_RUNNER_KEY`；RapidAPI 用 `CSA_JAVA_RAPIDAPI_KEY`。密钥只放环境变量。
-- 当前 14/43 道导入 FRQ 支持运行：13 道 Unit 4 方法/构造器题有 38 项功能测试；Bead Sequence 题有 4 组功能测试（21 个字符串样例）和 8 个参考评分点。其余题只提供语法检查和原评分指南，不能宣称全题库自动判分。
-- 编辑器接受方法/构造器；Bead Sequence 接受按 A–D 顺序填写的代码片段。系统提供题目声明的字段和辅助类。运行只发送代码与测试包装，不发送网站密钥、身份或浏览器学习记录。
+- 当前 43/43 道导入 FRQ 已配置代码运行入口，共 156 组测试。覆盖方法、构造器、完整类、分小问代码片段；文字设计说明不参与编译。全部题目已列出评分清单，共 315 项（其中缺官方指南的 13 题继续明确使用参考评分建议）。仅经测试及结构证据核对的项目提示参考得分，其余保留待复核，不能宣称全题库全自动官方判分。
+- 编辑器按题目接受方法/构造器、完整类或代码片段；独立小问可切换，草稿分别保存。Bead Sequence 接受四段代码片段。系统提供题目声明的字段和辅助类。运行只发送代码与测试包装，不发送网站密钥、身份或浏览器学习记录。
 - 每个网站进程最多 2 个并发运行、UTC 每日最多 100 次提交，重启会重置额度；相同提交缓存 5 分钟。CPU 2 秒、墙钟 5 秒、内存 256 MiB、输出文件 64 KiB，关闭网络。网站本身不执行学生 Java。
-- 编译失败、超时和服务故障不判零分。功能通过率不是 AP 分数；Bead Sequence 的参考得分只对已有测试和代码结构证据给出提示，其他分值保留待复核，不替代教师按完整评分指南判分。功能测试不保证所有输入正确，也不是防作弊考试系统。
-- 本地自动检查：`python -m unittest test_java_grading test_student_check test_student_portal test_generation_flow -q`。已实测正确答案、不同循环写法、边界错误、类型错误及死循环终止。
+- 编译失败、超时和服务故障不判零分。功能通过率不是 AP 分数；参考得分只对已有测试和代码结构证据给出提示，随机概率、文字设计及其他未验证分值保留待复核，不替代教师按完整评分指南判分。功能测试不保证所有输入正确，也不是防作弊考试系统。
+- 本地自动检查：`python -m unittest test_extended_java test_java_grading test_student_check test_student_portal test_generation_flow -q`。已实测正确答案、不同循环写法、边界错误、类型错误及死循环终止。

@@ -11,7 +11,9 @@ from . import java_runner
 from . import bead_grading
 
 PROFILES = json.loads(Path(__file__).with_name('java_profiles.json').read_text(encoding='utf8'))
+PROFILES.update(json.loads(Path(__file__).with_name('java_profiles_extended.json').read_text(encoding='utf8')))
 PROFILES[bead_grading.QUESTION_ID] = bead_grading.PROFILE
+PROFILES['AP-FRQ764c3eaaeb638f9fS13']['note'] = '运行检查覆盖编程小问；(c) 的文字设计说明请对照参考评分建议复核。'
 _lock = threading.Lock()
 _slots = threading.BoundedSemaphore(2)
 _cache = {}
@@ -29,23 +31,40 @@ record Plot(String crop,int yield){public String getCropType(){return crop;}publ
 
 
 def build_source(profile, code, marker):
+    if profile.get('kind') in {'snippet', 'email'}:
+        from .java_snippets import build
+        return build(profile, code, marker)
     if profile.get('kind') == 'fragment':
         return bead_grading.build(code, marker)
     # The editor accepts method/constructor implementations, not a replacement test harness.
     from tree_sitter import Language, Parser
     import tree_sitter_java
-    tree = Parser(Language(tree_sitter_java.language())).parse(('class Submission {\n' + code + '\n}').encode())
+    whole_class = profile.get('kind') == 'class'
+    tree = Parser(Language(tree_sitter_java.language())).parse((code if whole_class else 'class Submission {\n' + code + '\n}').encode())
     if tree.root_node.has_error:
-        raise ValueError('请只填写题目要求的方法或构造器，无需填写外层 class、字段或 main。')
-    declarations = tree.root_node.named_children
+        raise ValueError('请填写完整的类声明，并修正提示的语法问题。' if whole_class else '请只填写题目要求的方法或构造器，无需填写外层 class、字段或 main。')
+    declarations = [n for n in tree.root_node.named_children if n.type not in {'line_comment','block_comment'}]
     if len(declarations) != 1 or declarations[0].type != 'class_declaration':
         raise ValueError('请只填写题目要求的方法或构造器。')
     body = declarations[0].child_by_field_name('body')
+    if whole_class:
+        name = declarations[0].child_by_field_name('name').text.decode()
+        if name != profile['class_name']:
+            raise ValueError('请填写完整的 ' + profile['class_name'] + ' 类。')
+        # Nest the student's complete class without adding/removing any lines.
+        # Do not permit sibling classes/imports to replace the trusted harness.
+        start = declarations[0].start_byte
+        encoded = code.encode()
+        code = (encoded[:start] + b'static ' + encoded[start:]).decode()
     allowed = {'method_declaration', 'constructor_declaration', 'line_comment', 'block_comment'}
+    if whole_class:
+        allowed.add('field_declaration')
     if not body or not body.named_children or any(n.type not in allowed for n in body.named_children):
         raise ValueError('这里只需填写方法或构造器；题目给定的字段和辅助类由系统提供。')
-    prefix = 'import java.util.*;\npublic class Main {\n' + SUPPORT + '\nstatic class ' + profile['class_name'] + ' {\n' + profile['fields'] + '\n'
-    source = prefix + code + '\n}\npublic static void main(String[] args) {\n'
+    prefix = 'import java.util.*;\npublic class Main {\n' + SUPPORT + '\n' + profile.get('support','') + '\n'
+    if not whole_class:
+        prefix += 'static class ' + profile['class_name'] + ' {\n' + profile['fields'] + '\n'
+    source = prefix + code + ('\n' if whole_class else '\n}\n') + 'public static void main(String[] args) {\n'
     for index, case in enumerate(profile['cases']):
         source += ('try { ' + case['setup'] + '\nboolean passed = (' + case['condition'] + ');'
                    + 'System.out.println("' + marker + ':' + str(index) + ':" + (passed ? "PASS" : "FAIL"));'
@@ -91,13 +110,18 @@ def _interpret(profile, code, raw, marker, offset):
     return result
 
 
-def grade(question_id, code):
+def grade(question_id, code, part=None):
     profile = PROFILES.get(question_id)
     if profile is None:
         return dict(status='unsupported', message='这道题尚未配置运行测试，请对照评分指南检查。', cases=[], practice_score=None)
+    if profile.get('kind') == 'parts':
+        if not isinstance(part, int) or isinstance(part, bool) or not 0 <= part < len(profile['parts']):
+            raise ValueError('请先选择要检查的小问。')
+        profile = dict(profile['parts'][part])
+        profile['cases'] = [dict(label=e['label']) for e in profile['examples']]
     if not java_runner.configured():
         return dict(status='unavailable', message='Java 运行服务尚未启用。', cases=[], practice_score=None)
-    fingerprint = hashlib.sha256((question_id + '\0' + code).encode()).hexdigest()
+    fingerprint = hashlib.sha256((question_id + '\0' + str(part) + '\0' + code).encode()).hexdigest()
     with _lock:
         cached = _cache.get(fingerprint)
         if cached and time.monotonic() - cached[0] < 300:

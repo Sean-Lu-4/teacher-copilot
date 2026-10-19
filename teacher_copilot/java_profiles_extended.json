@@ -1,0 +1,1160 @@
+{
+  "AP-FRQ414a8797b527e415S1": {
+    "class_name": "Car",
+    "fields": "",
+    "cases": [
+      {
+        "label": "连续旅行正确扣减燃油",
+        "setup": "Car x=new Car(10,30);",
+        "condition": "x.canMakeTrip(120)&&x.canMakeTrip(90)&&!x.canMakeTrip(225)&&x.canMakeTrip(90)&&!x.canMakeTrip(1)"
+      },
+      {
+        "label": "油量刚好足够；失败不扣油",
+        "setup": "Car x=new Car(12,15);",
+        "condition": "!x.canMakeTrip(300)&&x.canMakeTrip(180)&&!x.canMakeTrip(1)"
+      },
+      {
+        "label": "两个对象的燃油独立",
+        "setup": "Car x=new Car(1.5,20);Car y=new Car(2,10);",
+        "condition": "x.canMakeTrip(20)&&y.canMakeTrip(20)&&x.canMakeTrip(10)"
+      }
+    ],
+    "kind": "class",
+    "support": "",
+    "headers": [
+      {
+        "index": 2,
+        "signatures": [
+          {
+            "name": "Car",
+            "args": [
+              "double",
+              "double"
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "signatures": [
+          {
+            "name": "canMakeTrip",
+            "args": [
+              "double"
+            ],
+            "returns": "boolean"
+          }
+        ]
+      }
+    ],
+    "private_fields": {
+      "double": 2
+    }
+  },
+  "AP-FRQ414a8797b527e415S2": {
+    "class_name": "TrashCan",
+    "fields": "",
+    "cases": [
+      {
+        "label": "未满时累计，超过容量后保留余量",
+        "setup": "TrashCan x=new TrashCan(10);",
+        "condition": "Math.abs(x.acceptTrash(2.5)-7.5)<1e-8&&Math.abs(x.acceptTrash(3.5)-4)<1e-8&&Math.abs(x.acceptTrash(6)-8)<1e-8"
+      },
+      {
+        "label": "恰好装满时清空",
+        "setup": "TrashCan x=new TrashCan(10);",
+        "condition": "x.acceptTrash(4)==6&&x.acceptTrash(6)==10&&x.acceptTrash(1)==9"
+      },
+      {
+        "label": "原题小数示例与对象独立",
+        "setup": "TrashCan x=new TrashCan(3);TrashCan y=new TrashCan(8);",
+        "condition": "Math.abs(x.acceptTrash(1)-2)<1e-8&&Math.abs(x.acceptTrash(3.2)-1.8)<1e-8&&y.acceptTrash(1)==7"
+      }
+    ],
+    "kind": "class",
+    "support": "",
+    "headers": [
+      {
+        "index": 2,
+        "signatures": [
+          {
+            "name": "TrashCan",
+            "args": [
+              "double"
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "signatures": [
+          {
+            "name": "acceptTrash",
+            "args": [
+              "double"
+            ],
+            "returns": "double"
+          }
+        ]
+      }
+    ],
+    "private_fields": {
+      "double": 2
+    }
+  },
+  "AP-FRQ906422c04f2fa6d6S6": {
+    "class_name": "TrashCan",
+    "fields": "",
+    "cases": [
+      {
+        "label": "未满时累计，超过容量后保留余量",
+        "setup": "TrashCan x=new TrashCan(10);",
+        "condition": "Math.abs(x.acceptTrash(2.5)-7.5)<1e-8&&Math.abs(x.acceptTrash(3.5)-4)<1e-8&&Math.abs(x.acceptTrash(6)-8)<1e-8"
+      },
+      {
+        "label": "恰好装满时清空",
+        "setup": "TrashCan x=new TrashCan(10);",
+        "condition": "x.acceptTrash(4)==6&&x.acceptTrash(6)==10&&x.acceptTrash(1)==9"
+      },
+      {
+        "label": "原题小数示例与对象独立",
+        "setup": "TrashCan x=new TrashCan(3);TrashCan y=new TrashCan(8);",
+        "condition": "Math.abs(x.acceptTrash(1)-2)<1e-8&&Math.abs(x.acceptTrash(3.2)-1.8)<1e-8&&y.acceptTrash(1)==7"
+      }
+    ],
+    "kind": "class",
+    "support": "",
+    "headers": [
+      {
+        "index": 2,
+        "signatures": [
+          {
+            "name": "TrashCan",
+            "args": [
+              "double"
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "signatures": [
+          {
+            "name": "acceptTrash",
+            "args": [
+              "double"
+            ],
+            "returns": "double"
+          }
+        ]
+      }
+    ],
+    "private_fields": {
+      "double": 2
+    }
+  },
+  "AP-FRQd841c16efb454b49S1": {
+    "class_name": "Shop",
+    "fields": "Shelf[] shelfArray;",
+    "cases": [
+      {
+        "label": "跨货架合并零件，车轴不足",
+        "setup": "Shop x=new Shop();x.shelfArray=new Shelf[]{new Shelf(4,0),new Shelf(0,10)};",
+        "condition": "x.getPossibleAssemblies()==4&&x.shelfArray.length==2&&x.shelfArray[0].getNumAxles()==4"
+      },
+      {
+        "label": "奇数车轮向下取整",
+        "setup": "Shop x=new Shop();x.shelfArray=new Shelf[]{new Shelf(20,3),new Shelf(0,2)};",
+        "condition": "x.getPossibleAssemblies()==2"
+      },
+      {
+        "label": "空数组与无车轮",
+        "setup": "Shop x=new Shop();x.shelfArray=new Shelf[]{};int a=x.getPossibleAssemblies();x.shelfArray=new Shelf[]{new Shelf(3,0)};",
+        "condition": "a==0&&x.getPossibleAssemblies()==0"
+      }
+    ],
+    "kind": "methods",
+    "support": "record Shelf(int axles,int wheels){public int getNumAxles(){return axles;}public int getNumWheels(){return wheels;}}"
+  },
+  "AP-FRQd841c16efb454b49S2": {
+    "class_name": "Painter",
+    "fields": "Surface[] surfaceArray;",
+    "cases": [
+      {
+        "label": "总面积刚好等于覆盖面积",
+        "setup": "Painter x=new Painter();x.surfaceArray=new Surface[]{new Surface(20,10),new Surface(10,20)};",
+        "condition": "x.hasEnoughPaint(1)&&x.surfaceArray.length==2"
+      },
+      {
+        "label": "小数面积不可截断",
+        "setup": "Painter x=new Painter();x.surfaceArray=new Surface[]{new Surface(20.01,20)};",
+        "condition": "!x.hasEnoughPaint(1)&&x.hasEnoughPaint(2)"
+      },
+      {
+        "label": "累加所有表面",
+        "setup": "Painter x=new Painter();x.surfaceArray=new Surface[]{new Surface(10,30),new Surface(10,30),new Surface(10,30)};",
+        "condition": "!x.hasEnoughPaint(2)&&x.hasEnoughPaint(3)"
+      }
+    ],
+    "kind": "methods",
+    "support": "record Surface(double width,double length){public double getWidth(){return width;}public double getLength(){return length;}}"
+  },
+  "AP-FRQe12b4823e927b30fS1": {
+    "class_name": "GamePlatform",
+    "fields": "ArrayList<GameAccount> allPlayers;",
+    "cases": [
+      {
+        "label": "包含 13 和 19 岁，排除其他年龄",
+        "setup": "GamePlatform x=new GamePlatform();x.allPlayers=new ArrayList<>(List.of(new GameAccount(\"a\",12),new GameAccount(\"b\",13),new GameAccount(\"c\",19),new GameAccount(\"d\",20)));",
+        "condition": "x.avgTeenAccounts()==16&&x.allPlayers.size()==4"
+      },
+      {
+        "label": "保留小数，分母仅包含青少年",
+        "setup": "GamePlatform x=new GamePlatform();x.allPlayers=new ArrayList<>(List.of(new GameAccount(\"a\",15),new GameAccount(\"b\",16),new GameAccount(\"c\",60)));",
+        "condition": "x.avgTeenAccounts()==15.5"
+      },
+      {
+        "label": "唯一青少年",
+        "setup": "GamePlatform x=new GamePlatform();x.allPlayers=new ArrayList<>(List.of(new GameAccount(\"a\",17)));",
+        "condition": "x.avgTeenAccounts()==17"
+      }
+    ],
+    "kind": "methods",
+    "support": "record GameAccount(String username,int age){public String getUsername(){return username;}public int getAge(){return age;}}"
+  },
+  "AP-FRQe12b4823e927b30fS2": {
+    "class_name": "Season",
+    "fields": "ArrayList<Game> allGames;",
+    "cases": [
+      {
+        "label": "平局中断连胜；最长连胜在末尾",
+        "setup": "Season x=new Season();x.allGames=new ArrayList<>(List.of(new Game(2,1),new Game(1,1),new Game(3,1),new Game(4,2)));",
+        "condition": "x.getLongestHomeWinStreak()==2&&x.allGames.size()==4"
+      },
+      {
+        "label": "没有获胜场次",
+        "setup": "Season x=new Season();x.allGames=new ArrayList<>(List.of(new Game(1,2),new Game(1,1)));",
+        "condition": "x.getLongestHomeWinStreak()==0"
+      },
+      {
+        "label": "保留较早出现的最大值",
+        "setup": "Season x=new Season();x.allGames=new ArrayList<>(List.of(new Game(2,1),new Game(3,1),new Game(4,1),new Game(0,1),new Game(2,1)));",
+        "condition": "x.getLongestHomeWinStreak()==3"
+      }
+    ],
+    "kind": "methods",
+    "support": "record Game(int home,int away){public int getHomeScore(){return home;}public int getAwayScore(){return away;}}"
+  },
+  "AP-FRQ8b32f5bc1d3ab57aS1": {
+    "class_name": "FlightSeatingChart",
+    "fields": "Passenger[][] chart;",
+    "cases": [
+      {
+        "label": "只选择目标行之后的乘客，清空原位置",
+        "setup": "FlightSeatingChart x=new FlightSeatingChart();Passenger a=new Passenger(100,\"a\"),b=new Passenger(5,\"b\"),c=new Passenger(9,\"c\");x.chart=new Passenger[][]{{a,null},{b,null},{null,c}};x.upgrade(0,1);",
+        "condition": "x.chart[0][1]==c&&x.chart[2][1]==null&&x.chart[0][0]==a&&x.chart[1][0]==b"
+      },
+      {
+        "label": "跳过空位，接受并列最高的任意乘客",
+        "setup": "FlightSeatingChart x=new FlightSeatingChart();Passenger a=new Passenger(8,\"a\"),b=new Passenger(8,\"b\");x.chart=new Passenger[][]{{null,null},{a,b}};x.upgrade(0,0);",
+        "condition": "(x.chart[0][0]==a&&x.chart[1][0]==null&&x.chart[1][1]==b)||(x.chart[0][0]==b&&x.chart[1][1]==null&&x.chart[1][0]==a)"
+      },
+      {
+        "label": "非方阵、最后一行乘客",
+        "setup": "FlightSeatingChart x=new FlightSeatingChart();Passenger a=new Passenger(1,\"a\");x.chart=new Passenger[][]{{null,null,null},{null,null,a}};x.upgrade(0,2);",
+        "condition": "x.chart[0][2]==a&&x.chart[1][2]==null"
+      }
+    ],
+    "kind": "methods",
+    "support": "record Passenger(int rating,String id){public int getRating(){return rating;}public String getID(){return id;}}"
+  },
+  "AP-FRQ8b32f5bc1d3ab57aS2": {
+    "class_name": "GameGrid",
+    "fields": "String[][] grid;",
+    "cases": [
+      {
+        "label": "四个方向离开单格网格",
+        "setup": "GameGrid x=new GameGrid();boolean ok=true;for(String s:List.of(\"NE\",\"NW\",\"SE\",\"SW\")){x.grid=new String[][]{{new String(s)}};ok&=x.navigate(0,0)==1;}",
+        "condition": "ok"
+      },
+      {
+        "label": "非方阵、多步路径、保持网格不变",
+        "setup": "GameGrid x=new GameGrid();x.grid=new String[][]{{\"SE\",\"NE\",\"NE\"},{\"NE\",\"NE\",\"NE\"}};",
+        "condition": "x.navigate(0,0)==3&&x.grid[0][0].equals(\"SE\")"
+      },
+      {
+        "label": "向左下方越界",
+        "setup": "GameGrid x=new GameGrid();x.grid=new String[][]{{\"SW\",\"SW\"},{\"SW\",\"SW\"},{\"SW\",\"SW\"}};",
+        "condition": "x.navigate(0,1)==2"
+      }
+    ],
+    "kind": "methods",
+    "support": ""
+  },
+  "AP-FRQ906422c04f2fa6d6S1": {
+    "class_name": "Sign",
+    "fields": "",
+    "cases": [
+      {
+        "label": "非整除分行，重复读取不改变消息",
+        "setup": "Sign x=new Sign(\"ABC222DE\",3);",
+        "condition": "x.numberOfLines()==3&&\"ABC;222;DE\".equals(x.getLines())&&\"ABC;222;DE\".equals(x.getLines())"
+      },
+      {
+        "label": "空字符串返回 null 和零行",
+        "setup": "Sign x=new Sign(\"\",4);",
+        "condition": "x.numberOfLines()==0&&x.getLines()==null"
+      },
+      {
+        "label": "整除无尾部分号，宽度大于长度",
+        "setup": "Sign x=new Sign(\"AB_CD_EF\",2);Sign y=new Sign(\"AB\",10);",
+        "condition": "x.numberOfLines()==4&&\"AB;_C;D_;EF\".equals(x.getLines())&&y.numberOfLines()==1&&\"AB\".equals(y.getLines())"
+      }
+    ],
+    "kind": "class",
+    "support": "",
+    "headers": [
+      {
+        "index": 2,
+        "signatures": [
+          {
+            "name": "Sign",
+            "args": [
+              "String",
+              "int"
+            ]
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "signatures": [
+          {
+            "name": "numberOfLines",
+            "args": [],
+            "returns": "int"
+          },
+          {
+            "name": "getLines",
+            "args": [],
+            "returns": "String"
+          }
+        ]
+      }
+    ]
+  },
+  "AP-FRQ906422c04f2fa6d6S3": {
+    "class_name": "CubePair",
+    "fields": "",
+    "cases": [
+      {
+        "label": "双参数保留两个方块的种类与顺序",
+        "setup": "CubePair x=new CubePair(\"number\",\"color\");",
+        "condition": "x.rollCubes().equals(\"1red\")&&x.rollCubes().equals(\"2orange\")"
+      },
+      {
+        "label": "单参数创建两个独立字母方块",
+        "setup": "CubePair x=new CubePair(\"letter\");",
+        "condition": "x.rollCubes().equals(\"AA\")&&x.rollCubes().equals(\"BB\")"
+      },
+      {
+        "label": "不同对象之间独立",
+        "setup": "CubePair x=new CubePair(\"color\",\"letter\");CubePair y=new CubePair(\"number\");",
+        "condition": "x.rollCubes().equals(\"redA\")&&y.rollCubes().equals(\"11\")"
+      }
+    ],
+    "kind": "class",
+    "support": "static class Cube{String type;int i;Cube(String t){type=t;}public String roll(){int n=(i++)%6;return type.equals(\"number\")?\"\"+(n+1):type.equals(\"letter\")?\"\"+(char)(65+n):new String[]{\"red\",\"orange\",\"yellow\",\"green\",\"blue\",\"purple\"}[n];}}",
+    "headers": [
+      {
+        "index": 2,
+        "signatures": [
+          {
+            "name": "CubePair",
+            "args": [
+              "String",
+              "String"
+            ]
+          },
+          {
+            "name": "CubePair",
+            "args": [
+              "String"
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "signatures": [
+          {
+            "name": "rollCubes",
+            "args": [],
+            "returns": "String"
+          }
+        ]
+      }
+    ],
+    "private_fields": {
+      "Cube": 2
+    }
+  },
+  "AP-FRQ906422c04f2fa6d6S4": {
+    "class_name": "CupcakeMachine",
+    "fields": "",
+    "cases": [
+      {
+        "label": "订单金额及连续编号",
+        "setup": "CupcakeMachine x=new CupcakeMachine(10,1.75);",
+        "condition": "\"Order number 1, cost $3.5\".equals(x.takeOrder(2))&&\"Order number 2, cost $5.25\".equals(x.takeOrder(3))"
+      },
+      {
+        "label": "失败不扣库存、不占订单编号",
+        "setup": "CupcakeMachine x=new CupcakeMachine(2,1.5);",
+        "condition": "\"Order cannot be filled\".equals(x.takeOrder(3))&&\"Order number 1, cost $3.0\".equals(x.takeOrder(2))&&\"Order cannot be filled\".equals(x.takeOrder(1))"
+      },
+      {
+        "label": "零库存与对象独立",
+        "setup": "CupcakeMachine x=new CupcakeMachine(0,2);CupcakeMachine y=new CupcakeMachine(1,2);",
+        "condition": "\"Order cannot be filled\".equals(x.takeOrder(1))&&\"Order number 1, cost $2.0\".equals(y.takeOrder(1))"
+      }
+    ],
+    "kind": "class",
+    "support": "",
+    "headers": [
+      {
+        "index": 2,
+        "signatures": [
+          {
+            "name": "CupcakeMachine",
+            "args": [
+              "int",
+              "double"
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "signatures": [
+          {
+            "name": "takeOrder",
+            "args": [
+              "int"
+            ],
+            "returns": "String"
+          }
+        ]
+      }
+    ],
+    "private_fields": {
+      "int": 2,
+      "double": 1
+    }
+  },
+  "AP-FRQ906422c04f2fa6d6S5": {
+    "class_name": "LapTracker",
+    "fields": "",
+    "cases": [
+      {
+        "label": "周期末返回累计值，下次开始重置",
+        "setup": "LapTracker x=new LapTracker(3);",
+        "condition": "x.addLaps(8)==8&&x.addLaps(12)==20&&x.addLaps(10)==30&&x.addLaps(11)==11&&x.addLaps(5)==16&&x.addLaps(13)==29&&x.addLaps(7)==7"
+      },
+      {
+        "label": "重置周期为 1",
+        "setup": "LapTracker x=new LapTracker(1);",
+        "condition": "x.addLaps(8)==8&&x.addLaps(4)==4"
+      },
+      {
+        "label": "不同对象独立计数",
+        "setup": "LapTracker x=new LapTracker(2);LapTracker y=new LapTracker(3);",
+        "condition": "x.addLaps(2)==2&&y.addLaps(3)==3&&x.addLaps(5)==7&&y.addLaps(1)==4"
+      }
+    ],
+    "kind": "class",
+    "support": "",
+    "headers": [
+      {
+        "index": 2,
+        "signatures": [
+          {
+            "name": "LapTracker",
+            "args": [
+              "int"
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "signatures": [
+          {
+            "name": "addLaps",
+            "args": [
+              "int"
+            ],
+            "returns": "int"
+          }
+        ]
+      }
+    ],
+    "private_fields": {
+      "int": 3
+    }
+  },
+  "AP-FRQ906422c04f2fa6d6S9": {
+    "class_name": "Scoreboard",
+    "fields": "",
+    "cases": [
+      {
+        "label": "初始比分及活动队伍",
+        "setup": "Scoreboard x=new Scoreboard(\"Red\",\"Blue\");",
+        "condition": "\"0-0-Red\".equals(x.getScore())&&\"0-0-Red\".equals(x.getScore())"
+      },
+      {
+        "label": "正数累加、零分切换双方",
+        "setup": "Scoreboard x=new Scoreboard(\"Red\",\"Blue\");x.recordPlay(1);String a=x.getScore();x.recordPlay(0);x.recordPlay(3);x.recordPlay(1);String b=x.getScore();x.recordPlay(0);",
+        "condition": "a.equals(\"1-0-Red\")&&b.equals(\"1-4-Blue\")&&x.getScore().equals(\"1-4-Red\")"
+      },
+      {
+        "label": "连续零分与对象独立",
+        "setup": "Scoreboard x=new Scoreboard(\"A\",\"B\");x.recordPlay(2);x.recordPlay(0);x.recordPlay(0);Scoreboard y=new Scoreboard(\"C\",\"D\");",
+        "condition": "x.getScore().equals(\"2-0-A\")&&y.getScore().equals(\"0-0-C\")"
+      }
+    ],
+    "kind": "class",
+    "support": "",
+    "headers": [
+      {
+        "index": 3,
+        "signatures": [
+          {
+            "name": "recordPlay",
+            "args": [
+              "int"
+            ],
+            "returns": "void"
+          },
+          {
+            "name": "getScore",
+            "args": [],
+            "returns": "String"
+          }
+        ]
+      }
+    ],
+    "private_fields": {
+      "String": 1,
+      "int": 1
+    }
+  },
+  "AP-FRQ906422c04f2fa6d6S10": {
+    "class_name": "AdditionPattern",
+    "fields": "",
+    "cases": [
+      {
+        "label": "初始值、前进、后退",
+        "setup": "AdditionPattern x=new AdditionPattern(2,3);int a=x.currentNumber();x.next();x.next();x.next();int b=x.currentNumber();x.prev();",
+        "condition": "a==2&&b==11&&x.currentNumber()==8"
+      },
+      {
+        "label": "不能退过起点",
+        "setup": "AdditionPattern x=new AdditionPattern(2,3);x.prev();x.next();x.prev();x.prev();",
+        "condition": "x.currentNumber()==2"
+      },
+      {
+        "label": "步长与对象独立",
+        "setup": "AdditionPattern x=new AdditionPattern(5,2);AdditionPattern y=new AdditionPattern(10,1);x.next();y.next();",
+        "condition": "x.currentNumber()==7&&y.currentNumber()==11"
+      }
+    ],
+    "kind": "class",
+    "support": "",
+    "headers": [
+      {
+        "index": 2,
+        "signatures": [
+          {
+            "name": "AdditionPattern",
+            "args": [
+              "int",
+              "int"
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "signatures": [
+          {
+            "name": "next",
+            "args": [],
+            "returns": "void"
+          },
+          {
+            "name": "prev",
+            "args": [],
+            "returns": "void"
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "signatures": [
+          {
+            "name": "currentNumber",
+            "args": [],
+            "returns": "int"
+          }
+        ]
+      }
+    ]
+  },
+  "AP-FRQ906422c04f2fa6d6S7": {
+    "class_name": "AppleCrate",
+    "fields": "Apple[][] apples;",
+    "cases": [
+      {
+        "label": "排除腐烂及上下左右相邻苹果，保留对角线",
+        "setup": "AppleCrate x=new AppleCrate();x.apples=new Apple[][]{{new Apple(10,true),new Apple(2,false)},{new Apple(3,false),new Apple(5,false)}};",
+        "condition": "x.numberOfPies(2)==2"
+      },
+      {
+        "label": "没有腐烂苹果，累计小数重量",
+        "setup": "AppleCrate x=new AppleCrate();x.apples=new Apple[][]{{new Apple(.5,false),new Apple(.5,false),new Apple(.5,false)},{new Apple(.5,false),new Apple(.5,false),new Apple(.5,false)}};",
+        "condition": "x.numberOfPies(1)==3"
+      },
+      {
+        "label": "全部腐烂返回零",
+        "setup": "AppleCrate x=new AppleCrate();x.apples=new Apple[][]{{new Apple(1,true),new Apple(1,true)},{new Apple(1,true),new Apple(1,true)}};",
+        "condition": "x.numberOfPies(1)==0"
+      }
+    ],
+    "kind": "methods",
+    "support": "record Apple(double weight,boolean rotten){public double getWeight(){return weight;}public boolean isRotten(){return rotten;}}"
+  },
+  "AP-FRQ906422c04f2fa6d6S8": {
+    "class_name": "Schedule",
+    "fields": "Appointment[][] sched;",
+    "cases": [
+      {
+        "label": "按列计数并比较内容而非字符串地址",
+        "setup": "Schedule x=new Schedule();x.sched=new Appointment[][]{{new Appointment(new String(\"busy\"),1),new Appointment(\"free\",2),new Appointment(\"busy\",3)},{new Appointment(\"busy\",4),new Appointment(\"free\",5),new Appointment(\"free\",6)}};",
+        "condition": "x.columnWithFewest(new String(\"busy\"))==1"
+      },
+      {
+        "label": "并列最少接受任一列",
+        "setup": "Schedule x=new Schedule();x.sched=new Appointment[][]{{new Appointment(\"free\",1),new Appointment(\"busy\",2),new Appointment(\"free\",3)}};int n=x.columnWithFewest(\"busy\");",
+        "condition": "n==0||n==2"
+      },
+      {
+        "label": "单列，无匹配值",
+        "setup": "Schedule x=new Schedule();x.sched=new Appointment[][]{{new Appointment(\"busy\",1)},{new Appointment(\"free\",2)}};",
+        "condition": "x.columnWithFewest(\"hold\")==0"
+      }
+    ],
+    "kind": "methods",
+    "support": "record Appointment(String status,int room){public String getStatus(){return status;}public int getRoomNumber(){return room;}}"
+  },
+  "AP-FRQ69fc5af861bea528S1": {
+    "class_name": "SimulateCarRace",
+    "fields": "RaceCar carOne,carTwo;",
+    "cases": [
+      {
+        "label": "逐圈相加，从第 1 圈到末圈",
+        "setup": "SimulateCarRace x=new SimulateCarRace();x.carOne=new RaceCar(1,10);x.carTwo=new RaceCar(4,4);",
+        "condition": "x.findWinner(2).equals(\"Car 2 wins!\")"
+      },
+      {
+        "label": "一圈获胜与平局",
+        "setup": "SimulateCarRace x=new SimulateCarRace();x.carOne=new RaceCar(1);x.carTwo=new RaceCar(2);String a=x.findWinner(1);x.carTwo=new RaceCar(1);",
+        "condition": "a.equals(\"Car 1 wins!\")&&x.findWinner(1).equals(\"Tie!\")"
+      },
+      {
+        "label": "删除首尾及多次出现的指定子串",
+        "setup": "SimulateCarRace x=new SimulateCarRace();",
+        "condition": "x.shortenMessage(\"the_driver_of_the_first_car_is_Jerry\",\"the_\").equals(\"driver_of_first_car_is_Jerry\")&&x.shortenMessage(\"xyAxy\",\"xy\").equals(\"A\")&&x.shortenMessage(\"ok\",\"z\").equals(\"ok\")&&x.shortenMessage(\"xyxy\",\"xy\").equals(\"\")"
+      }
+    ],
+    "kind": "methods",
+    "support": "static class RaceCar{double[] times;RaceCar(double...t){times=t;}public double getLapTime(int n){return times[n-1];}}"
+  },
+  "AP-FRQ69fc5af861bea528S2": {
+    "class_name": "MessageBuilder",
+    "fields": "String message;int numWords;int nextIndex;public String getNextWord(String s){if(nextIndex>0&&!s.equals(messageWords[nextIndex-1]))throw new IllegalArgumentException(\"Use the previously returned word\");return nextIndex<messageWords.length?messageWords[nextIndex++]:null;}",
+    "cases": [
+      {
+        "label": "构造消息时更新词数、空格和终止条件",
+        "setup": "MessageBuilder x=new MessageBuilder(\"the\");",
+        "condition": "x.message.equals(\"the book on the table\")&&x.numWords==5"
+      },
+      {
+        "label": "缩写含首尾单词，不改变消息",
+        "setup": "MessageBuilder x=new MessageBuilder(\"the\");x.message=\"as soon as possible\";",
+        "condition": "x.getAbbreviation().equals(\"asap\")&&x.message.equals(\"as soon as possible\")"
+      },
+      {
+        "label": "两个单字符单词",
+        "setup": "MessageBuilder x=new MessageBuilder(\"the\");x.message=\"A B\";",
+        "condition": "x.getAbbreviation().equals(\"AB\")"
+      },
+      {
+        "label": "起始词已是最后一个词",
+        "setup": "messageWords=new String[]{};MessageBuilder x=new MessageBuilder(\"alone\");",
+        "condition": "x.message.equals(\"alone\")&&x.numWords==1"
+      }
+    ],
+    "kind": "methods",
+    "support": "static String[] messageWords={\"book\",\"on\",\"the\",\"table\"};"
+  },
+  "AP-FRQ69fc5af861bea528S5": {
+    "class_name": "RobotMover",
+    "fields": "String moveSequence;",
+    "cases": [
+      {
+        "label": "构造器生成指定数量合法移动和分隔符（概率分布另行复核）",
+        "setup": "RobotMover x=new RobotMover(6);String[] a=x.moveSequence.split(\"_\");boolean ok=x.moveSequence.endsWith(\"_\")&&a.length==6;for(String s:a)ok&=List.of(\"up\",\"down\",\"left\",\"right\").contains(s);",
+        "condition": "ok"
+      },
+      {
+        "label": "统计重叠子串",
+        "setup": "RobotMover x=new RobotMover(1);x.moveSequence=\"right_down_left_down_right_down_up_up_up_\";",
+        "condition": "x.countOccurrences(\"up_up\")==2&&x.countOccurrences(\"right_d\")==2&&x.countOccurrences(\"down\")==3"
+      },
+      {
+        "label": "无匹配与保持原值",
+        "setup": "RobotMover x=new RobotMover(1);x.moveSequence=\"up_up_\";",
+        "condition": "x.countOccurrences(\"left\")==0&&x.countOccurrences(\"up\")==2&&x.moveSequence.equals(\"up_up_\")"
+      }
+    ],
+    "kind": "methods",
+    "support": ""
+  },
+  "AP-FRQ69fc5af861bea528S6": {
+    "class_name": "Feeder",
+    "fields": "int currentFood;",
+    "cases": [
+      {
+        "label": "一天消耗符合合法范围且不出现负数（概率分布另行复核）",
+        "setup": "Feeder x=new Feeder();x.currentFood=1000;x.simulateOneDay(3);int used=1000-x.currentFood;",
+        "condition": "x.currentFood==0||(used>=30&&used<=150&&used%3==0)"
+      },
+      {
+        "label": "食物不足时清空；初始无食物返回零天",
+        "setup": "Feeder x=new Feeder();x.currentFood=1;x.simulateOneDay(2);",
+        "condition": "x.currentFood==0&&x.simulateManyDays(2,5)==0"
+      },
+      {
+        "label": "独立检查多天模拟的调用与提前结束",
+        "setup": "Feeder x=new Feeder(){public void simulateOneDay(int n){currentFood=Math.max(0,currentFood-100);}};x.currentFood=250;int a=x.simulateManyDays(10,5);x.currentFood=1000;int b=x.simulateManyDays(10,2);",
+        "condition": "a==3&&b==2&&x.currentFood==800"
+      }
+    ],
+    "kind": "methods",
+    "support": ""
+  },
+  "AP-FRQ69fc5af861bea528S8": {
+    "class_name": "StringAnalyzer",
+    "fields": "",
+    "cases": [
+      {
+        "label": "重叠匹配只计第一次",
+        "setup": "StringAnalyzer x=new StringAnalyzer();",
+        "condition": "x.countRepeat(\"AAAAA\",\"AA\")==2&&x.countRepeat(\"AABABABAA\",\"ABA\")==2"
+      },
+      {
+        "label": "无匹配和普通匹配",
+        "setup": "StringAnalyzer x=new StringAnalyzer();",
+        "condition": "x.countRepeat(\"ABBAABB\",\"ABA\")==0&&x.countRepeat(\"BAAB\",\"AA\")==1"
+      },
+      {
+        "label": "末尾匹配，连续匹配",
+        "setup": "StringAnalyzer x=new StringAnalyzer();",
+        "condition": "x.countRepeat(\"xxAB\",\"AB\")==1&&x.countRepeat(\"ABABAB\",\"AB\")==3"
+      }
+    ],
+    "kind": "methods",
+    "support": "",
+    "note": "这里只检查 (a) 的 countRepeat 方法；(b) 是文字设计说明，请对照原评分指南复核。"
+  },
+  "AP-FRQ69fc5af861bea528S10": {
+    "class_name": "AppointmentBook",
+    "fields": "boolean[][] free=new boolean[9][60];private boolean isMinuteFree(int p,int m){return free[p][m];}private void reserveBlock(int p,int s,int d){for(int i=s;i<s+d;i++)free[p][i]=false;}",
+    "cases": [
+      {
+        "label": "找最早连续时间段，不修改预约表",
+        "setup": "AppointmentBook x=new AppointmentBook();Arrays.fill(x.free[2],10,15,true);Arrays.fill(x.free[2],30,45,true);Arrays.fill(x.free[2],50,60,true);",
+        "condition": "x.findFreeBlock(2,15)==30&&x.findFreeBlock(2,9)==30&&x.findFreeBlock(2,20)==-1&&x.free[2][30]"
+      },
+      {
+        "label": "完整 60 分钟与最后一分钟边界",
+        "setup": "AppointmentBook x=new AppointmentBook();Arrays.fill(x.free[1],true);x.free[8][59]=true;",
+        "condition": "x.findFreeBlock(1,60)==0&&x.findFreeBlock(8,1)==59"
+      },
+      {
+        "label": "按课节优先预约且只占用指定分钟",
+        "setup": "AppointmentBook x=new AppointmentBook();Arrays.fill(x.free[2],25,30,true);Arrays.fill(x.free[3],0,15,true);Arrays.fill(x.free[4],5,30,true);boolean a=x.makeAppointment(2,4,22);boolean b=x.makeAppointment(3,4,3);",
+        "condition": "a&&b&&!x.free[4][5]&&!x.free[4][26]&&x.free[4][27]&&!x.free[3][0]&&x.free[3][3]&&!x.makeAppointment(2,4,30)"
+      }
+    ],
+    "kind": "methods",
+    "support": ""
+  },
+  "AP-FRQ69fc5af861bea528S3": {
+    "kind": "parts",
+    "parts": [
+      {
+        "kind": "snippet",
+        "label": "A · 下载次数末位数字",
+        "args": "int downloads",
+        "examples": [
+          {
+            "input": 1734567,
+            "expected": "exactly once",
+            "label": "恰好再出现一次"
+          },
+          {
+            "input": 325322,
+            "expected": "not exactly once",
+            "label": "出现超过一次"
+          },
+          {
+            "input": 7,
+            "expected": "not exactly once",
+            "label": "一位数"
+          },
+          {
+            "input": 1010,
+            "expected": "exactly once",
+            "label": "末位为零"
+          },
+          {
+            "input": 111,
+            "expected": "not exactly once",
+            "label": "重复多个"
+          }
+        ],
+        "reference": "int digit=downloads%10;int rest=downloads/10,count=0;while(rest>0){if(rest%10==digit)count++;rest/=10;}System.out.print(count==1?\"exactly once\":\"not exactly once\");"
+      },
+      {
+        "kind": "snippet",
+        "label": "B · 歌曲信息",
+        "args": "String songInfo",
+        "examples": [
+          {
+            "input": "Artist-Album-Song",
+            "expected": "Song by Artist",
+            "label": "基本格式"
+          },
+          {
+            "input": "A B-C D-E F",
+            "expected": "E F by A B",
+            "label": "保留空格"
+          }
+        ],
+        "reference": "int first=songInfo.indexOf(\"-\");int second=songInfo.indexOf(\"-\",first+1);System.out.print(songInfo.substring(second+1)+\" by \"+songInfo.substring(0,first));"
+      }
+    ]
+  },
+  "AP-FRQ69fc5af861bea528S4": {
+    "kind": "parts",
+    "parts": [
+      {
+        "kind": "snippet",
+        "label": "A · 居中文本",
+        "args": "int colWidth,String text",
+        "examples": [
+          {
+            "input": [
+              5,
+              "ab"
+            ],
+            "expected": "|.ab..|",
+            "label": "奇数个补点"
+          },
+          {
+            "input": [
+              5,
+              "abc"
+            ],
+            "expected": "|.abc.|",
+            "label": "偶数个补点"
+          },
+          {
+            "input": [
+              3,
+              "abcd"
+            ],
+            "expected": "abcd",
+            "label": "超过宽度"
+          },
+          {
+            "input": [
+              3,
+              "abc"
+            ],
+            "expected": "|abc|",
+            "label": "刚好等宽"
+          },
+          {
+            "input": [
+              1,
+              ""
+            ],
+            "expected": "|.|",
+            "label": "空文本"
+          }
+        ],
+        "reference": "if(text.length()>colWidth)System.out.print(text);else{int left=(colWidth-text.length())/2;System.out.print(\"|\");for(int i=0;i<left;i++)System.out.print(\".\");System.out.print(text);for(int i=0;i<colWidth-text.length()-left;i++)System.out.print(\".\");System.out.print(\"|\");}"
+      },
+      {
+        "kind": "snippet",
+        "label": "B · 最长前缀",
+        "args": "String text,String otherText",
+        "examples": [
+          {
+            "input": [
+              "apple",
+              "pear"
+            ],
+            "expected": "1",
+            "label": "短前缀"
+          },
+          {
+            "input": [
+              "apple",
+              "pineapple"
+            ],
+            "expected": "5",
+            "label": "完整匹配"
+          },
+          {
+            "input": [
+              "apple",
+              "happy"
+            ],
+            "expected": "3",
+            "label": "中间长度"
+          },
+          {
+            "input": [
+              "apple",
+              "leek"
+            ],
+            "expected": "0",
+            "label": "没有匹配"
+          },
+          {
+            "input": [
+              "",
+              "a"
+            ],
+            "expected": "0",
+            "label": "空文本"
+          }
+        ],
+        "reference": "int best=0;for(int i=1;i<=text.length();i++)if(otherText.contains(text.substring(0,i)))best=i;System.out.print(best);"
+      }
+    ]
+  },
+  "AP-FRQabac91d826c61ac9": {
+    "kind": "parts",
+    "parts": [
+      {
+        "kind": "snippet",
+        "label": "A · 居中文本",
+        "args": "int colWidth,String text",
+        "examples": [
+          {
+            "input": [
+              5,
+              "ab"
+            ],
+            "expected": "|.ab..|",
+            "label": "奇数个补点"
+          },
+          {
+            "input": [
+              5,
+              "abc"
+            ],
+            "expected": "|.abc.|",
+            "label": "偶数个补点"
+          },
+          {
+            "input": [
+              3,
+              "abcd"
+            ],
+            "expected": "abcd",
+            "label": "超过宽度"
+          },
+          {
+            "input": [
+              3,
+              "abc"
+            ],
+            "expected": "|abc|",
+            "label": "刚好等宽"
+          },
+          {
+            "input": [
+              1,
+              ""
+            ],
+            "expected": "|.|",
+            "label": "空文本"
+          }
+        ],
+        "reference": "if(text.length()>colWidth)System.out.print(text);else{int left=(colWidth-text.length())/2;System.out.print(\"|\");for(int i=0;i<left;i++)System.out.print(\".\");System.out.print(text);for(int i=0;i<colWidth-text.length()-left;i++)System.out.print(\".\");System.out.print(\"|\");}"
+      },
+      {
+        "kind": "snippet",
+        "label": "B · 最长前缀",
+        "args": "String text,String otherText",
+        "examples": [
+          {
+            "input": [
+              "apple",
+              "pear"
+            ],
+            "expected": "1",
+            "label": "短前缀"
+          },
+          {
+            "input": [
+              "apple",
+              "pineapple"
+            ],
+            "expected": "5",
+            "label": "完整匹配"
+          },
+          {
+            "input": [
+              "apple",
+              "happy"
+            ],
+            "expected": "3",
+            "label": "中间长度"
+          },
+          {
+            "input": [
+              "apple",
+              "leek"
+            ],
+            "expected": "0",
+            "label": "没有匹配"
+          },
+          {
+            "input": [
+              "",
+              "a"
+            ],
+            "expected": "0",
+            "label": "空文本"
+          }
+        ],
+        "reference": "int best=0;for(int i=1;i<=text.length();i++)if(otherText.contains(text.substring(0,i)))best=i;System.out.print(best);"
+      },
+      {
+        "kind": "snippet",
+        "label": "A · 下载次数末位数字",
+        "args": "int downloads",
+        "examples": [
+          {
+            "input": 1734567,
+            "expected": "exactly once",
+            "label": "恰好再出现一次"
+          },
+          {
+            "input": 325322,
+            "expected": "not exactly once",
+            "label": "出现超过一次"
+          },
+          {
+            "input": 7,
+            "expected": "not exactly once",
+            "label": "一位数"
+          },
+          {
+            "input": 1010,
+            "expected": "exactly once",
+            "label": "末位为零"
+          },
+          {
+            "input": 111,
+            "expected": "not exactly once",
+            "label": "重复多个"
+          }
+        ],
+        "reference": "int digit=downloads%10;int rest=downloads/10,count=0;while(rest>0){if(rest%10==digit)count++;rest/=10;}System.out.print(count==1?\"exactly once\":\"not exactly once\");"
+      },
+      {
+        "kind": "snippet",
+        "label": "B · 歌曲信息",
+        "args": "String songInfo",
+        "examples": [
+          {
+            "input": "Artist-Album-Song",
+            "expected": "Song by Artist",
+            "label": "基本格式"
+          },
+          {
+            "input": "A B-C D-E F",
+            "expected": "E F by A B",
+            "label": "保留空格"
+          }
+        ],
+        "reference": "int first=songInfo.indexOf(\"-\");int second=songInfo.indexOf(\"-\",first+1);System.out.print(songInfo.substring(second+1)+\" by \"+songInfo.substring(0,first));"
+      }
+    ]
+  },
+  "AP-FRQ2459373609e2732d": {
+    "kind": "email",
+    "note": "填写各小问的代码片段；变量可自行命名。随机取值的概率与指定 API 使用要求仍需按评分指南复核。",
+    "cases": [
+      {
+        "label": "完整姓名用户名"
+      },
+      {
+        "label": "首字母用户名"
+      },
+      {
+        "label": "随机用户名格式和取值范围"
+      }
+    ]
+  },
+  "AP-FRQ69fc5af861bea528S9": {
+    "kind": "email",
+    "note": "填写各小问的代码片段；变量可自行命名。随机取值的概率与指定 API 使用要求仍需按评分指南复核。",
+    "cases": [
+      {
+        "label": "完整姓名用户名"
+      },
+      {
+        "label": "首字母用户名"
+      },
+      {
+        "label": "随机用户名格式和取值范围"
+      }
+    ]
+  },
+  "AP-FRQ69fc5af861bea528S7": {
+    "kind": "fragment",
+    "cases": [
+      {
+        "label": "长度包含 5 与 10"
+      },
+      {
+        "label": "同时包含 B 和 W"
+      },
+      {
+        "label": "首尾颜色相同"
+      },
+      {
+        "label": "输出正确判定"
+      }
+    ]
+  }
+}

@@ -1,0 +1,621 @@
+{
+  "AP-FRQ414a8797b527e415S1": [
+    {
+      "index": 5,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "canMakeTrip",
+      "label": "状态更新与边界处理"
+    },
+    {
+      "index": 6,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "canMakeTrip",
+      "label": "返回值符合题意"
+    }
+  ],
+  "AP-FRQ414a8797b527e415S2": [
+    {
+      "index": 5,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "acceptTrash",
+      "label": "状态更新与边界处理"
+    },
+    {
+      "index": 6,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "acceptTrash",
+      "label": "返回值符合题意"
+    }
+  ],
+  "AP-FRQ906422c04f2fa6d6S6": [
+    {
+      "index": 5,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "acceptTrash",
+      "label": "状态更新与边界处理"
+    },
+    {
+      "index": 6,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "acceptTrash",
+      "label": "返回值符合题意"
+    }
+  ],
+  "AP-FRQ906422c04f2fa6d6S4": [
+    {
+      "index": 5,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "takeOrder",
+      "label": "状态更新与边界处理"
+    },
+    {
+      "index": 6,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "takeOrder",
+      "label": "返回值符合题意"
+    }
+  ],
+  "AP-FRQ906422c04f2fa6d6S5": [
+    {
+      "index": 5,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "addLaps",
+      "label": "状态更新与边界处理"
+    },
+    {
+      "index": 6,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "addLaps",
+      "label": "返回值符合题意"
+    }
+  ],
+  "AP-FRQd841c16efb454b49S1": [
+    {
+      "index": 3,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "getPossibleAssemblies",
+      "label": "返回结果 / 最终状态符合测试要求"
+    }
+  ],
+  "AP-FRQd841c16efb454b49S2": [
+    {
+      "index": 4,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "hasEnoughPaint",
+      "label": "返回结果 / 最终状态符合测试要求"
+    }
+  ],
+  "AP-FRQe12b4823e927b30fS1": [
+    {
+      "index": 4,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "avgTeenAccounts",
+      "label": "返回结果 / 最终状态符合测试要求"
+    }
+  ],
+  "AP-FRQe12b4823e927b30fS2": [
+    {
+      "index": 4,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "getLongestHomeWinStreak",
+      "label": "返回结果 / 最终状态符合测试要求"
+    }
+  ],
+  "AP-FRQ8b32f5bc1d3ab57aS1": [
+    {
+      "index": 5,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "upgrade",
+      "label": "返回结果 / 最终状态符合测试要求"
+    }
+  ],
+  "AP-FRQ8b32f5bc1d3ab57aS2": [
+    {
+      "index": 5,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "navigate",
+      "label": "返回结果 / 最终状态符合测试要求"
+    }
+  ],
+  "AP-FRQ906422c04f2fa6d6S7": [
+    {
+      "index": 5,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "numberOfPies",
+      "label": "返回结果 / 最终状态符合测试要求"
+    }
+  ],
+  "AP-FRQ906422c04f2fa6d6S8": [
+    {
+      "index": 5,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "columnWithFewest",
+      "label": "返回结果 / 最终状态符合测试要求"
+    }
+  ],
+  "AP-FRQ69fc5af861bea528S8": [
+    {
+      "index": 4,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "countRepeat",
+      "label": "返回结果 / 最终状态符合测试要求"
+    }
+  ],
+  "AP-FRQ906422c04f2fa6d6S1": [
+    {
+      "index": 5,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "numberOfLines",
+      "label": "正确返回行数"
+    },
+    {
+      "index": 6,
+      "cases": [
+        1
+      ],
+      "method": "getLines",
+      "label": "空消息返回 null"
+    },
+    {
+      "index": 8,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "getLines",
+      "label": "分行字符串和分隔符"
+    }
+  ],
+  "AP-FRQ906422c04f2fa6d6S3": [
+    {
+      "index": 6,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "rollCubes",
+      "label": "返回两个方块的拼接结果"
+    }
+  ],
+  "AP-FRQ906422c04f2fa6d6S9": [
+    {
+      "index": 7,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "recordPlay",
+      "label": "累计比分与活动队伍"
+    },
+    {
+      "index": 8,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "getScore",
+      "label": "比分字符串格式"
+    }
+  ],
+  "AP-FRQ906422c04f2fa6d6S10": [
+    {
+      "index": 6,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "currentNumber",
+      "label": "数列值与前后移动边界"
+    },
+    {
+      "index": 7,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "next",
+      "label": "数列值与前后移动边界"
+    },
+    {
+      "index": 8,
+      "cases": [
+        1
+      ],
+      "method": "prev",
+      "label": "数列值与前后移动边界"
+    }
+  ],
+  "AP-FRQ69fc5af861bea528S1": [
+    {
+      "index": 3,
+      "cases": [
+        0,
+        1
+      ],
+      "method": "findWinner",
+      "label": "此小问的返回结果与边界测试"
+    },
+    {
+      "index": 6,
+      "cases": [
+        2
+      ],
+      "method": "shortenMessage",
+      "label": "此小问的返回结果与边界测试"
+    }
+  ],
+  "AP-FRQ69fc5af861bea528S2": [
+    {
+      "index": 3,
+      "cases": [
+        0
+      ],
+      "method": "MessageBuilder",
+      "label": "此小问的返回结果与边界测试"
+    },
+    {
+      "index": 6,
+      "cases": [
+        1,
+        2
+      ],
+      "method": "getAbbreviation",
+      "label": "此小问的返回结果与边界测试"
+    }
+  ],
+  "AP-FRQ69fc5af861bea528S5": [
+    {
+      "index": 6,
+      "cases": [
+        1,
+        2
+      ],
+      "method": "countOccurrences",
+      "label": "此小问的返回结果与边界测试"
+    }
+  ],
+  "AP-FRQ69fc5af861bea528S6": [
+    {
+      "index": 6,
+      "cases": [
+        2
+      ],
+      "method": "simulateManyDays",
+      "label": "此小问的返回结果与边界测试"
+    },
+    {
+      "index": 8,
+      "cases": [
+        2
+      ],
+      "method": "simulateManyDays",
+      "label": "此小问的返回结果与边界测试"
+    }
+  ],
+  "AP-FRQ69fc5af861bea528S10": [
+    {
+      "index": 4,
+      "cases": [
+        0,
+        1
+      ],
+      "method": "findFreeBlock",
+      "label": "此小问的返回结果与边界测试"
+    },
+    {
+      "index": 8,
+      "cases": [
+        2
+      ],
+      "method": "makeAppointment",
+      "label": "此小问的返回结果与边界测试"
+    }
+  ],
+  "AP-FRQ764c3eaaeb638f9fS2": [
+    {
+      "index": 4,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "averageWithinRange",
+      "label": "参考评分：此方法的结果符合测试要求"
+    }
+  ],
+  "AP-FRQ764c3eaaeb638f9fS4": [
+    {
+      "index": 4,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "playerWithClosestScore",
+      "label": "参考评分：此方法的结果符合测试要求"
+    }
+  ],
+  "AP-FRQ764c3eaaeb638f9fS7": [
+    {
+      "index": 4,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "countOrderedRows",
+      "label": "参考评分：此方法的结果符合测试要求"
+    }
+  ],
+  "AP-FRQ764c3eaaeb638f9fS8": [
+    {
+      "index": 4,
+      "cases": [
+        0,
+        1
+      ],
+      "method": "getHighRangeVehicles",
+      "label": "参考评分：此方法的结果符合测试要求"
+    }
+  ],
+  "AP-FRQ764c3eaaeb638f9fS11": [
+    {
+      "index": 3,
+      "cases": [
+        0,
+        1
+      ],
+      "method": "isWordChain",
+      "label": "参考评分：此方法的结果符合测试要求"
+    },
+    {
+      "index": 8,
+      "cases": [
+        2
+      ],
+      "method": "createList",
+      "label": "参考评分：此方法的结果符合测试要求"
+    }
+  ],
+  "AP-FRQ764c3eaaeb638f9fS12": [
+    {
+      "index": 3,
+      "cases": [
+        0,
+        1
+      ],
+      "method": "moveCandyToFirstRow",
+      "label": "参考评分：此方法的结果符合测试要求"
+    },
+    {
+      "index": 7,
+      "cases": [
+        2
+      ],
+      "method": "removeNextByFlavor",
+      "label": "参考评分：此方法的结果符合测试要求"
+    }
+  ],
+  "AP-FRQ764c3eaaeb638f9fS13": [
+    {
+      "index": 3,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "getRating",
+      "label": "参考评分：此方法的结果符合测试要求"
+    },
+    {
+      "index": 6,
+      "cases": [
+        0,
+        1,
+        2
+      ],
+      "method": "isDifficultyIncreasing",
+      "label": "参考评分：此方法的结果符合测试要求"
+    }
+  ],
+  "AP-FRQ764c3eaaeb638f9fS14": [
+    {
+      "index": 3,
+      "cases": [
+        0,
+        2
+      ],
+      "method": "computeBonusThreshold",
+      "label": "参考评分：此方法的结果符合测试要求"
+    },
+    {
+      "index": 8,
+      "cases": [
+        1
+      ],
+      "method": "computeWages",
+      "label": "参考评分：此方法的结果符合测试要求"
+    }
+  ],
+  "AP-FRQ764c3eaaeb638f9fS15": [
+    {
+      "index": 2,
+      "cases": [
+        0
+      ],
+      "method": "cleanData",
+      "label": "参考评分：此方法的结果符合测试要求"
+    },
+    {
+      "index": 8,
+      "cases": [
+        1,
+        2
+      ],
+      "method": "longestHeatWave",
+      "label": "参考评分：此方法的结果符合测试要求"
+    }
+  ],
+  "AP-FRQ764c3eaaeb638f9fS16": [
+    {
+      "index": 3,
+      "cases": [
+        0
+      ],
+      "method": "getDelimitersList",
+      "label": "参考评分：此方法的结果符合测试要求"
+    },
+    {
+      "index": 8,
+      "cases": [
+        1,
+        2
+      ],
+      "method": "isBalanced",
+      "label": "参考评分：此方法的结果符合测试要求"
+    }
+  ],
+  "AP-FRQ764c3eaaeb638f9fS17": [
+    {
+      "index": 4,
+      "cases": [
+        0
+      ],
+      "method": "UserName",
+      "label": "参考评分：此方法的结果符合测试要求"
+    },
+    {
+      "index": 7,
+      "cases": [
+        1,
+        2
+      ],
+      "method": "setAvailableUserNames",
+      "label": "参考评分：此方法的结果符合测试要求"
+    }
+  ],
+  "AP-FRQ764c3eaaeb638f9fS18": [
+    {
+      "index": 3,
+      "cases": [
+        0
+      ],
+      "method": "getNextLoc",
+      "label": "参考评分：此方法的结果符合测试要求"
+    },
+    {
+      "index": 8,
+      "cases": [
+        1,
+        2
+      ],
+      "method": "sumPath",
+      "label": "参考评分：此方法的结果符合测试要求"
+    }
+  ],
+  "AP-FRQ764c3eaaeb638f9fS19": [
+    {
+      "index": 4,
+      "cases": [
+        0,
+        1
+      ],
+      "method": "getHighestYield",
+      "label": "参考评分：此方法的结果符合测试要求"
+    },
+    {
+      "index": 8,
+      "cases": [
+        2
+      ],
+      "method": "sameCrop",
+      "label": "参考评分：此方法的结果符合测试要求"
+    }
+  ]
+}
