@@ -205,18 +205,18 @@
     "cases": [
       {
         "label": "包含 13 和 19 岁，排除其他年龄",
-        "setup": "GamePlatform x=new GamePlatform();x.allPlayers=new ArrayList<>(List.of(new GameAccount(\"a\",12),new GameAccount(\"b\",13),new GameAccount(\"c\",19),new GameAccount(\"d\",20)));",
-        "condition": "x.avgTeenAccounts()==16&&x.allPlayers.size()==4"
+        "setup": "GamePlatform x=new GamePlatform();x.allPlayers=new ArrayList<>(List.of(new GameAccount(\"a\",12),new GameAccount(\"b\",13),new GameAccount(\"c\",19),new GameAccount(\"d\",20)));ArrayList<GameAccount> saved=new ArrayList<>(x.allPlayers);",
+        "condition": "(x.avgTeenAccounts()==16&&x.allPlayers.size()==4)&&x.allPlayers.equals(saved)"
       },
       {
         "label": "保留小数，分母仅包含青少年",
-        "setup": "GamePlatform x=new GamePlatform();x.allPlayers=new ArrayList<>(List.of(new GameAccount(\"a\",15),new GameAccount(\"b\",16),new GameAccount(\"c\",60)));",
-        "condition": "x.avgTeenAccounts()==15.5"
+        "setup": "GamePlatform x=new GamePlatform();x.allPlayers=new ArrayList<>(List.of(new GameAccount(\"a\",15),new GameAccount(\"b\",16),new GameAccount(\"c\",60)));ArrayList<GameAccount> saved=new ArrayList<>(x.allPlayers);",
+        "condition": "(x.avgTeenAccounts()==15.5)&&x.allPlayers.equals(saved)"
       },
       {
         "label": "唯一青少年",
-        "setup": "GamePlatform x=new GamePlatform();x.allPlayers=new ArrayList<>(List.of(new GameAccount(\"a\",17)));",
-        "condition": "x.avgTeenAccounts()==17"
+        "setup": "GamePlatform x=new GamePlatform();x.allPlayers=new ArrayList<>(List.of(new GameAccount(\"a\",17)));ArrayList<GameAccount> saved=new ArrayList<>(x.allPlayers);",
+        "condition": "(x.avgTeenAccounts()==17)&&x.allPlayers.equals(saved)"
       }
     ],
     "kind": "methods",

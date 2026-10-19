@@ -69,5 +69,17 @@
       7,
       8
     ]
+  },
+  {
+    "id": "AP-FRQe12b4823e927b30fS1",
+    "name": "correct average but clears input list",
+    "code": "public double avgTeenAccounts(){int sum=0,n=0;for(GameAccount a:allPlayers)if(a.getAge()>=13&&a.getAge()<=19){sum+=a.getAge();n++;}allPlayers.clear();return (double)sum/n;}",
+    "withheld": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
   }
 ]

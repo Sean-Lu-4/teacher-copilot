@@ -297,5 +297,5 @@ py verify_java_bank.py --jdk .cache/java/jdk-21.0.12.1+1 --output outputs/bank30
 
 - 按方法和小问绑定功能、边界、原数据不变性与结构证据。调用检查支持提取辅助方法；循环检查接受 for、while、增强 for、++、+= 和展开赋值。不会按答案文本相似度给分。
 - 独立小问只统计本次提交的评分点；TriviaGame 两个方法的测试已分开，避免相互影响得分。
-- `python tools/verify_java_profiles.py --jdk <可信本地JDK路径>` 编译运行仓库内的可信样例：48 个题目/小问入口、12 个等价写法和 14 个故意错误，共 74 次验收。评分回归检查还核对等价写法不丢分、错误代码不误获对应分值。此脚本不得用于执行学生提交。
+- `python tools/verify_java_profiles.py --jdk <可信本地JDK路径>` 编译运行仓库内的可信样例：48 个题目/小问入口、12 个等价写法和 15 个故意错误，共 75 次验收。评分回归检查还核对等价写法不丢分、错误代码不误获对应分值。此脚本不得用于执行学生提交。
 - `python -m unittest test_frq_rubric_expansion test_java_initialization test_extended_java test_java_grading test_student_check test_student_portal test_generation_flow -q` 覆盖 59 项检查。线上仍通过免费 Judge0 CE 执行学生代码，服务不可用时保留输入并提示重试。
