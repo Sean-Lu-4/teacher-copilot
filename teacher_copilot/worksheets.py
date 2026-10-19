@@ -295,7 +295,9 @@ def bank_data():
                          topic_titles=[VISIBLE_TOPICS.get(t,t) for t in dict.fromkeys('csa-selection' if t=='csa-logic' else t for t in question.get('topic_ids',[topic]))],
                          units=question.get('units') or [GROUPS.get(topic,('', ['1.1']))[1][0].split('.')[0]]))
     from .java_grading import PROFILES
+    from .source_guides import pages_for
     for row in rows:
+        row['scoring_pages'] = pages_for(row.get('source_item_id',''))
         row['java_check_supported'] = row['id'] in PROFILES
         java_profile = PROFILES.get(row['id'], {})
         row['java_input_kind'] = java_profile.get('kind', 'methods')

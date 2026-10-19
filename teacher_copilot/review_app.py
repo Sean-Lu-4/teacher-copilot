@@ -496,6 +496,16 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                     path=ASSETS.parent / 'imported_bank' / 'images' / filename
                     if not path.is_file(): return self.send({'error':'文件不存在。'},404)
                     return self.send(path.read_bytes(),mime='image/png')
+                if parsed.path.startswith('/scoring-page/'):
+                    import re
+                    match = re.fullmatch(r'/scoring-page/([a-f0-9]{64})/([0-9]{1,4})\.png', parsed.path)
+                    if not match: return self.send({'error':'无效的评分页。'},404)
+                    from .source_guides import render_page
+                    try:
+                        page = render_page(match[1], int(match[2]))
+                    except (ValueError, FileNotFoundError):
+                        return self.send({'error':'评分页不存在。'},404)
+                    return self.send(page,mime='image/png')
                 if parsed.path.startswith('/source-pdf/'):
                     import re
                     filename=parsed.path.removeprefix('/source-pdf/')

@@ -44,22 +44,35 @@ function render(){
  }
  $('actions').append(button(mcq?'提交答案':'查看参考答案',()=>{
   if(mcq){const selected=document.querySelector('input[name=choice]:checked');if(!selected){$('notice').textContent='请先选择一个答案。';return;}const correct=selected.value===q.answer_key;progress[q.id]=CSAProgress.submit(record(q),correct,selected.value);save();dashboard();showAnswer(correct?'回答正确':'这道题还需要巩固');}
-  else{if(!$('draft').value.trim()){$('notice').textContent='请先写下你的解题尝试，再对照参考答案。';return;}showAnswer('对照评分标准，检查自己的实现');}
+  else{showAnswer('参考答案');}
  },mcq));
  if(!mcq)$('actions').prepend(button('检查代码',()=>checkCode(q),true));
  if(notebookReview)$('actions').append(button('返回错题本',()=>setView('mistakes')));
 }
-function showAnswer(message){if(revealed)return;revealed=true;if(storageOK)$('notice').textContent='';document.querySelectorAll('input[name=choice]').forEach(e=>e.disabled=true);const q=current,box=node('section',undefined,'answer');box.append(node('p',message,'result'));
+function showAnswer(message){if(revealed)return;revealed=true;if(storageOK)$('notice').textContent='';document.querySelectorAll('input[name=choice]').forEach(e=>e.disabled=true);const q=current,box=node('section',undefined,'answer');box.id='reference-answer';box.append(node('p',message,'result'));
  if(q.answer_key){
   for(const input of document.querySelectorAll('input[name=choice]')){const label=input.closest('label');if(input.value===q.answer_key){label.classList.add('choice-correct');label.append(node('strong','✓ 正确答案','choice-verdict'));}else if(input.checked){label.classList.add('choice-wrong');label.append(node('strong','✕ 你的选择','choice-verdict'));}}
   box.append(node('h3','正确答案：'+q.answer_key));
  }
- for(const [title,text] of [['答案与解析',q.answer],['参考代码',q.reference_solution],['评分标准',q.rubric],['English explanation',q.explanation_en]])if(text){const detail=node('details');detail.append(node('summary',title),node('pre',text.replace(/^Select a point value to view scoring criteria or to score the response\.\s*$/gm,'')));box.append(detail);}
- for(const ref of (q.source_refs||[]).filter(r=>r.role==='SG')){if(!/^[a-f0-9]{64}$/.test(ref.document))continue;const a=node('a','查看原评分指南');a.href=`/source-pdf/${ref.document}.pdf#page=${Number(ref.page)||1}`;a.target='_blank';a.rel='noopener';box.append(a);}
+ for(const [title,text] of [['答案与解析',q.answer],['参考代码',q.reference_solution],['评分标准',q.rubric],['English explanation',q.explanation_en]])if(text){const detail=node('details');detail.open=true;detail.append(node('summary',title),node('pre',text.replace(/^Select a point value to view scoring criteria or to score the response\.\s*$/gm,'')));box.append(detail);}
+ if(q.scoring_pages?.length){
+  const guide=node('section',undefined,'inline-scoring-guide');guide.append(node('h3','原评分指南'));
+  const seen=new Set();
+  for(const ref of q.scoring_pages){
+   if(!/^[a-f0-9]{64}$/.test(ref.document)||!Number.isInteger(ref.page)||ref.page<1)continue;
+   const key=ref.document+':'+ref.page;if(seen.has(key))continue;seen.add(key);
+   const figure=node('figure'),img=node('img'),caption=node('figcaption',`原评分指南 · 第 ${ref.page} 页`);
+   img.src=`/scoring-page/${ref.document}/${ref.page}.png`;img.alt=caption.textContent;img.loading='lazy';img.decoding='async';
+   img.onerror=()=>{img.hidden=true;caption.textContent='原版页面暂未载入，请先查看上方答案与解析。';};
+   figure.append(caption,img);guide.append(figure);
+  }
+  box.append(guide);
+ }
  $('question').append(box);$('actions').replaceChildren();
  if(q.question_kind==='write')$('actions').append(button('检查代码',()=>checkCode(q)));
  if(q.question_kind==='write'){for(const [label,mastered] of [['自评：已掌握',true],['自评：还需练习',false]])$('actions').append(button(label,()=>{progress[q.id]=CSAProgress.submit(record(q),mastered);save();dashboard();next();},mastered));}
  else $('actions').append(button(notebookReview?'返回错题本':'下一题',next,true));
+ box.scrollIntoView({behavior:'smooth',block:'start'});
 }
 let checkingCode=false;
 async function checkCode(q){
