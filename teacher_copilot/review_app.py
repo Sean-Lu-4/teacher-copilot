@@ -534,6 +534,7 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                          '/bank-audit.css': ('bank-audit.css', 'text/css'),
                          '/bank': ('bank.html', 'text/html'), '/bank.js': ('bank.js', 'text/javascript')}
                 names.update({'/java-reference-1.png':('java-reference-1.png','image/png'), '/java-reference-2.png':('java-reference-2.png','image/png')})
+                names.update({'/exam':('exam.html','text/html'), '/exam.js':('exam.js','text/javascript'), '/exam.css':('exam.css','text/css')})
                 names.update({'/curriculum': ('curriculum.html','text/html'),
                               '/curriculum.js': ('curriculum.js','text/javascript')})
                 names.update({'/library':('library.html','text/html'), '/library.js':('library.js','text/javascript'),
@@ -576,6 +577,14 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                 return
             if self.headers.get('X-Review-Token') != token:
                 return self.send({'error': '请从练习页面提交。'}, 403)
+            if self.path == '/api/exam':
+                try:
+                    size=int(self.headers.get('Content-Length','0'))
+                    if not 0 < size <= 400000: raise ValueError('提交内容过大或为空。')
+                    from .exam import action
+                    return self.send(action(self.workspace().root,json.loads(self.rfile.read(size))))
+                except (ValueError,TypeError,KeyError,OSError) as exc:
+                    return self.send({'error':str(exc)},400)
             if self.path == '/api/student/check':
                 try:
                     size = int(self.headers.get('Content-Length', '0'))
