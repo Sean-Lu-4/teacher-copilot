@@ -1,6 +1,7 @@
 "use strict";
 const $=id=>document.getElementById(id), KEY='csa-studio-progress-v1';
 let bank=[],catalog=[],progress={},unit='',current=null,revealed=false,storageOK=true,notebookReview=false;
+let sessionRows=[],clockState={},clockHidden=false,clockQuestion=null;
 const initialView=new URLSearchParams(location.search);
 const names={1:'使用对象与方法',2:'选择与循环',3:'类的创建',4:'数据集合'};
 function node(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
@@ -18,29 +19,32 @@ function dashboard(){
  for(const id of ['1','2','3','4']){const rows=bank.filter(q=>units(q).includes(id)),done=rows.filter(q=>record(q).done).length;const b=node('button',undefined,'unit');b.type='button';b.setAttribute('aria-pressed',String(unit===id));b.append(node('b','Unit '+id),node('span',names[id]),node('small',`${done} / ${rows.length} 题 · ${rows.length?Math.round(done/rows.length*1000)/10:0}%`));const p=node('progress');p.max=rows.length||1;p.value=done;p.setAttribute('aria-label',`Unit ${id} 已练 ${done} 题，共 ${rows.length} 题`);b.append(p);b.onclick=()=>{unit=id;refreshTopics();dashboard();choose();$('practice-area').scrollIntoView({behavior:'smooth',block:'start'});};$('units').append(b);}
 }
 function refreshTopics(){const previous=$('topic').value;$('topic').replaceChildren(new Option('全部课题',''));for(const t of catalog){if(bank.some(q=>(!unit||units(q).includes(unit))&&(q.ced_topics||[]).includes(t.id)))$('topic').append(new Option(`${t.id} · ${t.title}`,t.id));}if([...$('topic').options].some(o=>o.value===previous))$('topic').value=previous;}
-function choose(skip){notebookReview=false;const rows=bank.filter(available);current=rows.find(q=>q.id!==skip)||null;revealed=false;render();}
+function choose(skip){pauseClock();notebookReview=false;sessionRows=bank.filter(available);current=sessionRows.find(q=>q.id!==skip)||null;revealed=false;render();}
 function button(text,fn,primary=false){const b=node('button',text,primary?'primary':'');b.type='button';b.onclick=fn;return b;}
 function render(){
- const box=$('question');box.replaceChildren();$('actions').replaceChildren();
+ const box=$('question');box.replaceChildren();$('actions').replaceChildren();updateWorkspace();
  if(!current){box.append(node('h2','这个范围已没有待练题目'),node('p','可以切换单元、课题或选择“全部题目”继续练习。'));return;}
  const q=current,r=record(q),mcq=q.question_kind==='concept';
- box.append(node('p',`${units(q).map(u=>'Unit '+u).join(' / ')} · ${mcq?'MCQ':'FRQ'} · 预计 ${q.minutes} 分钟`,'muted'),node('h2',q.title));
+ box.append(node('p',`${units(q).map(u=>'Unit '+u).join(' / ')} · ${mcq?'MCQ':'FRQ'}${mcq?' · 预计 '+q.minutes+' 分钟':''}`,'muted'),node('h2',q.title));
  if(q.code&&!q.code.startsWith('// AP source question'))box.append(node('pre',q.code));
  if(q.question_images?.length){
   for(const file of q.question_images){const link=node('a');link.href='/source-image/'+encodeURIComponent(file);link.target='_blank';link.rel='noopener';link.title='打开原题大图';const img=node('img');img.src=link.href;img.alt=q.title+' 原题（含表格和图示）';img.className='question-image';link.append(img);box.append(link);}
   const transcript=node('details');transcript.append(node('summary','题目文字'),node('div',q.task,'task'));box.append(transcript);
  }else box.append(node('div',q.task,'task'));
- if(mcq){const group=node('fieldset');group.append(node('legend','选择一个答案'));for(const [key,text] of Object.entries(q.options)){const label=node('label',undefined,'option'),input=node('input');input.type='radio';input.name='choice';input.value=key;input.disabled=revealed;label.append(input,node('span',`${key}. ${text}`));group.append(label);}box.append(group);}
+ const prompt=node('section',undefined,'question-prompt');prompt.setAttribute('aria-label','题目');while(box.firstChild)prompt.append(box.firstChild);box.append(prompt);
+ const response=node('section',undefined,'response-pane');response.setAttribute('aria-label','答题区');box.append(response);
+ if(mcq){const group=node('fieldset');group.append(node('legend','选择一个答案'));for(const [key,text] of Object.entries(q.options)){const label=node('label',undefined,'option'),input=node('input');input.type='radio';input.name='choice';input.value=key;input.checked=r.draftChoice===key;input.onchange=()=>{progress[q.id]={...record(q),draftChoice:key};save();};input.disabled=revealed;label.append(input,node('span',`${key}. ${text}`));group.append(label);}response.append(node('h3','选择答案'),group);}
  else{
   const parts=q.java_parts||[],selected=Math.min(Number.isInteger(r.javaPart)&&r.javaPart>=0?r.javaPart:0,Math.max(0,parts.length-1));
-  if(parts.length){const label=node('label','检查哪一小问'),select=node('select');select.id='java-part';parts.forEach((p,i)=>select.append(new Option(p.label,String(i))));select.value=String(selected);select.onchange=()=>{progress[q.id]={...record(q),javaPart:Number(select.value)};save();revealed=false;render();};label.append(select);box.append(label,node('p','已提供变量：'+parts[selected].args,'muted'));}
-  if(parts.length&&r.draft){const old=node('details');old.append(node('summary','查看之前保存的整题草稿'),node('pre',r.draft));box.append(old);}
+  if(parts.length){const label=node('label','检查哪一小问'),select=node('select');select.id='java-part';parts.forEach((p,i)=>select.append(new Option(p.label,String(i))));select.value=String(selected);select.onchange=()=>{progress[q.id]={...record(q),javaPart:Number(select.value)};save();revealed=false;render();};label.append(select);response.append(label,node('p','已提供变量：'+parts[selected].args,'muted'));}
+  if(parts.length&&r.draft){const old=node('details');old.append(node('summary','查看之前保存的整题草稿'),node('pre',r.draft));response.append(old);}
   const label=node('label','你的 Java 代码');label.htmlFor='draft';const area=node('textarea');area.id='draft';area.maxLength=20000;area.spellcheck=false;
   area.value=parts.length?(r.partDrafts?.[selected]||''):(r.draft||'');
   area.placeholder=q.java_input_kind==='class'?'填写题目要求的完整类，包括字段、构造器和方法。':['fragment','email','parts'].includes(q.java_input_kind)?'填写本题或所选小问的代码片段；不需要外层 class 或方法。':'填写题目要求的方法或构造器；无需重复给定的字段、辅助类或 main。';
+  area.addEventListener('keydown',event=>{if(event.key==='Tab'){event.preventDefault();const start=area.selectionStart,end=area.selectionEnd;area.setRangeText('    ',start,end,'end');area.dispatchEvent(new Event('input'));}});
   area.oninput=()=>{const previous=record(q);progress[q.id]={...previous,...(parts.length?{partDrafts:{...previous.partDrafts,[selected]:area.value}}:{draft:area.value}),frqReview:null};save();document.getElementById('code-feedback')?.remove();};
-  box.append(label,area,node('p',q.java_check_supported?'检查时仅提交代码到免费 Java 运行服务；服务繁忙时可稍后重试。':'本题暂支持语法检查，答案请对照评分指南。','muted'));
-  if(q.java_check_note)box.append(node('p',q.java_check_note,'muted'));
+  response.append(label,area,node('p',q.java_check_supported?'检查时仅提交代码到免费 Java 运行服务；服务繁忙时可稍后重试。':'本题暂支持语法检查，答案请对照评分指南。','muted'));
+  if(q.java_check_note)response.append(node('p',q.java_check_note,'muted'));
  }
  $('actions').append(button(mcq?'提交答案':'查看参考答案',()=>{
   if(mcq){const selected=document.querySelector('input[name=choice]:checked');if(!selected){$('notice').textContent='请先选择一个答案。';return;}const correct=selected.value===q.answer_key;progress[q.id]=CSAProgress.submit(record(q),correct,selected.value);save();dashboard();showAnswer(correct?'回答正确':'这道题还需要巩固');}
@@ -49,7 +53,7 @@ function render(){
  if(!mcq)$('actions').prepend(button('检查代码',()=>checkCode(q),true));
  if(notebookReview)$('actions').append(button('返回错题本',()=>setView('mistakes')));
 }
-function showAnswer(message){if(revealed)return;revealed=true;if(storageOK)$('notice').textContent='';document.querySelectorAll('input[name=choice]').forEach(e=>e.disabled=true);const q=current,box=node('section',undefined,'answer');box.id='reference-answer';box.append(node('p',message,'result'));
+function showAnswer(message){pauseClock();if(revealed){$('reference-answer')?.scrollIntoView({behavior:'smooth',block:'start'});return;}revealed=true;if(storageOK)$('notice').textContent='';document.querySelectorAll('input[name=choice]').forEach(e=>e.disabled=true);const q=current,box=node('section',undefined,'answer');box.id='reference-answer';box.append(node('p',message,'result'));
  if(q.answer_key){
   for(const input of document.querySelectorAll('input[name=choice]')){const label=input.closest('label');if(input.value===q.answer_key){label.classList.add('choice-correct');label.append(node('strong','✓ 正确答案','choice-verdict'));}else if(input.checked){label.classList.add('choice-wrong');label.append(node('strong','✕ 你的选择','choice-verdict'));}}
   box.append(node('h3','正确答案：'+q.answer_key));
@@ -128,9 +132,10 @@ async function checkCode(q){
  }catch(error){if(current?.id===q.id)$('notice').textContent=error.name==='AbortError'?'检查超时，请稍后重试。':error.message;}
  finally{clearTimeout(timer);checkingCode=false;pendingButtons.forEach(b=>{b.disabled=false;b.textContent='检查代码';});}
 }
-function next(){if(notebookReview){notebookReview=false;setView('mistakes');return;}const old=current?.id;choose(old);}
+function next(){if(notebookReview){notebookReview=false;setView('mistakes');return;}moveQuestion(1);}
 function mistakeRows(){return bank.filter(q=>CSAProgress.isMistake(record(q))&&(!$('mistake-unit').value||units(q).includes($('mistake-unit').value))&&(!$('mistake-kind').value||q.question_kind===$('mistake-kind').value)&&($('mistake-status').value==='all'||($('mistake-status').value==='mastered'?record(q).mastered:!record(q).mastered))).sort((a,b)=>(record(b).lastWrong||'').localeCompare(record(a).lastWrong||''));}
 function setView(view){
+ if(view==='mistakes')pauseClock();
  const mistakes=view==='mistakes';document.body.classList.toggle('notebook-mode',mistakes);$('practice-view').hidden=mistakes;$('mistakes-view').hidden=!mistakes;
  $('practice-tab').setAttribute('aria-pressed',String(!mistakes));$('mistakes-tab').setAttribute('aria-pressed',String(mistakes));
  document.querySelectorAll('header nav a').forEach(a=>{const selected=a.getAttribute('href')===(mistakes?'/practice?view=mistakes':'/practice');a.classList.toggle('active',selected);if(selected)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
@@ -138,7 +143,7 @@ function setView(view){
  if(mistakes){notebookReview=false;renderNotebook();}else{render();}
 }
 function openMistake(q){
- unit='';refreshTopics();$('topic').value='';$('kind').value=q.question_kind;$('scope').value='all';current=q;revealed=false;notebookReview=true;
+ pauseClock();sessionRows=[q];unit='';refreshTopics();$('topic').value='';$('kind').value=q.question_kind;$('scope').value='all';current=q;revealed=false;notebookReview=true;
  dashboard();setView('practice');$('practice-area').scrollIntoView({behavior:'smooth',block:'start'});$('practice-area').focus({preventScroll:true});
 }
 function renderNotebook(){
@@ -155,4 +160,45 @@ function renderNotebook(){
  }
 }
 async function init(){try{const response=await fetch('/api/bank');if(!response.ok)throw Error('题库暂时无法加载，请刷新重试。');const data=await response.json();catalog=data.ced_topics||[];bank=[...new Map(data.questions.filter(q=>q.source_item_id&&((q.question_kind==='concept'&&q.answer_key&&q.options?.[q.answer_key])||(q.question_kind==='write'&&(q.reference_solution||q.answer||(q.source_refs||[]).some(r=>r.role==='SG'))))).map(q=>[q.id,q])).values()];$('notice').textContent=storageOK?'':'当前浏览器无法保存进度。';unit=['1','2','3','4'].includes(initialView.get('unit'))?initialView.get('unit'):'';refreshTopics();dashboard();choose();setView(initialView.get('view')==='mistakes'?'mistakes':'practice');$('practice-tab').onclick=()=>{notebookReview=false;choose();setView('practice');};$('mistakes-tab').onclick=()=>setView('mistakes');for(const id of ['mistake-status','mistake-unit','mistake-kind'])$(id).onchange=renderNotebook;for(const id of ['kind','scope','topic'])$(id).onchange=()=>{if(id==='scope'&&$('scope').value==='runnable')$('kind').value='write';if(id==='kind'&&$('kind').value==='concept'&&$('scope').value==='runnable')$('scope').value='all';notebookReview=false;choose();};for(const id of ['kind','scope','topic'])$(id).disabled=false;}catch(e){$('notice').textContent=e.message;}}
+initWorkspace();
 init();
+
+function clockSave(){if(!clockQuestion)return;progress[clockQuestion]={...(progress[clockQuestion]||{}),timer:clockState};save();}
+function pauseClock(){if(!clockQuestion)return;clockState=PracticeClock.pause(clockState,Date.now());clockSave();paintClock();}
+function updateWorkspace(){
+ if(!current){$('question-position').textContent='暂无题目';for(const id of ['clock-toggle','flag-question','previous-question','next-question','question-menu-toggle','target-minutes'])$(id).disabled=true;return;}
+ const q=current;
+ if(clockQuestion!==q.id){pauseClock();clockQuestion=q.id;clockState=PracticeClock.restore(record(q).timer);}
+ const index=sessionRows.findIndex(x=>x.id===q.id);
+ $('question-position').textContent=`${q.question_kind==='write'?'FRQ':'MCQ'} · 第 ${index+1} / ${sessionRows.length} 题`;
+ for(const id of ['clock-toggle','flag-question','question-menu-toggle','target-minutes'])$(id).disabled=false;
+ $('previous-question').disabled=index<=0;$('next-question').disabled=index>=sessionRows.length-1;
+ $('flag-question').setAttribute('aria-pressed',String(!!record(q).flagged));$('flag-question').textContent=record(q).flagged?'已标记 · 取消标记':'标记待检查';
+ $('target-minutes').value=clockState.target|| (q.question_kind==='write'?22.5:Math.max(1,Number(q.minutes)||2));
+ $('timing-note').textContent=q.question_kind==='write'?'完整 FRQ 可参考平均 22.5 分钟；单个小问请自行缩短。这是练习目标，不是官方逐题限时。':'按自己的节奏练习；目标时间可调整。';
+ $('question-menu').hidden=true;$('question-menu-toggle').setAttribute('aria-expanded','false');paintClock();
+}
+function paintClock(){
+ const elapsed=PracticeClock.elapsed(clockState,Date.now()),target=Number($('target-minutes').value)*60000,over=elapsed>=target;
+ $('clock-display').textContent=clockHidden?'已隐藏':PracticeClock.format(elapsed);
+ $('clock-toggle').textContent=clockState.startedAt!==null?'暂停':elapsed?'继续计时':'开始计时';
+ $('clock-display').classList.toggle('time-over',over);
+ const message=over?'已达到练习目标时间，你可以继续作答。':'';
+ if($('clock-notice').textContent!==message)$('clock-notice').textContent=message;
+}
+function moveQuestion(step){const index=sessionRows.findIndex(q=>q.id===current?.id);const q=sessionRows[index+step];if(q)visitQuestion(q);}
+function visitQuestion(q){pauseClock();current=q;revealed=false;render();$('practice-area').scrollIntoView({behavior:'smooth',block:'start'});}
+function initWorkspace(){
+ clockState=PracticeClock.restore(null);
+ $('clock-toggle').onclick=()=>{if(!current)return;clockState=clockState.startedAt!==null?PracticeClock.pause(clockState,Date.now()):PracticeClock.start(clockState,Date.now());clockSave();paintClock();};
+ $('clock-hide').onclick=()=>{clockHidden=!clockHidden;$('clock-hide').textContent=clockHidden?'显示时间':'隐藏时间';paintClock();};
+ $('target-minutes').onchange=()=>{const n=Number($('target-minutes').value);if(!Number.isFinite(n)||n<1||n>180){$('target-minutes').value=clockState.target||22.5;return;}clockState.target=n;clockSave();paintClock();};
+ $('setup-toggle').onclick=()=>{const focused=document.body.classList.toggle('focused-practice');$('setup-toggle').textContent=focused?'展开设置':'收起设置';$('setup-toggle').setAttribute('aria-expanded',String(!focused));$('practice-area').scrollIntoView({block:'start'});};
+ $('flag-question').onclick=()=>{if(!current)return;progress[current.id]={...record(current),flagged:!record(current).flagged};save();updateWorkspace();};
+ $('previous-question').onclick=()=>moveQuestion(-1);$('next-question').onclick=()=>moveQuestion(1);
+ $('question-menu-toggle').onclick=()=>{const menu=$('question-menu');menu.hidden=!menu.hidden;$('question-menu-toggle').setAttribute('aria-expanded',String(!menu.hidden));menu.replaceChildren();if(!menu.hidden){menu.append(node('p','实心为当前题 · 已答为已提交 · 标记为待检查'));sessionRows.forEach((q,i)=>{const r=record(q),b=button(`${i+1}${r.done?' · 已答':''}${r.flagged?' · 标记':''}`,()=>visitQuestion(q));b.setAttribute('aria-current',q.id===current?.id?'true':'false');menu.append(b);});menu.scrollIntoView({behavior:'smooth',block:'nearest'});}};
+ $('reference-toggle').onclick=()=>{$('java-reference').showModal();};
+ $('reference-close').onclick=()=>$('java-reference').close();
+ setInterval(()=>{if(current)paintClock();},1000);
+ window.addEventListener('pagehide',clockSave);
+}

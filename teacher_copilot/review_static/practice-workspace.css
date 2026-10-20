@@ -1,0 +1,37 @@
+/* Focused practice: independently readable prompt and response, persistent tools. */
+.practice-page {background:#f5f7f9;color:#172d43;font:17px/1.65 system-ui,'Microsoft YaHei',sans-serif}
+.practice-page main {max-width:1600px;padding:24px 24px 40px}
+.practice-page .page-title {margin:0 0 16px}.practice-page .page-title h1{font-size:30px;margin:8px 0}.practice-page .page-title p{margin:4px 0;font-size:17px}
+.practice-page .stats{margin:16px 0}.practice-page .stat{padding:12px 20px}.practice-page .stat strong{font-size:25px}
+.practice-page .unit{padding:12px 16px}.practice-page .study-tabs{margin:18px 0}
+.practice-page .practice-box{padding:0;border-radius:12px;overflow:visible;scroll-margin-top:12px}
+.session-toolbar{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid #ccd8e1;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 24px;border-radius:12px 12px 0 0}
+.session-toolbar strong{display:block;font-size:18px}.session-mode{font-size:14px;color:#536779}
+.clock-controls,.session-tools,.question-navigation{display:flex;gap:10px;align-items:center}.clock-controls{flex-wrap:wrap}
+.practice-page button{font-size:16px;min-height:44px;padding:8px 15px;border-radius:7px;box-shadow:none}
+#clock-label{font-size:14px}#clock-display{font:600 24px/1.3 Consolas,monospace;min-width:76px;font-variant-numeric:tabular-nums}.time-over{color:#9d4419}
+#clock-notice:empty{display:none}#clock-notice{background:#fff4d9;padding:10px 24px;color:#713f13}
+.practice-page .filters{padding:16px 24px;background:#f8fafb;gap:24px}.practice-page .filters label{font-size:15px}.practice-page select{font-size:16px;padding:8px}
+.question-toolbar{display:flex;align-items:center;gap:18px;padding:16px 24px;border-bottom:1px solid #e4e9ee;flex-wrap:wrap}
+#question-position{font-size:18px;font-weight:700;margin-right:auto}.time-budget{display:flex;align-items:center;gap:8px;font-size:14px}
+#target-minutes{width:78px;min-height:40px;padding:6px;border:1px solid #b9c9d5;border-radius:6px;font:inherit}
+#flag-question[aria-pressed=true]{background:#fff1ca;border-color:#d0a440;color:#754812}
+#timing-note{margin:0;padding:8px 24px;font-size:14px}
+#question{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}
+.question-prompt,.response-pane{padding:24px 28px;min-width:0}
+.question-prompt{border-right:1px solid #d9e2e8}.question-prompt h2{font-size:23px;margin:8px 0 22px;line-height:1.45}
+.question-prompt .task{font:18px/1.75 system-ui,'Microsoft YaHei',sans-serif;overflow-wrap:anywhere}.question-prompt pre{font-size:16px;line-height:1.65;overflow-x:auto;overflow-wrap:normal;white-space:pre}
+.response-pane{position:sticky;top:96px}.response-pane h3{margin:0 0 16px}.response-pane textarea{min-height:440px;resize:vertical;border-radius:6px;font:17px/1.7 Consolas,monospace;tab-size:4}
+.response-pane fieldset{border:0;margin:0;padding:0}.response-pane legend{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.response-pane .option{font-size:17px;line-height:1.6;padding:14px;margin:0 0 12px;border-radius:8px}.response-pane .muted{font-size:14px}
+#question>.answer,#question>.code-feedback{grid-column:1/-1;margin:16px 24px;padding:24px;border-radius:8px}
+.session-bottom{position:sticky;bottom:0;z-index:15;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 24px;background:#fff;border-top:1px solid #cdd9e2;box-shadow:0 -4px 18px #172d4308}
+.session-bottom .actions{margin:0}.practice-page #question-menu{padding:16px 24px;background:#f3f7fa;max-height:330px;overflow:auto}.practice-page #question-menu button{margin:5px}.practice-page #question-menu button[aria-current=true]{background:#087e80;color:white}.practice-page [hidden]{display:none!important}
+.focused-practice:not(.notebook-mode) .setup-content,.focused-practice:not(.notebook-mode) #stats,.focused-practice:not(.notebook-mode) .study-tabs,.focused-practice:not(.notebook-mode)>header,.focused-practice:not(.notebook-mode)>footer{display:none}
+.focused-practice:not(.notebook-mode) main{padding-top:12px}.focused-practice .practice-box{margin-top:0}
+#java-reference{width:min(1100px,94vw);height:88vh;padding:20px;border:1px solid #cbd6df;border-radius:12px}#java-reference::backdrop{background:#10253888}.reference-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}.reference-heading h2{margin:0}#reference-frame{width:100%;height:calc(100% - 135px);border:1px solid #d7e2e9}
+@media(min-width:1000px){.focused-practice .question-prompt{max-height:calc(100vh - 300px);overflow:auto;overscroll-behavior:contain}.focused-practice .response-pane{max-height:calc(100vh - 300px);overflow:auto;position:static}.focused-practice .response-pane textarea{min-height:320px}}
+@media(max-width:1000px){.session-toolbar{flex-wrap:wrap;position:relative}.session-tools{margin-left:auto}#question{grid-template-columns:1fr}.question-prompt{border-right:0;border-bottom:1px solid #d9e2e8}.response-pane{position:static}.response-pane textarea{min-height:300px}.session-bottom{flex-wrap:wrap}.practice-page main{padding:16px 12px}.session-toolbar,.question-toolbar,.question-prompt,.response-pane{padding:16px}.session-bottom .actions{flex-wrap:wrap}.clock-controls{gap:8px}.session-toolbar strong{font-size:16px}}
+@media(max-width:600px){.session-toolbar{gap:12px}.session-toolbar>div:first-child{width:100%}.session-tools{margin:0}.session-bottom{position:relative;padding:12px}.question-navigation{flex-wrap:wrap}.practice-page .unit-grid{grid-template-columns:1fr 1fr}.question-toolbar{gap:10px}.time-budget{width:100%}.practice-page .stats{grid-template-columns:1fr 1fr}#question>.answer,#question>.code-feedback{margin:12px;padding:16px}.choice-verdict{white-space:normal}}
+#reference-frame{overflow:auto}#reference-frame img{display:block;width:100%;height:auto}
+.response-pane .option{font-weight:400}.response-pane .option span{min-width:0}.session-toolbar .clock-controls button{font-size:14px}
