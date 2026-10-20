@@ -35,3 +35,5 @@
 @media(max-width:600px){.session-toolbar{gap:12px}.session-toolbar>div:first-child{width:100%}.session-tools{margin:0}.session-bottom{position:relative;padding:12px}.question-navigation{flex-wrap:wrap}.practice-page .unit-grid{grid-template-columns:1fr 1fr}.question-toolbar{gap:10px}.time-budget{width:100%}.practice-page .stats{grid-template-columns:1fr 1fr}#question>.answer,#question>.code-feedback{margin:12px;padding:16px}.choice-verdict{white-space:normal}}
 #reference-frame{overflow:auto}#reference-frame img{display:block;width:100%;height:auto}
 .response-pane .option{font-weight:400}.response-pane .option span{min-width:0}.session-toolbar .clock-controls button{font-size:14px}
+
+#question:has(>.answer)>.response-pane{position:static}
