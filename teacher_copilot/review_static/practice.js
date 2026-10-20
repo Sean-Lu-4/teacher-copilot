@@ -58,7 +58,7 @@ function showAnswer(message){pauseClock();if(revealed){$('reference-answer')?.sc
   for(const input of document.querySelectorAll('input[name=choice]')){const label=input.closest('label');if(input.value===q.answer_key){label.classList.add('choice-correct');label.append(node('strong','✓ 正确答案','choice-verdict'));}else if(input.checked){label.classList.add('choice-wrong');label.append(node('strong','✕ 你的选择','choice-verdict'));}}
   box.append(node('h3','正确答案：'+q.answer_key));
  }
- for(const [title,text] of [['答案与解析',q.answer],['参考代码',q.reference_solution],['评分标准',q.rubric],['English explanation',q.explanation_en]])if(text){const detail=node('details');detail.open=true;detail.append(node('summary',title),node('pre',text.replace(/^Select a point value to view scoring criteria or to score the response\.\s*$/gm,'')));box.append(detail);}
+ for(const [title,text] of [['答案与解析',q.answer],['参考代码',q.reference_solution],['评分标准',q.rubric],['English explanation',q.explanation_en]])if(text){const detail=node('details');detail.open=!q.scoring_pages?.length;detail.append(node('summary',q.scoring_pages?.length?title+'（文字备份）':title),node('pre',text.replace(/^Select a point value to view scoring criteria or to score the response\.\s*$/gm,'')));box.append(detail);}
  if(q.scoring_pages?.length){
   const guide=node('section',undefined,'inline-scoring-guide');guide.append(node('h3','原评分指南'));
   const seen=new Set();
@@ -68,7 +68,7 @@ function showAnswer(message){pauseClock();if(revealed){$('reference-answer')?.sc
    const figure=node('figure'),img=node('img'),caption=node('figcaption',`原评分指南 · 第 ${ref.page} 页`);
    img.src=`/scoring-page/${ref.document}/${ref.page}.png`;img.alt=caption.textContent;img.loading='lazy';img.decoding='async';
    img.onerror=()=>{img.hidden=true;caption.textContent='原版页面暂未载入，请先查看上方答案与解析。';};
-   figure.append(caption,img);guide.append(figure);
+   const link=node('a');link.href=img.src;link.target='_blank';link.rel='noopener';link.title='打开评分指南大图';link.append(img);figure.append(caption,link);guide.append(figure);
   }
   box.append(guide);
  }

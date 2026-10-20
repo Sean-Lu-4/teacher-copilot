@@ -517,7 +517,12 @@
         ],
         "rationale": "依次调用 String 方法提取用户名，并调用 Math.random 类方法。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-2459373609e2732d-S0-p1.png",
+        "FRQ-2459373609e2732d-S0-p2.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "MCQ-2c56be8e618b3323",
@@ -8035,7 +8040,12 @@
         ],
         "rationale": "实现 getPossibleAssemblies；通过对象访问器累计数组中的零件数量。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-d841c16efb454b49-S1-p1.png",
+        "FRQ-d841c16efb454b49-S1-p2.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-d841c16efb454b49-S2",
@@ -8102,7 +8112,12 @@
         ],
         "rationale": "实现 hasEnoughPaint，累计表面积并返回是否足够的关系表达式。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-d841c16efb454b49-S2-p2.png",
+        "FRQ-d841c16efb454b49-S2-p3.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-e12b4823e927b30f-S1",
@@ -8169,7 +8184,12 @@
         ],
         "rationale": "调用年龄访问器，按13至19的条件筛选并计算平均值。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-e12b4823e927b30f-S1-p1.png",
+        "FRQ-e12b4823e927b30f-S1-p2.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-e12b4823e927b30f-S2",
@@ -8239,7 +8259,12 @@
         ],
         "rationale": "逐场比较主客队得分，重置或延长连续获胜计数。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-e12b4823e927b30f-S2-p2.png",
+        "FRQ-e12b4823e927b30f-S2-p3.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-8b32f5bc1d3ab57a-S1",
@@ -17734,7 +17759,12 @@
         ],
         "rationale": "按圈数累计 getLapTime；循环移除所有指定子串。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-69fc5af861bea528-S1-p1.png",
+        "FRQ-69fc5af861bea528-S1-p2.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-69fc5af861bea528-S2",
@@ -17859,7 +17889,11 @@
         ],
         "rationale": "循环剥离十进制数字并统计个位数出现次数。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-69fc5af861bea528-S3-p5.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-69fc5af861bea528-S4",
@@ -17992,7 +18026,12 @@
         ],
         "rationale": "生成 numMoves 次随机方向并累计字符串，循环计数指定子串。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-69fc5af861bea528-S5-p7.png",
+        "FRQ-69fc5af861bea528-S5-p8.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-69fc5af861bea528-S6",
@@ -18052,7 +18091,14 @@
         ],
         "rationale": "simulateOneDay 要求按概率随机模拟；多天模拟须同时限制天数与剩余食物。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-69fc5af861bea528-S6-p8.png",
+        "FRQ-69fc5af861bea528-S6-p9.png",
+        "FRQ-69fc5af861bea528-S6-p10.png",
+        "FRQ-69fc5af861bea528-S6-p11.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-69fc5af861bea528-S7",
@@ -18240,7 +18286,12 @@
         ],
         "rationale": "用户名处理明确调用 Math.random 类方法与 String 实例方法。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-69fc5af861bea528-S9-p13.png",
+        "FRQ-69fc5af861bea528-S9-p14.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-69fc5af861bea528-S10",
@@ -18299,7 +18350,14 @@
         ],
         "rationale": "逐分钟寻找连续空闲区间，再按时段顺序查找并调用预订辅助方法。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-69fc5af861bea528-S10-p14.png",
+        "FRQ-69fc5af861bea528-S10-p15.png",
+        "FRQ-69fc5af861bea528-S10-p16.png",
+        "FRQ-69fc5af861bea528-S10-p17.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "MCQ-cf246fe8cf9ef6fb",
@@ -26896,7 +26954,13 @@
         ],
         "rationale": "AppleCrate.numberOfPies 实际是二维数组和相邻格检查，最后取整计算完整馅饼；没有编写构造器要求。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-906422c04f2fa6d6-S7-p9.png",
+        "FRQ-906422c04f2fa6d6-S7-p10.png",
+        "FRQ-906422c04f2fa6d6-S7-p11.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-906422c04f2fa6d6-S8",
@@ -26958,7 +27022,12 @@
         ],
         "rationale": "Schedule.columnWithFewest 实际逐列逐行比较预约状态并求最小列；没有编写类或构造器要求。",
         "date": "2026-10-15"
-      }
+      },
+      "question_images": [
+        "FRQ-906422c04f2fa6d6-S8-p11.png",
+        "FRQ-906422c04f2fa6d6-S8-p12.png"
+      ],
+      "question_image_source": "Original TB PDF, bounded to the full question including tables, figures and subparts."
     },
     {
       "id": "FRQ-906422c04f2fa6d6-S9",
