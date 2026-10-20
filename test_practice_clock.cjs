@@ -6,3 +6,5 @@ s=c.start(s,91000);s=c.start(s,95000);assert.equal(c.elapsed(s,101000),20000);
 s=c.pause(s,101000);assert.equal(c.format(c.elapsed(s,999999)), '00:20');
 assert.equal(c.format(1350000),'22:30');assert.equal(c.restore({target:-2,startedAt:'x'}).startedAt,null);assert.equal(c.restore({target:999}).target,null);
 console.log('Timer: start, pause, resume, reload and formatting passed');
+let n=c.start(c.restore(null),1000);assert.equal(c.shouldNotify(n,60999,1),false);assert.equal(c.shouldNotify(n,61000,1),true);n.notifiedTarget=1;assert.equal(c.shouldNotify(c.restore(n),120000,1),false);assert.equal(c.shouldNotify(n,121000,2),true);assert.equal(c.shouldNotify(c.pause(n,121000),180000,2),false);
+console.log('Reminder: deadline, once per target, reload, pause passed');

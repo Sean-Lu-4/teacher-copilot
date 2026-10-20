@@ -37,3 +37,4 @@
 .response-pane .option{font-weight:400}.response-pane .option span{min-width:0}.session-toolbar .clock-controls button{font-size:14px}
 
 
+#time-reminder{max-width:min(560px,calc(100vw - 32px));padding:24px;border:1px solid #c3d4df;border-radius:12px;color:#172d43;box-shadow:0 16px 50px #172d4330}#time-reminder::backdrop{background:#152b4566}#time-reminder h2{margin:0 0 12px;font-size:24px}#time-reminder p{line-height:1.7}

@@ -22,7 +22,7 @@ function refreshTopics(){const previous=$('topic').value;$('topic').replaceChild
 function choose(skip){pauseClock();notebookReview=false;sessionRows=bank.filter(available);current=sessionRows.find(q=>q.id!==skip)||null;revealed=false;render();}
 function button(text,fn,primary=false){const b=node('button',text,primary?'primary':'');b.type='button';b.onclick=fn;return b;}
 function render(){
- const box=$('question');box.replaceChildren();$('actions').replaceChildren();updateWorkspace();
+ const box=$('question');box.replaceChildren();$('actions').replaceChildren();updateWorkspace();if(current?.question_kind==='write'&&!revealed){clockState=PracticeClock.start(clockState,Date.now());clockSave();paintClock();}
  if(!current){box.append(node('h2','这个范围已没有待练题目'),node('p','可以切换单元、课题或选择“全部题目”继续练习。'));return;}
  const q=current,r=record(q),mcq=q.question_kind==='concept';
  box.append(node('p',`${units(q).map(u=>'Unit '+u).join(' / ')} · ${mcq?'MCQ':'FRQ'}${mcq?' · 预计 '+q.minutes+' 分钟':''}`,'muted'),node('h2',q.title));
@@ -185,10 +185,12 @@ function paintClock(){
  $('clock-display').classList.toggle('time-over',over);
  const message=over?'已达到练习目标时间，你可以继续作答。':'';
  if($('clock-notice').textContent!==message)$('clock-notice').textContent=message;
+ if(current?.question_kind==='write'&&clockQuestion===current.id&&!revealed&&PracticeClock.shouldNotify(clockState,Date.now(),target/60000)){clockState.notifiedTarget=target/60000;clockSave();$('time-reminder-text').textContent=`本题已达到设定的 ${target/60000} 分钟。你的作答会保留，关闭提示后可以继续，计时不会停止。`;$('time-reminder').showModal();}
 }
 function moveQuestion(step){const index=sessionRows.findIndex(q=>q.id===current?.id);const q=sessionRows[index+step];if(q)visitQuestion(q);}
 function visitQuestion(q){pauseClock();current=q;revealed=false;render();$('practice-area').scrollIntoView({behavior:'smooth',block:'start'});}
 function initWorkspace(){
+ const reminder=node('dialog');reminder.id='time-reminder';reminder.setAttribute('aria-labelledby','time-reminder-title');const title=node('h2','练习时间到了');title.id='time-reminder-title';const text=node('p');text.id='time-reminder-text';reminder.append(title,text,button('继续作答',()=>reminder.close(),true));document.body.append(reminder);
  clockState=PracticeClock.restore(null);
  $('clock-toggle').onclick=()=>{if(!current)return;clockState=clockState.startedAt!==null?PracticeClock.pause(clockState,Date.now()):PracticeClock.start(clockState,Date.now());clockSave();paintClock();};
  $('clock-hide').onclick=()=>{clockHidden=!clockHidden;$('clock-hide').textContent=clockHidden?'显示时间':'隐藏时间';paintClock();};
