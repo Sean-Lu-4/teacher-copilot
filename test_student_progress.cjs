@@ -29,3 +29,11 @@ test('submission does not mutate the stored record',()=>{
  const old=Object.freeze({done:true,mastered:false,note:'keep',attempts:1});
  submit(old,true,'A');assert.equal(old.mastered,false);
 });
+test('manual notebook does not invent attempts and can be removed',()=>{
+ const {toggleNotebook}=require('./teacher_copilot/review_static/progress.js');
+ const r=toggleNotebook({draft:'keep',note:'note'});assert.equal(isMistake(r),true);assert.equal(r.done,undefined);assert.equal(r.attempts,undefined);
+ const removed=toggleNotebook(r);assert.equal(isMistake(removed),false);assert.equal(removed.draft,'keep');
+ const wrong=submit(r,false,'A');assert.equal(wrong.wrongCount,1);assert.equal(isMistake(toggleNotebook(wrong)),false);
+ assert.equal(isMistake(submit(toggleNotebook(wrong),false,'B')),true);
+ assert.equal(isMistake(submit(r,true,'B')),true);
+});

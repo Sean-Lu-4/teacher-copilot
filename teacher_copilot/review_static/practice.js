@@ -9,7 +9,7 @@ try{const saved=JSON.parse(localStorage.getItem(KEY)||'{}');if(saved&&typeof sav
 function save(){try{localStorage.setItem(KEY,JSON.stringify(progress));}catch{storageOK=false;$('notice').textContent='浏览器无法保存进度。本次仍可练习，关闭页面后记录可能丢失。';}}
 function record(q){const r=progress[q.id];return r&&typeof r==='object'?r:{};}
 function units(q){return (q.units||[q.ap_unit]).map(String);}
-function available(q){return (!unit||units(q).includes(unit))&&q.question_kind===$('kind').value&&(!$('topic').value||(q.ced_topics||[]).includes($('topic').value))&&($('scope').value==='all'||($('scope').value==='runnable'?q.java_check_supported:($('scope').value==='new'?!record(q).done:record(q).done&&!record(q).mastered)));}
+function available(q){return (!unit||units(q).includes(unit))&&q.question_kind===$('kind').value&&(!$('topic').value||(q.ced_topics||[]).includes($('topic').value))&&($('scope').value==='all'||($('scope').value==='runnable'?q.java_check_supported:($('scope').value==='new'?!record(q).done:CSAProgress.isMistake(record(q))&&!record(q).mastered)));}
 function dashboard(){
  $('mistake-count').textContent=bank.filter(q=>CSAProgress.isMistake(record(q))&&!record(q).mastered).length;
  $('stats').replaceChildren();const done=bank.filter(q=>record(q).done),mastered=done.filter(q=>record(q).mastered);
@@ -21,10 +21,12 @@ function dashboard(){
 function refreshTopics(){const previous=$('topic').value;$('topic').replaceChildren(new Option('全部课题',''));for(const t of catalog){if(bank.some(q=>(!unit||units(q).includes(unit))&&(q.ced_topics||[]).includes(t.id)))$('topic').append(new Option(`${t.id} · ${t.title}`,t.id));}if([...$('topic').options].some(o=>o.value===previous))$('topic').value=previous;}
 function choose(skip){pauseClock();notebookReview=false;sessionRows=bank.filter(available);current=sessionRows.find(q=>q.id!==skip)||null;revealed=false;render();}
 function button(text,fn,primary=false){const b=node('button',text,primary?'primary':'');b.type='button';b.onclick=fn;return b;}
+function paintNotebookButton(b,q){const added=CSAProgress.isMistake(record(q));b.textContent=added?'已加入错题本 · 移除':'＋ 加入错题本';b.setAttribute('aria-pressed',String(added));b.classList.add('notebook-toggle');}
 function render(){
  const box=$('question');box.replaceChildren();$('actions').replaceChildren();updateWorkspace();if(current?.question_kind==='write'&&!revealed){clockState=PracticeClock.start(clockState,Date.now());clockSave();paintClock();}
  if(!current){box.append(node('h2','这个范围已没有待练题目'),node('p','可以切换单元、课题或选择“全部题目”继续练习。'));return;}
  const q=current,r=record(q),mcq=q.question_kind==='concept';
+ const notebook=button('',()=>{progress[q.id]=CSAProgress.toggleNotebook(record(q));save();dashboard();paintNotebookButton(notebook,q);});paintNotebookButton(notebook,q);box.append(notebook);
  box.append(node('p',`${units(q).map(u=>'Unit '+u).join(' / ')} · ${mcq?'MCQ':'FRQ'}${mcq?' · 预计 '+q.minutes+' 分钟':''}`,'muted'),node('h2',q.title));
  if(q.code&&!q.code.startsWith('// AP source question'))box.append(node('pre',q.code));
  if(q.question_images?.length){
@@ -53,7 +55,7 @@ function render(){
  if(!mcq)$('actions').prepend(button('检查代码',()=>checkCode(q),true));
  if(notebookReview)$('actions').append(button('返回错题本',()=>setView('mistakes')));
 }
-function showAnswer(message){pauseClock();if(revealed){$('reference-answer')?.scrollIntoView({behavior:'smooth',block:'start'});return;}revealed=true;if(storageOK)$('notice').textContent='';document.querySelectorAll('input[name=choice]').forEach(e=>e.disabled=true);const q=current,box=node('section',undefined,'answer');box.id='reference-answer';box.append(node('p',message,'result'));
+function showAnswer(message){pauseClock();if(revealed){$('reference-answer')?.scrollIntoView({behavior:'smooth',block:'start'});return;}revealed=true;if(storageOK)$('notice').textContent='';document.querySelectorAll('input[name=choice]').forEach(e=>e.disabled=true);const q=current,box=node('section',undefined,'answer');box.id='reference-answer';const notebookButton=document.querySelector('.notebook-toggle');if(notebookButton)paintNotebookButton(notebookButton,q);box.append(node('p',message,'result'));
  if(q.answer_key){
   for(const input of document.querySelectorAll('input[name=choice]')){const label=input.closest('label');if(input.value===q.answer_key){label.classList.add('choice-correct');label.append(node('strong','✓ 正确答案','choice-verdict'));}else if(input.checked){label.classList.add('choice-wrong');label.append(node('strong','✕ 你的选择','choice-verdict'));}}
   box.append(node('h3','正确答案：'+q.answer_key));
@@ -151,11 +153,12 @@ function renderNotebook(){
  $('notebook-summary').textContent=`累计收录 ${all.length} 道 · 待巩固 ${pending.length} 道 · 已巩固 ${all.length-pending.length} 道`;
  const review=rows.filter(q=>!record(q).mastered);$('review-pending').disabled=!review.length;$('review-pending').textContent=review.length?`复习待巩固题（${review.length}）`:'暂无待巩固题';$('review-pending').onclick=()=>{if(review[0])openMistake(review[0]);};
  $('mistake-list').replaceChildren();
- if(!rows.length){const empty=node('div',undefined,'notebook-empty');empty.append(node('h3',all.length?'当前筛选下没有题目':'你的错题本，从第一次尝试开始'),node('p',all.length?'试试其他单元、题型或复习状态。':'答错的选择题和需要再练的 FRQ 会自动出现在这里。'));empty.append(button('去练习',()=>{notebookReview=false;unit='';$('scope').value='new';refreshTopics();dashboard();choose();setView('practice');},true));$('mistake-list').append(empty);return;}
+ if(!rows.length){const empty=node('div',undefined,'notebook-empty');empty.append(node('h3',all.length?'当前筛选下没有题目':'你的错题本，从第一次尝试开始'),node('p',all.length?'试试其他单元、题型或复习状态。':'答错的题会自动加入，也可以在题目上点击“加入错题本”。'));empty.append(button('去练习',()=>{notebookReview=false;unit='';$('scope').value='new';refreshTopics();dashboard();choose();setView('practice');},true));$('mistake-list').append(empty);return;}
  for(const q of rows){const r=record(q),card=node('article',undefined,'mistake-card'),head=node('div',undefined,'mistake-card-head');head.append(node('span',units(q).map(u=>'Unit '+u).join(' / ')+' · '+(q.question_kind==='concept'?'MCQ':'FRQ'),'eyebrow'),node('span',r.mastered?'已巩固':'待巩固',r.mastered?'state-pill mastered':'state-pill pending'));card.append(head,node('h3',q.title));
  card.append(node('p',q.task.replace(/\s+/g,' ').slice(0,160)+(q.task.length>160?'…':''),'mistake-excerpt'));
- const info=[];if(r.lastWrongChoice||(!r.mastered&&r.choice))info.push('上次错选 '+(r.lastWrongChoice||r.choice));info.push('已尝试 '+(Number(r.attempts)||1)+' 次');if(r.lastWrong){const dt=new Date(r.lastWrong);if(!Number.isNaN(dt.getTime()))info.push(dt.toLocaleDateString('zh-CN'));}card.append(node('p',info.join(' · '),'muted'));
+ const info=[];if(r.manualMistake)info.push('手动加入');if(r.lastWrongChoice||(!r.mastered&&r.choice))info.push('上次错选 '+(r.lastWrongChoice||r.choice));info.push('已尝试 '+(Number(r.attempts)||0)+' 次');if(r.lastWrong){const dt=new Date(r.lastWrong);if(!Number.isNaN(dt.getTime()))info.push(dt.toLocaleDateString('zh-CN'));}card.append(node('p',info.join(' · '),'muted'));
  const actions=node('div',undefined,'actions');actions.append(button(r.mastered?'再练一次':'重新练习',()=>openMistake(q),true));
+ actions.append(button('移出错题本',()=>{progress[q.id]=CSAProgress.toggleNotebook(record(q));save();dashboard();renderNotebook();}));
  const notes=node('details',undefined,'review-notes'),summary=node('summary',r.note?'查看 / 修改复习笔记':'记录复习笔记'),label=node('label','这道题提醒了你什么？'),area=node('textarea');area.setAttribute('aria-label','复习笔记：'+q.title);area.value=r.note||'';area.maxLength=3000;area.placeholder='例如：整数除法会舍去小数部分。';area.oninput=()=>{progress[q.id]={...record(q),note:area.value};save();};label.append(area);notes.append(summary,label);card.append(actions,notes);$('mistake-list').append(card);
  }
 }
