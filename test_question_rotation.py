@@ -1,3 +1,4 @@
+from test_pdf_fixtures import pdf_ids
 import tempfile
 import unittest
 import base64
@@ -16,7 +17,7 @@ class RotationTests(unittest.TestCase):
 
     def generate(self, topic='csa-selection', minutes=20, current=None):
         return self.store.mutate(dict(action='generate', run=current, settings=dict(topic=topic,
-            contents=TOPIC_CONTENTS[topic], difficulty='basic', minutes=minutes, purpose='homework')))
+            contents=TOPIC_CONTENTS[topic], difficulty='any', minutes=minutes, purpose='homework')))
 
     def action(self, state, action, **args):
         return self.store.mutate(dict(action=action, run=state['run'], version=state['version'], **args))
@@ -35,7 +36,7 @@ class RotationTests(unittest.TestCase):
     def test_replace_history_coverage_export_and_conflict(self):
         state = self.generate()
         original = state
-        index = next(i for i,r in enumerate(state['records']) if r['content']['id']=='CSA2_3_B')
+        index = 0
         old = state['records'][index]
         state = self.action(state, 'replace', id=old['content']['id'])
         replacement = next(r for r in state['records'] if r['history'] and r['history'][-1]['action']=='replace')
@@ -62,18 +63,22 @@ class RotationTests(unittest.TestCase):
         with self.assertRaises(ValueError):self.action(state, 'replace', id=replacement['content']['id'])
 
     def test_exhaustion_does_not_modify_and_reuse_is_disclosed(self):
-        state = self.generate('csa-arrays',10)
-        second = self.generate('csa-arrays',10,current=state['run'])
-        self.assertIn('使用过', second['generation_notice'])
-        with self.assertRaisesRegex(ValueError, '保持不变'):
-            self.action(state,'replace',id=state['records'][0]['content']['id'])
-        self.assertEqual(state, self.store.state(state['run']))
+        from unittest.mock import patch
+        from teacher_copilot.worksheets import BANKS
+        source=next(q for q in BANKS['csa-arrays'] if q.get('source_item_id') and q.get('options'))
+        with patch.dict(BANKS,{'csa-arrays':[source]}):
+            state = self.generate('csa-arrays',10)
+            second = self.generate('csa-arrays',10,current=state['run'])
+            self.assertIn('使用过', second['generation_notice'])
+            with self.assertRaisesRegex(ValueError, '保持不变'):
+                self.action(state,'replace',id=state['records'][0]['content']['id'])
+            self.assertEqual(state, self.store.state(state['run']))
 
     def test_replacements_do_not_cycle(self):
         state = self.generate()
-        index = next(i for i,r in enumerate(state['records']) if r['content']['id']=='CSA2_3_B')
+        index = 0
         seen = set()
-        for _ in range(20):
+        for _ in range(200):
             question_id = state['records'][index]['content']['id']
             self.assertNotIn(question_id, seen)
             seen.add(question_id)

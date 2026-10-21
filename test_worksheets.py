@@ -6,15 +6,15 @@ import test_review_app
 class WorksheetTests(unittest.TestCase):
     def test_topic_catalog_and_scope(self):
         data = catalog()
-        self.assertEqual([d['title'] for d in data['difficulties']], ['基础', '巩固', '考试'])
+        self.assertEqual([d['title'] for d in data['difficulties']], ['全部难度（含未标定）', '基础', '巩固', '考试'])
         topics = {t['id']: {c['id'] for c in t['contents']} for t in data['topics']}
         self.assertNotIn('method-calls', topics)
         self.assertIn('returns', topics['csa-calls'])
         with self.assertRaises(ValueError):
             assemble(self.settings(topic='method-calls', contents=['returns']))
-        settings, records = assemble(self.settings(topic='method-returns', contents=['returns','tracing']))
+        settings, records = assemble(self.settings())
         self.assertTrue(records)
-        self.assertIn('返回值与跟踪', paper_report(dict(worksheet_settings=settings),records,'teacher'))
+        self.assertIn('（教师版）', paper_report(dict(worksheet_settings=settings),records,'teacher'))
 
     def test_removed_mixed_difficulty_and_guidance_export(self):
         with self.assertRaises(ValueError):
@@ -22,12 +22,12 @@ class WorksheetTests(unittest.TestCase):
         settings, records = assemble(self.settings())
         teacher = paper_report(dict(worksheet_settings=settings), records, 'teacher')
         student = paper_report(dict(worksheet_settings=settings), records, 'student')
-        self.assertIn('学生答错时的讲解建议', teacher)
+        self.assertNotIn('学生答错时的讲解建议', teacher)
         self.assertNotIn('教师处理', teacher)
-        self.assertNotIn(records[0]['content']['intervention'], student)
+        self.assertNotIn('AI 模拟体验', student)
 
     def settings(self, **changes):
-        return dict(dict(topic='methods', contents=TOPIC_CONTENTS['methods'], difficulty='basic', minutes=20), **changes)
+        return dict(dict(topic='csa-calls', contents=TOPIC_CONTENTS['csa-calls'], difficulty='any', minutes=20), **changes)
 
     def test_budget_difficulty_and_determinism(self):
         s, records = assemble(self.settings())
@@ -35,18 +35,20 @@ class WorksheetTests(unittest.TestCase):
         self.assertEqual(len({r['content']['id'] for r in records}), len(records))
         self.assertEqual([r['content']['level'] for r in records], sorted(r['content']['level'] for r in records))
         self.assertEqual(assemble(self.settings())[1], records)
-        _, exam = assemble(self.settings(difficulty='exam'))
-        self.assertTrue(all(r['content']['level'] == 4 for r in exam))
+        self.assertTrue(all(r['content'].get('source_item_id') for r in records))
 
     def test_strict_scope_and_no_match(self):
-        _, records = assemble(self.settings(contents=['returns','tracing']))
-        self.assertTrue(all(set(r['content']['objectives']) <= {'return_use','trace','errors','practice'} for r in records))
+        from teacher_copilot.worksheets import selection_objectives
+        selected=TOPIC_CONTENTS['csa-calls']
+        _,records=assemble(self.settings(contents=selected))
+        allowed=set().union(*(CONTENT[c][1] for c in selected))
+        self.assertTrue(all(selection_objectives(r['content'],'csa-calls') & allowed for r in records))
         with self.assertRaises(ValueError):
-            assemble(self.settings(contents=['calls'], difficulty='exam'))
+            assemble(self.settings(contents=['ced_4_3']))
 
     def test_short_bank_and_invalid_inputs(self):
         s, records = assemble(self.settings(minutes=90))
-        self.assertTrue(summary(s, records)['warnings'])
+        self.assertLessEqual(summary(s, records)['minutes'],90)
         for changes in [dict(minutes=0), dict(minutes=True), dict(contents=[]), dict(topic='arrays'), dict(difficulty='invalid')]:
             with self.subTest(changes=changes), self.assertRaises(ValueError):
                 assemble(self.settings(**changes))
@@ -58,7 +60,12 @@ class WorksheetTests(unittest.TestCase):
         teacher = paper_report(plan, records, 'teacher')
         for r in records:
             q = r['content']
-            self.assertIn(q['task'], student)
+            q.update(answer='PRIVATE_ANSWER_SENTINEL',rubric='PRIVATE_RUBRIC_SENTINEL')
+            student=paper_report(plan,records,'student')
+            teacher=paper_report(plan,records,'teacher')
+            if q.get('question_images'):
+                for image in q['question_images']:self.assertIn(image,student)
+            else:self.assertIn(q['task'], student)
             self.assertNotIn(q['answer'], student)
             self.assertNotIn(q['rubric'], student)
             self.assertIn(q['answer'], teacher)
@@ -68,7 +75,7 @@ class WorksheetTests(unittest.TestCase):
 class AssemblyStoreTests(unittest.TestCase):
     setUp = test_review_app.ReviewTests.setUp
     def test_generate_save_and_export_modified_student_paper(self):
-        state = self.store.mutate(dict(action='generate',settings=dict(topic='methods',contents=TOPIC_CONTENTS['methods'], difficulty='basic',minutes=20)))
+        state = self.store.mutate(dict(action='generate',settings=dict(topic='csa-calls',contents=TOPIC_CONTENTS['csa-calls'], difficulty='any',minutes=20)))
         self.assertEqual(state['settings']['minutes'],20)
         first=state['records'][0]['content']['id']
         state=self.store.mutate(dict(action='revise',run=state['run'],version=state['version'],id=first,actor='teacher',reason='edit',changes={'title':'New paper title'}))

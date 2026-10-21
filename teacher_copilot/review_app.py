@@ -199,81 +199,22 @@ class ReviewStore:
                 return save_submission(base_root, payload)
             if payload.get('action') == 'generate':
                 mode=payload.get('source','local')
-                if mode not in {'local','mock','ai','hybrid'}:raise ValueError('请选择有效的题目来源。')
+                if mode != 'local':
+                    raise ValueError('现在仅使用 PDF 题库，请刷新页面后重新组卷。')
                 recent = self.recent_usage(payload.get('run'))
-                requested=payload.get('settings') or {}
-                settings=validate_settings(requested)
+                settings=validate_settings(payload.get('settings') or {})
                 builder=assemble_exam if settings.get('purpose')=='exam' else assemble
-                if mode=='local':
-                    settings,records=builder(settings,recent)
-                    generation=dict(source='local')
-                elif mode=='hybrid':
-                    if settings.get('selected_ids'):
-                        raise ValueError('自选清单请使用题库组卷；补题请先取消自选限制。')
-                    try:
-                        _,records=builder(settings,recent)
-                    except ValueError:
-                        records=[]
-                        if settings.get('purpose')=='exam':
-                            records=partial_exam(settings,recent)
-                    used=sum(r['content']['minutes'] for r in records)
-                    exam=settings.get('purpose')=='exam'
-                    # A fixed-size paper with all requested questions needs no extra question.
-                    needs_more=(len(records)<settings['question_count']) if exam else used<settings['minutes']
-                    if needs_more:
-                        if exam:
-                            # Reserve at least one minute for each missing question.
-                            while records and settings['minutes']-used < settings['question_count']-len(records):
-                                used-=records.pop()['content']['minutes']
-                        covered=set().union(*(selection_objectives(r['content'],settings['topic']) for r in records))
-                        kwargs={}
-                        if exam:
-                            allocated=0
-                            for r in records:
-                                marks=max(1,round(settings['total_marks']*r['content']['minutes']/settings['minutes']))
-                                marks=min(marks,settings['total_marks']-allocated-(settings['question_count']-len(records))-(len(records)-records.index(r)-1))
-                                allocated+=marks
-                                r['content']['marks']=marks
-                                from .questions import content_hash
-                                r['content']['rubric']+=f'\n本卷本题按 {marks} 分计：按原评分标准得分比例折算。'
-                                r['content_hash']=content_hash(r['content'])
-                            kwargs=dict(supplement_count=settings['question_count']-len(records),
-                                        supplement_marks=settings['total_marks']-allocated)
-                        try:
-                            if not ai_questions.availability()['free_ready']:
-                                raise ValueError('免费补题尚未启用，请先配置 OpenRouter 免费模型。')
-                            extra,generation=self.ai_records(settings,'ai',payload.get('run'),
-                                supplement_minutes=settings['minutes']-used,covered_objectives=covered,
-                                extra_excluded=[r['content'] for r in records],request_id=payload.get('request_id'),**kwargs)
-                            records+=extra
-                            generation['source']='hybrid'
-                            generation['notice']=f'保留题库题目，补充 {len(extra)} 道题。'
-                            if generation.get('remaining_minutes'):
-                                generation['notice']+=f"仍缺约 {generation['remaining_minutes']} 分钟，已保留通过检查的题目，可稍后继续补充。"
-                        except ValueError as exc:
-                            if not records: raise
-                            generation=dict(source='local',notice='补题未完成，已保留题库练习。'+str(exc))
-                    else:
-                        generation=dict(source='local',notice='题库已满足题量要求，未调用 AI。')
-                else:
-                    records,generation=self.ai_records(settings,mode,payload.get('run'),request_id=payload.get('request_id'))
+                settings,records=builder(settings,recent)
+                generation=dict(source='local')
                 reused = sum(r['content']['id'] in recent for r in records)
                 notice = (f'本次有 {reused} 道题在近期作业中使用过；满足当前内容、难度和时长的题量有限，已优先选择较少使用的题目。'
                           if reused else '本次题目未出现在最近 5 份作业和当前预览中。')
-                if mode=='ai':notice='AI 已生成并保存；结构检查通过，内容与难度待教师确认。'
-                elif mode=='mock':notice='模拟流程使用本地题库，未调用 AI；'+notice
-                elif mode=='hybrid':notice=generation.get('notice','题库已满足设定时长，未调用 AI。')
                 self.root.mkdir(parents=True, exist_ok=True)
                 directory = Path(tempfile.mkdtemp(prefix=datetime.now().strftime('%Y%m%d_%H%M%S_worksheet_'), dir=self.root))
                 atomic_json(directory / 'exercise_plan.json', dict(course=dict(topic=TOPICS.get(settings['topic'],'跨课题综合练习'), duration=settings['minutes']),
                             worksheet_settings=settings, schedule=[], textbook_evidence=[], mode='local_worksheet',
                             questions=[r['content'] for r in records], generation_notice=notice,generation=generation))
                 save_questions(directory / 'questions.json', records)
-                if mode in {'ai','hybrid'} and generation.get('source') in {'ai','hybrid'}:
-                    from .ai_usage import request_path
-                    path=request_path(self.root,payload.get('request_id'))
-                    entry=json.loads(path.read_text(encoding='utf-8'));entry['run']=directory.name;entry['result']=[records,generation]
-                    atomic_json(path,entry)
                 return self.state(directory.name)
             state = self.state(payload.get('run'))
             if payload.get('version') != state['version']:
@@ -321,13 +262,7 @@ class ReviewStore:
             actor = payload.get('actor', '')
             if action == 'replace':
                 if record['locked']:raise ValueError('这道题已锁定，请先解锁再换题。')
-                if state['source'] in {'local','hybrid'}:
-                    replacement = replace_question(state['settings'], records, index, self.recent_usage())
-                else:
-                    replacement_rows,usage=self.ai_records(state['settings'],state['source'],state['run'],
-                        replacement=record['content'],records=records,index=index,request_id=payload.get('request_id'))
-                    replacement=replacement_rows[0]
-                    replacement['generation_usage']=usage
+                replacement = replace_question(state['settings'], records, index, self.recent_usage())
                 replacement['history'] = deepcopy(record['history']) + [dict(action='replace',
                     actor='本地教师', at=datetime.now().isoformat(), revision=1,
                     detail=dict(previous_content=deepcopy(record['content']),
@@ -395,6 +330,8 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
     demo = os.getenv('TEACHER_COPILOT_PUBLIC_DEMO') == '1'
     if demo and ai_questions.availability()['ready'] and not ai_questions.availability()['free_ready']:
         raise ValueError('Public demo only supports configured free AI models.')
+    from .accounts import Accounts
+    accounts = Accounts(root)
     session_secret = secrets.token_bytes(32)
     stores = {}
     stores_lock = threading.Lock()
@@ -402,7 +339,32 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
     explicit_origins = bool(allowed_origins)
 
     class Handler(BaseHTTPRequestHandler):
+        def account_token(self):
+            cookies = SimpleCookie()
+            try:
+                cookies.load(self.headers.get('Cookie', ''))
+                return cookies['csa_account'].value if 'csa_account' in cookies else ''
+            except Exception:
+                return ''
+
+        def account_matches(self):
+            expected = self.headers.get('X-Account-ID')
+            if expected is None: return True  # older clients do not perform account-bound sync
+            user = accounts.user(self.account_token())
+            return expected == (user['id'] if user else 'guest')
+
+        def account_cookie(self, value):
+            secure = '; Secure' if demo else ''
+            self._new_cookie = f'csa_account={value}; Path=/; HttpOnly; SameSite=Lax; Max-Age={30*86400 if value else 0}{secure}'
+
         def workspace(self):
+            user = accounts.user(self.account_token())
+            if user:
+                sid = 'account-' + user['id']
+                with stores_lock:
+                    if sid not in stores:
+                        stores[sid] = ReviewStore(Path(root) / 'sessions' / sid)
+                    return stores[sid]
             if not demo:
                 return store
             if hasattr(self, '_workspace'):
@@ -474,6 +436,14 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
             from urllib.parse import parse_qs
             parsed = urlparse(self.path)
             try:
+                if parsed.path == '/api/account':
+                    from .account_mail import available as email_available
+                    return self.send({'user':accounts.user(self.account_token()), 'token':token, 'email_enabled':email_available(), 'contact':{'email':os.getenv('CSA_CONTACT_EMAIL','15652805681@163.com'), 'wechat':os.getenv('CSA_CONTACT_WECHAT','15652805681')}})
+                if parsed.path == '/api/account/progress':
+                    if not self.account_matches(): return self.send({'error':'账号已在其他页面切换，请刷新后继续。'},409)
+                    user = accounts.user(self.account_token())
+                    if not user: return self.send({'error':'请先登录。'},401)
+                    return self.send(accounts.progress(user['id']))
                 if parsed.path == '/api/state':
                     run = parse_qs(parsed.query).get('run', [None])[0]
                     runs = self.workspace().runs()
@@ -533,6 +503,7 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                          '/bank-audit': ('bank-audit.html', 'text/html'),
                          '/bank-audit.css': ('bank-audit.css', 'text/css'),
                          '/bank': ('bank.html', 'text/html'), '/bank.js': ('bank.js', 'text/javascript')}
+                names.update({'/community.js':('community.js','text/javascript'), '/community.css':('community.css','text/css')})
                 names.update({'/java-reference-1.png':('java-reference-1.png','image/png'), '/java-reference-2.png':('java-reference-2.png','image/png')})
                 names.update({'/exam':('exam.html','text/html'), '/exam.js':('exam.js','text/javascript'), '/exam.css':('exam.css','text/css')})
                 names.update({'/curriculum': ('curriculum.html','text/html'),
@@ -544,13 +515,8 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                     return self.send({'error': '页面不存在。'}, 404)
                 name, mime = names[parsed.path]
                 content = (ASSETS / name).read_bytes()
-                if demo and name in {'index.html','library.html'}:
-                    notice = '<p class="public-notice" role="status">完成组卷后请下载保存，试用期间在线练习记录可能被清理。</p>'
-                    content = content.replace(b'<main>', ('<main>' + notice).encode())
-                    content = content.replace('本地题库 / AI 按需生成'.encode(), '公开试用版 · 教师工作台'.encode())
-                    content = content.replace('本地题库 · 可筛选组卷'.encode(), '公开试用版 · 可筛选组卷'.encode())
-                    content = content.replace('查看全课程题目审核页 →'.encode(), '查看课程范围与题库说明 →'.encode())
-                    content = content.replace('有额度时可为旧题生成英文解析。'.encode(), '教师答案支持中英双语导出。'.encode())
+                if mime == 'text/html' and name not in {'admin.html','bank-audit.html','source-bank.html'}:
+                    content = content.replace(b'<script ', b'<link rel="stylesheet" href="/community.css"><script src="/community.js" defer></script><script ', 1)
                 self.send(content, mime=mime + '; charset=utf-8')
             except (ValueError, OSError) as exc:
                 self.send({'error': str(exc)}, 400)
@@ -577,6 +543,47 @@ def create_server(root=OUTPUT_FOLDER, port=8765, host=None, allowed_hosts=None, 
                 return
             if self.headers.get('X-Review-Token') != token:
                 return self.send({'error': '请从练习页面提交。'}, 403)
+            if not self.account_matches():
+                return self.send({'error':'账号已在其他页面切换，请刷新后继续；本机草稿仍保留。'},409)
+            if self.path.startswith('/api/account/') or self.path == '/api/feedback':
+                try:
+                    size = int(self.headers.get('Content-Length','0'))
+                    limit = 2100000 if self.path.endswith('/progress') else 12000
+                    if not 0 < size <= limit: raise ValueError('提交内容过大或为空。')
+                    payload = json.loads(self.rfile.read(size))
+                    if not isinstance(payload,dict): raise ValueError('提交格式无效。')
+                    action = self.path.rsplit('/',1)[-1]
+                    if self.path == '/api/feedback':
+                        accounts.throttle('feedback:' + self.client_address[0], 10)
+                        from .feedback import save_feedback
+                        return self.send(save_feedback(accounts.path.parent,payload))
+                    if action == 'email-request':
+                        purpose = payload.get('purpose')
+                        if purpose not in {'bind','reset'}: raise ValueError('不支持的操作。')
+                        user = accounts.user(self.account_token())
+                        if purpose == 'bind' and not user: return self.send({'error':'请先登录。'},401)
+                        return self.send(accounts.request_code(purpose,payload,self.client_address[0],user['id'] if user else None))
+                    if action == 'email-verify':
+                        user = accounts.user(self.account_token())
+                        if not user:return self.send({'error':'请先登录。'},401)
+                        accounts.consume_code(str(payload.get('challenge','')),str(payload.get('email_code','')),'bind',user['id'])
+                        return self.send({'ok':True})
+                    if action in {'register','login','reset'}:
+                        value,recovery = accounts.authenticate(action,payload,self.client_address[0])
+                        accounts.logout(self.account_token())
+                        self.account_cookie(value)
+                        return self.send({'user':accounts.user(value),'recovery':recovery})
+                    if action == 'logout':
+                        accounts.logout(self.account_token())
+                        self.account_cookie('')
+                        return self.send({'ok':True})
+                    if action == 'progress':
+                        user = accounts.user(self.account_token())
+                        if not user: return self.send({'error':'登录已过期，请先登录。'},401)
+                        return self.send(accounts.progress(user['id'],payload))
+                    raise ValueError('不支持的操作。')
+                except (ValueError,TypeError,KeyError) as exc:
+                    return self.send({'error':str(exc)},400)
             if self.path == '/api/exam':
                 try:
                     size=int(self.headers.get('Content-Length','0'))

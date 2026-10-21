@@ -18,36 +18,39 @@ class ExpandedBankTests(unittest.TestCase):
             self.assertTrue(q['prerequisites'])
 
     def test_all_topic_difficulty_time_combinations(self):
-        # Every nonempty content subset: no unrelated objectives, duplicates,
-        # difficulty leakage or budget overruns; unsupported cases explicitly fail.
-        for topic,contents in TOPIC_CONTENTS.items():
-            for n in range(1,len(contents)+1):
-                for selected in combinations(contents,n):
-                    allowed=set().union(*(CONTENT[c][1] for c in selected))
-                    for difficulty,(_,levels) in DIFFICULTIES.items():
-                        for minutes in [10,20,30]:
-                            settings=dict(topic=topic,contents=list(selected),difficulty=difficulty,minutes=minutes)
-                            eligible=[q for q in BANKS[topic] if q['level'] in levels and selection_objectives(q,topic)<=allowed and q['minutes']<=minutes]
-                            with self.subTest(settings=settings):
-                                if not eligible:
-                                    with self.assertRaises(ValueError):assemble(settings)
-                                    continue
-                                s,records=assemble(settings)
-                                self.assertLessEqual(summary(s,records)['minutes'],minutes)
-                                ids=[r['content']['id'] for r in records]
-                                self.assertEqual(len(ids),len(set(ids)))
-                                for r in records:
-                                    self.assertIn(r['content']['level'],levels)
-                                    self.assertLessEqual(selection_objectives(r['content'],topic),allowed)
+        from teacher_copilot.worksheets import VISIBLE_TOPICS, eligible_questions, validate_settings
+        # Single labels, adjacent pairs and complete topic: bounded even as the bank grows.
+        for topic in VISIBLE_TOPICS:
+            if topic == 'all-csa': continue
+            contents = TOPIC_CONTENTS[topic]
+            subsets = [[c] for c in contents] + [contents[i:i+2] for i in range(len(contents)-1)] + [contents]
+            for selected in subsets:
+                for difficulty in DIFFICULTIES:
+                    for minutes in [10,20,30]:
+                        settings=dict(topic=topic,contents=list(selected),difficulty=difficulty,minutes=minutes)
+                        eligible=[q for q in eligible_questions(validate_settings(settings)) if q['minutes'] <= minutes]
+                        with self.subTest(settings=settings):
+                            if not eligible:
+                                with self.assertRaises(ValueError): assemble(settings)
+                                continue
+                            s, records=assemble(settings)
+                            self.assertLessEqual(summary(s, records)['minutes'], minutes)
+                            ids=[r['content']['id'] for r in records]
+                            self.assertEqual(len(ids),len(set(ids)))
+                            self.assertLessEqual(set(ids), {q['id'] for q in eligible})
+                            self.assertTrue(all(r['content'].get('source_item_id') for r in records))
 
     def test_dp_matches_exhaustive_optimum(self):
-        for difficulty,(_,levels) in DIFFICULTIES.items():
-            eligible=[q for q in QUESTIONS if q['level'] in levels]
-            def score(group):
-                return (len(set().union(*(set(q['objectives']) for q in group))),len({q['level'] for q in group}),sum(q['minutes'] for q in group))
-            groups=[g for n in range(1,len(eligible)+1) for g in combinations(eligible,n) if sum(q['minutes'] for q in g)<=20]
-            _,records=assemble(dict(topic='methods',contents=TOPIC_CONTENTS['methods'],difficulty=difficulty,minutes=20))
-            self.assertEqual(score([r['content'] for r in records]),max(map(score,groups)))
-
+        from unittest.mock import patch
+        from teacher_copilot.worksheets import eligible_questions, validate_settings
+        settings=dict(topic='csa-calls',contents=TOPIC_CONTENTS['csa-calls'],difficulty='any',minutes=20)
+        eligible=eligible_questions(validate_settings(settings))[:10]
+        wanted=set().union(*(CONTENT[c][1] for c in settings['contents']))
+        def score(group):
+            return (len(set().union(*(selection_objectives(q,'csa-calls') & wanted for q in group))),len({q['level'] for q in group}),sum(q['minutes'] for q in group))
+        groups=[g for n in range(1,len(eligible)+1) for g in combinations(eligible,n) if sum(q['minutes'] for q in g)<=20]
+        with patch.dict(BANKS, {'csa-calls':eligible}):
+            _, records=assemble(settings)
+        self.assertEqual(score([r['content'] for r in records]), max(map(score,groups)))
 
 if __name__=='__main__':unittest.main()

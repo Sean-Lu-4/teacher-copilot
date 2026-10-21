@@ -38,6 +38,8 @@ def save_feedback(root, payload):
             'email': _text(payload.get('email'), '联系邮箱', 254),
             'run': _text(payload.get('run'), '练习编号', 120),
             'question_id': _text(payload.get('question_id'), '题目编号', 120),
+            'page': _text(payload.get('page'), '页面', 500),
+            'contact': _text(payload.get('contact'), '联系方式', 254),
             'created_at': datetime.now(timezone.utc).isoformat()}
     atomic_json(_root(root) / 'feedback' / f"{item['id']}.json", item)
     return {'saved': True, 'id': item['id']}

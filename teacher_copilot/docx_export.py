@@ -145,7 +145,7 @@ def build_docx(plan, records, audience, language='bilingual'):
                 for item in value if isinstance(value, list) else [value]:
                     paragraph(item)
     document.core_properties.title = 'AP CSA ' + topic + ' ' + audience
-    document.core_properties.author = 'Teacher Copilot'
+    document.core_properties.author = 'CSA Studio'
     stream = BytesIO()
     document.save(stream)
     return stream.getvalue()

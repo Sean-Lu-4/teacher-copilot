@@ -97,36 +97,7 @@ class AITests(unittest.TestCase):
                 with self.assertRaises(ValueError) as raised:ai.generate(SETTINGS,'ai',client_factory=FakeClient)
                 self.assertNotIn('secret-key',str(raised.exception))
 
-    def test_mock_saved_edit_replace_and_word(self):
-        with tempfile.TemporaryDirectory() as root,patch.dict('os.environ',{},clear=True):
-            store=ReviewStore(root)
-            with patch('openai.OpenAI',side_effect=AssertionError('Network forbidden')):
-                state=store.mutate(dict(action='generate',settings=SETTINGS,source='mock'))
-                state=store.mutate(dict(action='replace',run=state['run'],version=state['version'],id=state['records'][0]['content']['id']))
-                state=store.mutate(dict(action='revise',run=state['run'],version=state['version'],id=state['records'][0]['content']['id'],actor='Test',reason='Edit test',changes=dict(title='LATEST_MOCK_TITLE')))
-                export=store.mutate(dict(action='export',run=state['run'],version=state['version'],format='docx',audience='student'))
-            text='\n'.join(p.text for p in Document(BytesIO(base64.b64decode(export['download']))).paragraphs)
-            self.assertIn('LATEST_MOCK_TITLE',text)
-            self.assertNotIn('模拟',text)
-            self.assertEqual(state['generation']['output_tokens'],0)
-            self.assertEqual(store.state(state['run'])['source'],'mock')
 
-    def test_same_request_once_and_daily_budget_persist(self):
-        """Failed paid attempts must remain counted across process restarts."""
-        with tempfile.TemporaryDirectory() as root,patch.dict('os.environ',ENV,clear=True):
-            store=ReviewStore(root)
-            from teacher_copilot.ai_usage import set_limits
-            set_limits(store.root,dict(daily_requests=10,daily_output_tokens=1000000))
-            request=dict(action='generate',source='ai',settings=SETTINGS,request_id=str(uuid.uuid4()))
-            with patch.object(ai,'generate',side_effect=ValueError('failed')) as call:
-                with self.assertRaises(ValueError):store.mutate(request)
-                with self.assertRaisesRegex(ValueError,'已经处理'):ReviewStore(root).mutate(request)
-                self.assertEqual(call.call_count,1)
-                for _ in range(9):
-                    with self.assertRaises(ValueError):store.mutate(dict(request,request_id=str(uuid.uuid4())))
-                with self.assertRaisesRegex(ValueError,'上限'):store.mutate(dict(request,request_id=str(uuid.uuid4())))
-                self.assertEqual(call.call_count,10)
-                self.assertEqual(store.runs(),[])
 
     def test_replacement_preserves_required_objectives_and_time(self):
         data=payload();data['questions']=data['questions'][:1]
@@ -136,38 +107,6 @@ class AITests(unittest.TestCase):
         data['questions'][0]['minutes']=4
         with self.assertRaises(ValueError):ai.validate_result(data,SETTINGS,[],replacement=old)
 
-    def test_ai_adapter_save_edit_reload_export_and_failed_regeneration(self):
-        # Exercise the real adapter and store together, replacing only the SDK
-        # client. Network access is forbidden throughout this acceptance case.
-        with tempfile.TemporaryDirectory() as root,patch.dict('os.environ',ENV,clear=True), \
-                patch('openai.OpenAI',FakeClient), \
-                patch('socket.socket.connect',side_effect=AssertionError('Network forbidden')):
-            store=ReviewStore(root)
-            state=store.mutate(dict(action='generate',source='ai',settings=SETTINGS,
-                                    request_id=str(uuid.uuid4())))
-            self.assertEqual(state['source'],'ai')
-            self.assertEqual(len(FakeClient.calls),2)
-            self.assertEqual(state['summary']['minutes'],10)
-            state=store.mutate(dict(action='revise',run=state['run'],version=state['version'],
-                id=state['records'][0]['content']['id'],actor='Teacher',reason='Acceptance',
-                changes=dict(title='SAVED_AI_QUESTION',answer='TEACHER_ONLY_ANSWER')))
-            reloaded=ReviewStore(root).state(state['run'])
-            self.assertEqual(reloaded['version'],state['version'])
-            for audience in ('student','teacher'):
-                exported=store.mutate(dict(action='export',run=state['run'],version=state['version'],
-                                          format='docx',audience=audience))
-                doc=Document(BytesIO(base64.b64decode(exported['download'])))
-                text='\n'.join(p.text for p in doc.paragraphs)
-                self.assertIn('SAVED_AI_QUESTION',text)
-                self.assertEqual('TEACHER_ONLY_ANSWER' in text,audience=='teacher')
-            before=store.state(state['run'])
-            for output in ('not json',json.dumps({'questions':[]})):
-                FakeClient.response.output_text=output
-                with self.assertRaises(ValueError):
-                    store.mutate(dict(action='generate',source='ai',settings=SETTINGS,
-                        run=state['run'],request_id=str(uuid.uuid4())))
-                self.assertEqual(store.runs(),[state['run']])
-                self.assertEqual(store.state(state['run']),before)
 
 
 if __name__=='__main__':unittest.main()

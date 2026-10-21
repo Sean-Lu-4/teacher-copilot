@@ -86,7 +86,7 @@ class ReviewTests(unittest.TestCase):
         with urlopen(Request(url+'/api/action', data=body, headers={'X-Review-Token':data['token']})) as response:
             self.assertIn('report', json.load(response))
         with urlopen(url) as response:
-            self.assertIn('生成课堂练习', response.read().decode())
+            self.assertIn('CSA Studio', response.read().decode())
 
     def test_http_exposes_read_only_bank_browser(self):
         server = create_server(self.root, 0)
@@ -97,8 +97,9 @@ class ReviewTests(unittest.TestCase):
         url = f'http://127.0.0.1:{server.server_port}'
         with urlopen(url+'/api/bank') as response:
             data = json.load(response)
-        self.assertEqual(data['count'], 275)
-        self.assertTrue(any(q['title'] == '识别合法调用' for q in data['questions']))
+        self.assertEqual(data['total_count'], len(data['questions']))
+        self.assertGreater(data['count'], 0)
+        self.assertTrue(all(q.get('id') for q in data['questions']))
         with urlopen(url+'/bank') as response:
             self.assertIn('浏览题库', response.read().decode())
 

@@ -51,6 +51,18 @@ def action(root,payload,now=None):
     if not isinstance(payload,dict):raise ValueError('请求格式无效。')
     kind=payload.get('action')
     with LOCK:
+        if kind=='latest':
+            folder=Path(root)/'exams'
+            candidates=[]
+            if folder.exists():
+                for file in folder.glob('*.json'):
+                    try:
+                        item=json.loads(file.read_text(encoding='utf8'))
+                        candidates.append((item['started_at'],item['id']))
+                    except (ValueError,KeyError,OSError):
+                        continue
+            if not candidates:return {'session':None}
+            return {'session':view(read(root,max(candidates)[1],now),now)}
         if kind=='start':
             questions() # Fail before creating a session if the curated set is missing.
             s=dict(id=secrets.token_hex(24),started_at=now,deadline=now+DURATION,status='active',revision=0,drafts={},results={})

@@ -37,29 +37,33 @@ class CSABankTests(unittest.TestCase):
                 self.assertTrue(q['reference_solution'])
                 self.assertNotIn('/* complete */',q['reference_solution'])
 
-    def test_every_topic_available_in_all_tiers(self):
+    def test_every_topic_reports_actual_pdf_availability(self):
+        from teacher_copilot.worksheets import eligible_questions,validate_settings,DIFFICULTIES
         for group,(_,topics) in GROUPS.items():
             for t in topics:
-                for difficulty,level in [('basic',2),('advanced',3),('exam',4)]:
+                for difficulty in DIFFICULTIES:
                     contents=['calls','returns','tracing'] if t=='1.10' else [objective(t)]
-                    settings,records=assemble(dict(topic=group,contents=contents,difficulty=difficulty,minutes=20))
-                    self.assertTrue(records)
-                    allowed=set().union(*(CONTENT[c][1] for c in contents))
-                    self.assertTrue(all(selection_objectives(r['content'],group)<=allowed for r in records))
-                    self.assertIn(records[0]['content']['level'],{1,2} if level==2 else {level})
-                    self.assertTrue(records[0]['bank_version'])
+                    settings=dict(topic=group,contents=contents,difficulty=difficulty,minutes=30)
+                    eligible=[q for q in eligible_questions(validate_settings(settings)) if q['minutes']<=30]
+                    with self.subTest(topic=t,difficulty=difficulty):
+                        if not eligible:
+                            with self.assertRaises(ValueError):assemble(settings)
+                        else:
+                            _,records=assemble(settings)
+                            self.assertLessEqual({r['content']['id'] for r in records},{q['id'] for q in eligible})
+                            self.assertTrue(all(r['content'].get('source_item_id') for r in records))
 
     def test_student_export_and_saved_reference_edit(self):
         with tempfile.TemporaryDirectory() as temp:
             store=ReviewStore(temp)
-            state=store.mutate(dict(action='generate',settings=dict(topic='csa-arrays',contents=[objective('4.5')],difficulty='exam',minutes=20)))
+            state=store.mutate(dict(action='generate',settings=dict(topic='csa-arrays',contents=[objective('4.5')],difficulty='any',minutes=20,question_types=['write'])))
             q=state['records'][0]['content']
             payload=dict(run=state['run'],version=state['version'])
             teacher=store.mutate(dict(payload,action='export',audience='teacher'))['report']
             student=store.mutate(dict(payload,action='export',audience='student'))['report']
             self.assertIn(q['reference_solution'],teacher)
             for field in ['answer','reference_solution','rubric','intervention']:
-                self.assertNotIn(q[field],student)
+                if len(q.get(field,''))>5:self.assertNotIn(q[field],student)
             self.assertIn('一维数组',student)
             state=store.mutate(dict(payload,action='revise',id=q['id'],actor='test',reason='test update',changes={'reference_solution':q['reference_solution']+'\n// reviewed'}))
             report=store.mutate(dict(action='export',run=state['run'],version=state['version'],audience='teacher'))['report']

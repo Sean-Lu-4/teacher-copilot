@@ -10,3 +10,6 @@ embeddings_cache*.json
 # Keep local teaching materials out of source control by default.
 materials/
 backups/
+
+# Local previews, test accounts and release verification artifacts.
+tmp/

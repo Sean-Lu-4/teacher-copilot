@@ -9,7 +9,7 @@ function updateSelected() {
   const rows = data.questions.filter(q => selected.has(q.id)); selected = new Set(rows.map(q => q.id));
   try { localStorage.setItem('teacher-copilot-picked', JSON.stringify([...selected])); } catch {}
   let panel = $('selection-panel'); if (!panel) { panel = document.createElement('section'); panel.id = 'selection-panel'; panel.className = 'bank-card'; $('results').before(panel); }
-  panel.replaceChildren(); panel.append(Object.assign(document.createElement('h2'), {textContent: `组卷清单 · ${rows.length} 道题 · 预计 ${rows.reduce((n, q) => n + q.minutes, 0)} 分钟`}));
+  panel.hidden=!rows.length; panel.replaceChildren(); panel.append(Object.assign(document.createElement('h2'), {textContent: `组卷清单 · ${rows.length} 道题 · 预计 ${rows.reduce((n, q) => n + q.minutes, 0)} 分钟`}));
   const topics = new Set(rows.map(q => q.topic)); const hint = document.createElement('p'); hint.className = 'hint'; hint.textContent = topics.size > 1 ? '当前自选清单跨越多个课题；正式试卷会保留这些题目。' : rows.length < 3 ? '至少选择 3 道题后组卷。' : rows.length > 30 ? '最多带入 30 道候选题。' : '所选题目会带入正式试卷的候选范围。'; panel.append(hint);
   const list = document.createElement('ul'); for (const q of rows) { const li = document.createElement('li'); li.textContent = `${q.title} · ${q.topic_title} · ${q.minutes} 分钟 `; const remove = document.createElement('button'); remove.textContent = '移除'; remove.onclick = () => { selected.delete(q.id); render(); }; li.append(remove); list.append(li); } panel.append(list);
   const clear = document.createElement('button'); clear.textContent = '清空清单'; clear.disabled = !rows.length; clear.onclick = () => { selected.clear(); render(); }; panel.append(clear);

@@ -1,0 +1,31 @@
+.community-dialog{color:#173238;background:#fff;border:1px solid #cbdcde;border-radius:20px;padding:28px;width:min(480px,calc(100vw - 32px));max-height:88dvh;overflow:auto;box-sizing:border-box;box-shadow:0 24px 90px #17323833}
+.community-dialog::backdrop{background:#102a3866}
+.community-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:20px}
+.community-heading h2{font-size:24px;margin:0}.community-dialog p{font-size:15px;line-height:1.7}
+.community-dialog label{display:block;font-size:15px;font-weight:600;margin:14px 0}
+.community-dialog input,.community-dialog select,.community-dialog textarea{display:block;box-sizing:border-box;width:100%;font:inherit;font-size:16px;border:1px solid #b8cbcf;border-radius:9px;padding:12px;margin-top:7px;background:#fff;color:#173238}
+.community-dialog button{font-size:16px;min-height:44px;border-radius:9px;cursor:pointer}
+.community-dialog button[type=submit]{width:100%;margin-top:12px}
+.community-close{border:0;background:#eef4f4;min-width:44px;color:#173238;font-size:24px!important;padding:4px!important}
+.community-help{color:#52676c}.community-status{color:#9e3325;white-space:pre-wrap}
+.community-links{display:flex;justify-content:space-between;flex-wrap:wrap;margin-top:18px;gap:8px}
+.community-links button,.community-text-button{border:0;background:none;color:#087b78;padding:8px;cursor:pointer}
+.community-contacts{border-top:1px solid #dce6e7;margin-top:24px;padding-top:12px}
+.community-contacts a{overflow-wrap:anywhere;color:#087b78}
+.community-account{background:#087b78!important;color:white!important;border:0!important;font-size:16px!important;min-height:44px;padding:10px 18px!important;border-radius:10px;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+header nav{gap:6px;align-items:center}header nav .nav-link{font-size:16px;white-space:nowrap}
+.guest-import{border:1px solid #b9d8d2;background:#eff8f5;border-radius:12px;padding:16px;margin-bottom:20px}.guest-import button{margin-right:8px}
+.community-feedback{position:fixed;bottom:20px;right:18px;z-index:40;border:1px solid #b7cfce;border-radius:24px;background:white;color:#076b68;padding:10px 18px;font-size:16px;min-height:44px;box-shadow:0 4px 18px #17323818;cursor:pointer}
+footer{display:flex;justify-content:center;gap:16px;align-items:center;flex-wrap:wrap;padding:28px 72px!important;font-size:14px!important}
+@media(max-width:600px){.community-dialog{padding:20px}.community-feedback{bottom:12px;right:12px}.community-account{font-size:14px!important;padding:8px 12px!important}footer{padding:24px 65px 80px 20px!important}}
+/* Launch layout: keep the task visible before secondary information. */
+body.modal-open{overflow:hidden}
+.mobile-menu-toggle{display:none}
+.community-account{white-space:nowrap;flex-shrink:0}
+.community-dialog{overscroll-behavior:contain;scrollbar-gutter:stable}
+.community-heading{position:sticky;top:-28px;background:white;z-index:2;padding:8px 0}
+.community-dialog.image-reader{width:min(1280px,96vw);height:92dvh;max-height:92dvh;display:flex;flex-direction:column;overflow:hidden}
+.image-reader .community-heading{flex-shrink:0;margin-bottom:8px}.reader-tools{display:flex;gap:8px;margin-bottom:12px}.reader-viewport{overflow:auto;flex:1;min-height:0;overscroll-behavior:contain}.reader-viewport img{display:block;width:100%;max-width:none!important;height:auto}
+.teacher-page .intro{padding:16px 24px;margin-bottom:20px}.teacher-page .intro h1{font-size:28px}.teacher-page #empty{min-height:180px;padding:40px 24px;max-height:240px}.teacher-page .workspace{grid-template-columns:minmax(300px,360px) minmax(0,1fr)}.teacher-page aside{position:static!important;max-height:none!important;overflow:visible!important;padding:24px}.teacher-page .hint:empty{display:none}.teacher-page .section-title{margin-top:0;padding-top:0}.teacher-page #generate{position:sticky;bottom:12px;z-index:5}.teacher-page .task{font-family:system-ui,'Microsoft YaHei',sans-serif;white-space:pre-wrap;font-size:17px}.bank-page .intro{padding:16px 24px;margin-bottom:16px}.bank-page .intro h1{font-size:28px}.bank-page .bank-toolbar{padding:12px 16px}
+@media(max-width:760px){header:has(#site-navigation){display:flex!important;flex-wrap:wrap!important;align-items:center!important;padding:12px 16px!important;gap:12px!important}header .brand{margin:0!important;font-size:23px!important}.mobile-menu-toggle{display:block;margin-left:auto;border:1px solid #b8cbcf;background:white;border-radius:8px;min-height:44px;padding:8px 16px;font-size:16px}header #site-navigation{display:none!important;width:100%;flex-direction:column;align-items:stretch}header #site-navigation.mobile-open{display:flex!important}header #site-navigation a,header #site-navigation button{width:100%;max-width:none;box-sizing:border-box;text-align:left;font-size:16px!important}.community-heading{top:-20px}.teacher-page .workspace{grid-template-columns:1fr}.teacher-page .intro,.bank-page .intro{padding:8px 12px;margin:8px 0 16px}.teacher-page .intro h1,.bank-page .intro h1{font-size:24px}.teacher-page #empty{display:none}.bank-page .intro .eyebrow,.bank-page .intro p{display:none}.bank-page .bank-toolbar{gap:8px;flex-wrap:wrap}.bank-page .bank-toolbar button{padding:6px 12px;min-height:44px}.community-feedback{bottom:12px;padding:8px 14px}.practice-page .session-bottom,.exam-bottom{padding-bottom:68px!important}}
+@media(min-width:761px){.practice-page .community-feedback,body:has(#exam) .community-feedback{bottom:96px}}

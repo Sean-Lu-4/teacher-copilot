@@ -38,3 +38,9 @@
 
 
 #time-reminder{max-width:min(560px,calc(100vw - 32px));padding:24px;border:1px solid #c3d4df;border-radius:12px;color:#172d43;box-shadow:0 16px 50px #172d4330}#time-reminder::backdrop{background:#152b4566}#time-reminder h2{margin:0 0 12px;font-size:24px}#time-reminder p{line-height:1.7}
+/* Compact by default; progress remains one click away. */
+.practice-page .page-title{display:none}
+#learning-overview{margin:0 0 12px;padding:10px 16px;background:white;border:1px solid #d4e0e8;border-radius:10px}
+#learning-overview>summary{font-weight:650;cursor:pointer;min-height:30px}
+#learning-overview .unit-grid{margin:12px 0}.practice-page .exam-entry{float:right;font-size:14px;padding:8px 12px;min-height:36px}.practice-page .study-tabs{margin:8px 0 14px}.practice-page .practice-box{clear:both}.compact-practice .filters{display:none}.practice-page #timing-note{display:none}.practice-page .session-toolbar{padding:10px 16px}.practice-page .question-toolbar{padding:10px 16px}.question-prompt,.response-pane{padding:18px 22px}.practice-page #reference-answer{scroll-margin-top:110px;outline:none}.score-summary{font-size:17px;line-height:1.7}.practice-page .answer details>pre{max-height:420px;overflow:auto}.practice-page .question-prompt a:has(img){display:block;cursor:zoom-in}.practice-page .question-prompt:has(.question-image)::before{content:'点击原图可放大阅读';display:block;color:#43646d;font-size:14px;margin-bottom:12px}.practice-page .inline-scoring-guide img{max-width:100%;height:auto}
+@media(max-width:760px){.practice-page main{padding:12px}.practice-page .exam-entry{float:none;display:inline-block;margin:0 0 8px}.practice-page .session-toolbar>div:first-child{display:none}.practice-page .session-tools{gap:8px}.practice-page .clock-controls{gap:6px}.practice-page .question-prompt h2{font-size:21px}.practice-page .question-toolbar{gap:8px}.practice-page #reference-answer{scroll-margin-top:12px}}

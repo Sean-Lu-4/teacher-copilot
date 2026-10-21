@@ -1,3 +1,5 @@
+from test_pdf_fixtures import pdf_ids
+from teacher_copilot.worksheets import TOPIC_CONTENTS
 import unittest
 from unittest.mock import patch
 
@@ -7,9 +9,9 @@ from teacher_copilot.worksheets import assemble_exam, summary
 class ExamBuilderTests(unittest.TestCase):
     def settings(self, **changes):
         value = dict(purpose='exam', topic='csa-calls',
-                     contents=['parameters', 'calls', 'returns', 'tracing'],
+                     contents=TOPIC_CONTENTS['csa-calls'],
                      difficulty='mixed', minutes=60, question_count=10,
-                     total_marks=40, question_types=['trace', 'write', 'concept'])
+                     total_marks=40, question_types=['write', 'concept'])
         value.update(changes)
         return value
 
@@ -29,14 +31,14 @@ class ExamBuilderTests(unittest.TestCase):
 
     def test_selected_pool_errors_are_actionable(self):
         with self.assertRaisesRegex(ValueError, '清单只有 3 道题'):
-            assemble_exam(self.settings(selected_ids=['Q1', 'Q2', 'Q3']))
+            assemble_exam(self.settings(selected_ids=pdf_ids()))
         with self.assertRaisesRegex(ValueError, '其他课题或已失效'):
             assemble_exam(self.settings(selected_ids=['Q1', 'IB01']))
         with self.assertRaisesRegex(ValueError, '符合所选内容、难度和题型'):
-            assemble_exam(self.settings(selected_ids=['Q1', 'Q2', 'Q3'], question_count=3, difficulty='exam'))
+            assemble_exam(self.settings(selected_ids=pdf_ids(), question_count=3, difficulty='exam'))
 
     def test_selected_pool_is_respected(self):
-        ids=['Q1', 'Q2', 'Q3']
+        ids=pdf_ids()
         _, records=assemble_exam(self.settings(selected_ids=ids, question_count=3))
         self.assertEqual({r['content']['id'] for r in records}, set(ids))
 

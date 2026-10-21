@@ -227,10 +227,10 @@ def navigation_settings(settings):
 
 
 def catalog(include_mixed=False):
-    topics=[dict(id=key, title=title, unit=(GROUPS[key][1][0].split('.')[0] if key in GROUPS else '1'), bank_count=len(BANKS[key]),
+    topics=[dict(id=key, title=title, unit=(GROUPS[key][1][0].split('.')[0] if key in GROUPS else '1'), bank_count=sum(bool(q.get("source_item_id")) for q in BANKS[key]),
                             contents=[dict(id=c, title=CONTENT[c][0]) for c in (ALL_CSA_CONTENTS if key=='all-csa' else TOPIC_CONTENTS[key])])
                 for key, title in VISIBLE_TOPICS.items() if include_mixed or key!='all-csa']
-    return dict(bank_count=len(QUESTIONS)+len(IMPORTED_AP), bank_version=BANK_VERSION,
+    return dict(bank_count=len({q["id"] for q in IMPORTED_AP if q.get("source_item_id")}), bank_version=BANK_VERSION,
                 objective_labels={k: title for k, (title, _) in CONTENT.items()},
                 units=[dict(id=str(key),title=f'Unit {key} · {title}') for key,title in UNITS.items()],
                 homework_minutes=[10,20,30,45,60],
@@ -249,7 +249,7 @@ def bank_data():
     rows=[]
     for question in QUESTIONS:
         topic=topic_by_id.get(question['id'])
-        if not topic:
+        if not topic or not question.get("source_item_id"):
             continue
         rows.append(dict(id=question['id'], title=question['title'], topic=topic,
                          topic_title=VISIBLE_TOPICS[topic], level=question['level'],
@@ -296,14 +296,16 @@ def bank_data():
                          units=question.get('units') or [GROUPS.get(topic,('', ['1.1']))[1][0].split('.')[0]]))
     from .java_grading import PROFILES
     from .source_guides import pages_for
+    from .student_check import scoring_points
     for row in rows:
+        row['scoring_points'] = scoring_points(row) if row['question_kind']=='write' else []
         row['scoring_pages'] = pages_for(row.get('source_item_id',''))
         row['java_check_supported'] = row['id'] in PROFILES
         java_profile = PROFILES.get(row['id'], {})
         row['java_input_kind'] = java_profile.get('kind', 'methods')
         row['java_parts'] = [{'label': p['label'], 'args': p['args']} for p in java_profile.get('parts', [])]
         row['java_check_note'] = java_profile.get('note', '')
-    return dict(version=BANK_VERSION, count=original_count, total_count=len(rows), questions=rows,
+    return dict(version=BANK_VERSION, count=len(rows), total_count=len(rows), questions=rows,
                 ced_topics=[dict(id=code,title=label) for code,label in LABELS.items()],
                 topics=[dict(id=t['id'],title=t['title']) for t in catalog()['topics']],
                 difficulties=[dict(id=k,title=v[0]) for k,v in DIFFICULTIES.items()],
@@ -382,9 +384,8 @@ def selected_bank(settings):
         bank = list(BANKS[settings['topic']])
     if imported_selected:
         bank.extend(q for q in imported_selected if q['id'] not in {item['id'] for item in bank})
-    # Default assembly uses imported PDF questions only. Explicitly picked
-    # questions remain available for teachers who chose them in the bank.
-    return [q for q in bank if q.get("source_item_id") or q["id"] in selected_ids]
+    # All assembly, including explicit selections, uses imported PDF questions.
+    return [q for q in bank if q.get("source_item_id")]
 
 
 def eligible_questions(settings):
@@ -503,32 +504,25 @@ def assemble_exam(settings, recent=None):
         raise ValueError(f'当前条件下，{count} 道题至少需要 {minimum_minutes} 分钟，超过设定的 {settings["minutes"]} 分钟。请将考试时间调至至少 {minimum_minutes} 分钟，或减少题量。')
     recent=recent or {}
     bits={key:1<<i for i,key in enumerate(sorted(CORE))}
-    states={(0,0,0):((),0)}
+    # Keep one coverage/reuse candidate per (question count, elapsed time).
+    # Coverage masks must not be state dimensions: 53 topics otherwise create
+    # exponential combinations and repeatedly sort thousands of large tuples.
+    states={(0,0):(0,(),0)}
     for question in eligible:
         mask=sum(bits[key] for key in selection_objectives(question,settings['topic']) & wanted)
-        for (count,used,covered),(group,cost) in list(states.items()):
-            if count >= settings['question_count'] or used + question['minutes'] > settings['minutes']:
+        duration=question['minutes']
+        for (size,used),(covered,group,cost) in list(states.items()):
+            if size >= settings['question_count'] or used+duration > settings['minutes']:
                 continue
-            key=(count+1,used+question['minutes'],covered|mask)
-            proposal=group+(question,)
-            proposal_cost=cost+recent.get(question['id'],0)
-            if key not in states or proposal_cost < states[key][1]:
-                states[key]=(proposal,proposal_cost)
-        # Bound cross-course coverage search; keep the cheapest path for each
-        # count/time pair as well as diverse high-coverage paths.
-        if len(states)>12000:
-            cheapest={}
-            for key,value in states.items():
-                pair=key[:2]
-                if pair not in cheapest or value[1]<cheapest[pair][1][1]:
-                    cheapest[pair]=(key,value)
-            best=sorted(states.items(),key=lambda x:(x[0][2].bit_count(),-x[1][1]),reverse=True)[:8000]
-            states=dict(best)
-            states.update(dict(cheapest.values()))
+            key=(size+1,used+duration)
+            proposal=(covered|mask,group+(question,),cost+recent.get(question['id'],0))
+            previous=states.get(key)
+            if previous is None or (proposal[0].bit_count(),-proposal[2]) > (previous[0].bit_count(),-previous[2]):
+                states[key]=proposal
     candidates=[(key,value) for key,value in states.items() if key[0]==settings['question_count']]
     if not candidates:
         raise ValueError('当前条件无法组成指定题量和时长的正式试卷，请增加考试时间或减少题量。')
-    key,(chosen,_) = max(candidates,key=lambda item:(item[0][2].bit_count(),item[0][1],-item[1][1]))
+    _,(_,chosen,_) = max(candidates,key=lambda item:(item[1][0].bit_count(),item[0][1],-item[1][2]))
     records=[create_record(q,QUESTION_VERSIONS[q['id']],dict(kind='original',sources=[])) for q in sorted(chosen,key=lambda q:(q['level'],q['id']))]
     weights={'write': 6, 'trace': 4, 'concept': 3}
     total_weight=sum(weights.get(r['content'].get('question_kind') or 'concept',3) for r in records)

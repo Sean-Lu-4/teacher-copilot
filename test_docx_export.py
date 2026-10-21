@@ -1,3 +1,5 @@
+from test_pdf_fixtures import pdf_ids
+from teacher_copilot.worksheets import TOPIC_CONTENTS
 import base64
 from io import BytesIO
 from pathlib import Path
@@ -13,9 +15,9 @@ class WordExportTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             store = ReviewStore(root)
             state = store.mutate(dict(action='generate', settings=dict(purpose='exam',
-                topic='csa-calls', contents=['parameters','calls','returns','tracing'],
+                topic='csa-calls', contents=TOPIC_CONTENTS['csa-calls'],
                 difficulty='mixed', minutes=45, question_count=3, total_marks=20,
-                question_types=['concept','trace','write'], selected_ids=['Q1','Q2','Q3'])))
+                question_types=['concept','write'], selected_ids=pdf_ids())))
             q = state['records'][0]['content']
             state = store.mutate(dict(action='revise', run=state['run'], version=state['version'],
                 id=q['id'], actor='Test teacher', reason='Exam export acceptance',
@@ -34,9 +36,9 @@ class WordExportTests(unittest.TestCase):
         from teacher_copilot.worksheets import assemble_exam
         from teacher_copilot.docx_export import build_docx
         settings, records = assemble_exam(dict(purpose='exam', topic='csa-calls',
-            contents=['parameters', 'calls', 'returns', 'tracing'], difficulty='mixed',
+            contents=TOPIC_CONTENTS['csa-calls'], difficulty='mixed',
             minutes=60, question_count=10, total_marks=40,
-            question_types=['trace', 'write', 'concept']))
+            question_types=['write', 'concept']))
         for audience in ['student', 'teacher']:
             doc = Document(BytesIO(build_docx({'worksheet_settings': settings}, records, audience)))
             text = '\n'.join(p.text for p in doc.paragraphs)
@@ -46,13 +48,15 @@ class WordExportTests(unittest.TestCase):
                 q = record['content']
                 self.assertIn(f'{q["marks"]} 分  |  预计 {q["minutes"]} 分钟', text)
             headings = [p for p in doc.paragraphs if p.style.name == 'Heading 1']
-            self.assertTrue(all(p.paragraph_format.page_break_before for p in headings[1:]))
+            for i, heading in enumerate(headings[1:], 1):
+                expected = any(records[j]['content'].get('question_kind') == 'write' for j in [i-1, i])
+                self.assertEqual(bool(heading.paragraph_format.page_break_before), expected)
 
     def test_latest_saved_content_and_student_answer_isolation(self):
         with tempfile.TemporaryDirectory() as root:
             store = ReviewStore(root)
             state = store.mutate(dict(action='generate', settings=dict(topic='csa-arrays',
-                contents=TOPIC_CONTENTS['csa-arrays'], difficulty='exam', minutes=20, purpose='homework')))
+                contents=TOPIC_CONTENTS['csa-arrays'], difficulty='any', minutes=20, purpose='homework')))
             old = state
             question = state['records'][0]['content']
             state = store.mutate(dict(action='revise', run=state['run'], version=state['version'],
@@ -65,8 +69,8 @@ class WordExportTests(unittest.TestCase):
                 self.assertEqual(binary, (Path(result['export_path']) / result['filename']).read_bytes())
                 text = '\n'.join(p.text for p in Document(BytesIO(binary)).paragraphs)
                 self.assertIn('SAVED_TITLE', text)
-                self.assertIn(question['code'], text)
-                for secret in ['PRIVATE_ANSWER', 'PRIVATE_RUBRIC', 'PRIVATE_REASONING', 'PRIVATE_GUIDANCE']:
+                self.assertNotIn('// AP source question', text)
+                for secret in ['PRIVATE_ANSWER', 'PRIVATE_RUBRIC', 'PRIVATE_REASONING']:
                     self.assertEqual(secret in text, audience == 'teacher')
             with self.assertRaises(Conflict):
                 store.mutate(dict(action='export', format='docx', audience='teacher',

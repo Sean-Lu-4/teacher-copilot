@@ -15,8 +15,13 @@ def audit():
             continue
         for difficulty in DIFFICULTIES:
             for minutes in [10,20]:
-                settings, records=assemble(dict(topic=topic,contents=TOPIC_CONTENTS[topic],
-                    difficulty=difficulty,minutes=minutes,purpose='homework'))
+                try:
+                    settings, records=assemble(dict(topic=topic,contents=TOPIC_CONTENTS[topic],
+                        difficulty=difficulty,minutes=minutes,purpose='homework'))
+                except ValueError as exc:
+                    rows.append(dict(topic=topic,difficulty=difficulty,target=minutes,actual=0,
+                        missing=list(TOPIC_CONTENTS[topic]),replaceable=0,count=0,new_second=0,error=str(exc)))
+                    continue
                 info=summary(settings,records)
                 replaceable=0
                 for i in range(len(records)):

@@ -1,12 +1,42 @@
 "use strict";
-const $=id=>document.getElementById(id), KEY='csa-studio-progress-v1';
+const $=id=>document.getElementById(id); let KEY='csa-studio-progress-v1', accountUser=null, progressRevision=0, syncError=false, syncTimer=null, syncing=false, syncAgain=false,progressConflict=false;
 let bank=[],catalog=[],progress={},unit='',current=null,revealed=false,storageOK=true,notebookReview=false;
 let sessionRows=[],clockState={},clockHidden=false,clockQuestion=null;
 const initialView=new URLSearchParams(location.search);
 const names={1:'使用对象与方法',2:'选择与循环',3:'类的创建',4:'数据集合'};
 function node(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
-try{const saved=JSON.parse(localStorage.getItem(KEY)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))progress=saved;}catch{storageOK=false;}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(progress));}catch{storageOK=false;$('notice').textContent='浏览器无法保存进度。本次仍可练习，关闭页面后记录可能丢失。';}}
+async function loadProgress(){
+ accountUser=await CSAAccount.ready;
+ if(accountUser)KEY+=':'+accountUser.id;
+ try{const saved=JSON.parse(localStorage.getItem(KEY)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))progress=saved;}catch{storageOK=false;}
+ if(accountUser){const r=await fetch('/api/account/progress',{headers:{'X-Account-ID':accountUser.id}});if(!r.ok)throw Error('无法加载账号记录，请刷新后重试。');const data=await r.json();progress=data.data;progressRevision=data.revision;
+ const pending=JSON.parse(localStorage.getItem(KEY+':pending')||'null');
+ if(pending&&JSON.stringify(pending.data)===JSON.stringify(data.data)){localStorage.removeItem(KEY+':pending');}
+ else if(pending&&pending.revision===progressRevision){progress=pending.data;setTimeout(syncProgress,0);}
+ else if(pending){progressConflict=true;$('practice-area').inert=true;const banner=node('div',undefined,'community-status');banner.append(node('p','有一份尚未同步的本机草稿。账号记录已更新，请先下载备份再继续。'));const download=node('button','下载本机草稿');download.onclick=()=>{const a=node('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(pending.data,null,2)],{type:'application/json'}));a.download='CSA-draft-backup.json';a.click();URL.revokeObjectURL(a.href);};const resume=node('button','使用账号已保存的记录');resume.disabled=true;const downloadDraft=download.onclick;download.onclick=()=>{downloadDraft();resume.disabled=false;};resume.onclick=()=>{localStorage.removeItem(KEY+':pending');progressConflict=false;$('practice-area').inert=false;banner.remove();};banner.append(download,resume);document.querySelector('main').prepend(banner);}
+ }
+}
+function offerGuestImport(){
+ if(!accountUser)return;let guest;try{guest=JSON.parse(localStorage.getItem('csa-studio-progress-v1')||'{}');}catch{return;}
+ const missing=Object.keys(guest).filter(id=>!progress[id]);if(!missing.length)return;
+ const banner=node('div',undefined,'guest-import');banner.append(node('p',`本机还有 ${missing.length} 道游客练习记录，可以保存到当前账号。`));
+ const importButton=node('button','导入游客记录');importButton.onclick=async()=>{importButton.disabled=true;for(const id of missing)if(!progress[id])progress[id]=guest[id];save();clearTimeout(syncTimer);await syncProgress();if(!syncError){banner.remove();dashboard();choose();}else importButton.disabled=false;};
+ const dismiss=node('button','暂不导入');dismiss.onclick=()=>banner.remove();banner.append(importButton,dismiss);document.querySelector('main').prepend(banner);
+}
+async function syncProgress(){
+ if(!accountUser||progressConflict)return;if(syncing){syncAgain=true;return;}syncing=true;
+ const snapshot=JSON.stringify(progress);
+ try{const result=await CSAAccount.post('/api/account/progress',{data:JSON.parse(snapshot),revision:progressRevision});progressRevision=result.revision;syncAgain=syncAgain||snapshot!==JSON.stringify(progress);syncError=false;if(!syncAgain)localStorage.removeItem(KEY+':pending');else localStorage.setItem(KEY+':pending',JSON.stringify({data:progress,revision:progressRevision}));}
+ catch(e){syncError=true;$('notice').textContent=e.message+' 本机草稿已保留。';syncAgain=false;
+ if(e.status===409){progressConflict=true;$('practice-area').inert=true;const banner=node('div',undefined,'community-status');banner.append(node('p','账号或学习记录已在其他页面更新。请刷新页面，核对并恢复本机草稿。'));const reload=node('button','刷新并恢复草稿');reload.onclick=()=>location.reload();banner.append(reload);document.querySelector('main').prepend(banner);}
+ }
+ finally{syncing=false;if(syncAgain){syncAgain=false;syncProgress();}}
+}
+function save(){if(progressConflict)return;try{localStorage.setItem(KEY,JSON.stringify(progress));}catch{storageOK=false;$('notice').textContent='浏览器无法保存进度，请勿关闭页面。';}if(accountUser){try{localStorage.setItem(KEY+':pending',JSON.stringify({data:progress,revision:progressRevision}));}catch{}clearTimeout(syncTimer);syncTimer=setTimeout(syncProgress,500);}}
+CSAAccount.flush=async()=>{clearTimeout(syncTimer);await syncProgress();if(syncError||syncing||progressConflict)throw Error('学习记录尚未保存，请稍后再退出。');};
+window.addEventListener('beforeunload',e=>{if(accountUser&&(syncing||syncError||localStorage.getItem(KEY+':pending'))){e.preventDefault();e.returnValue='';}});
+window.addEventListener('online',()=>{if(accountUser){clearTimeout(syncTimer);syncProgress();}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&accountUser){clearTimeout(syncTimer);syncProgress();}});
 function record(q){const r=progress[q.id];return r&&typeof r==='object'?r:{};}
 function units(q){return (q.units||[q.ap_unit]).map(String);}
 function available(q){return (!unit||units(q).includes(unit))&&q.question_kind===$('kind').value&&(!$('topic').value||(q.ced_topics||[]).includes($('topic').value))&&($('scope').value==='all'||($('scope').value==='runnable'?q.java_check_supported:($('scope').value==='new'?!record(q).done:CSAProgress.isMistake(record(q))&&!record(q).mastered)));}
@@ -26,7 +56,7 @@ function render(){
  const box=$('question');box.replaceChildren();$('actions').replaceChildren();updateWorkspace();if(current?.question_kind==='write'&&!revealed){clockState=PracticeClock.start(clockState,Date.now());clockSave();paintClock();}
  if(!current){box.append(node('h2','这个范围已没有待练题目'),node('p','可以切换单元、课题或选择“全部题目”继续练习。'));return;}
  const q=current,r=record(q),mcq=q.question_kind==='concept';
- const notebook=button('',()=>{progress[q.id]=CSAProgress.toggleNotebook(record(q));save();dashboard();paintNotebookButton(notebook,q);});paintNotebookButton(notebook,q);box.append(notebook);
+ box.dataset.questionId=q.id; const notebook=button('',()=>{progress[q.id]=CSAProgress.toggleNotebook(record(q));save();dashboard();paintNotebookButton(notebook,q);});paintNotebookButton(notebook,q);box.append(notebook);
  box.append(node('p',`${units(q).map(u=>'Unit '+u).join(' / ')} · ${mcq?'MCQ':'FRQ'}${mcq?' · 预计 '+q.minutes+' 分钟':''}`,'muted'),node('h2',q.title));
  if(q.code&&!q.code.startsWith('// AP source question'))box.append(node('pre',q.code));
  if(q.question_images?.length){
@@ -45,7 +75,7 @@ function render(){
   area.placeholder=q.java_input_kind==='class'?'填写题目要求的完整类，包括字段、构造器和方法。':['fragment','email','parts'].includes(q.java_input_kind)?'填写本题或所选小问的代码片段；不需要外层 class 或方法。':'填写题目要求的方法或构造器；无需重复给定的字段、辅助类或 main。';
   area.addEventListener('keydown',event=>{if(event.key==='Tab'){event.preventDefault();const start=area.selectionStart,end=area.selectionEnd;area.setRangeText('    ',start,end,'end');area.dispatchEvent(new Event('input'));}});
   area.oninput=()=>{const previous=record(q);progress[q.id]={...previous,...(parts.length?{partDrafts:{...previous.partDrafts,[selected]:area.value}}:{draft:area.value}),frqReview:null};save();document.getElementById('code-feedback')?.remove();};
-  response.append(label,area,node('p',q.java_check_supported?'检查时仅提交代码到免费 Java 运行服务；服务繁忙时可稍后重试。':'本题暂支持语法检查，答案请对照评分指南。','muted'));
+  response.append(label,area,node('p',q.java_check_supported?'检查后查看运行结果和逐项得分。':'本题暂支持语法检查，答案请对照评分指南。','muted'));
   if(q.java_check_note)response.append(node('p',q.java_check_note,'muted'));
  }
  $('actions').append(button(mcq?'提交答案':'查看参考答案',()=>{
@@ -55,12 +85,12 @@ function render(){
  if(!mcq)$('actions').prepend(button('检查代码',()=>checkCode(q),true));
  if(notebookReview)$('actions').append(button('返回错题本',()=>setView('mistakes')));
 }
-function showAnswer(message){pauseClock();if(revealed){$('reference-answer')?.scrollIntoView({behavior:'smooth',block:'start'});return;}revealed=true;if(storageOK)$('notice').textContent='';document.querySelectorAll('input[name=choice]').forEach(e=>e.disabled=true);const q=current,box=node('section',undefined,'answer');box.id='reference-answer';const notebookButton=document.querySelector('.notebook-toggle');if(notebookButton)paintNotebookButton(notebookButton,q);box.append(node('p',message,'result'));
+function showAnswer(message){pauseClock();if(revealed){$('reference-answer')?.scrollIntoView({behavior:'smooth',block:'start'});return;}revealed=true;if(storageOK)$('notice').textContent='';document.querySelectorAll('input[name=choice]').forEach(e=>e.disabled=true);const q=current,box=node('section',undefined,'answer');box.id='reference-answer';const notebookButton=document.querySelector('.notebook-toggle');if(notebookButton)paintNotebookButton(notebookButton,q);box.append(node('p',message,'result'));box.tabIndex=-1;if(q.question_kind==='write'&&q.scoring_points?.length){const list=node('ol',undefined,'score-summary');for(const point of q.scoring_points)list.append(node('li',`${point.label} · ${point.points} 分：${point.description}`));box.append(node('h3','本题得分点'),list);}
  if(q.answer_key){
   for(const input of document.querySelectorAll('input[name=choice]')){const label=input.closest('label');if(input.value===q.answer_key){label.classList.add('choice-correct');label.append(node('strong','✓ 正确答案','choice-verdict'));}else if(input.checked){label.classList.add('choice-wrong');label.append(node('strong','✕ 你的选择','choice-verdict'));}}
   box.append(node('h3','正确答案：'+q.answer_key));
  }
- for(const [title,text] of [['答案与解析',q.answer],['参考代码',q.reference_solution],['评分标准',q.rubric],['English explanation',q.explanation_en]])if(text){const detail=node('details');detail.open=!q.scoring_pages?.length;detail.append(node('summary',q.scoring_pages?.length?title+'（文字备份）':title),node('pre',text.replace(/^Select a point value to view scoring criteria or to score the response\.\s*$/gm,'')));box.append(detail);}
+ for(const [title,text] of [['答案与解析',q.answer],['参考代码',q.reference_solution],['评分标准',q.rubric],['English explanation',q.explanation_en]])if(text){const detail=node('details');detail.open=q.question_kind==='concept'||title==='参考代码'||!q.scoring_pages?.length;detail.append(node('summary',q.scoring_pages?.length?title+'（文字备份）':title),node('pre',text.replace(/^Select a point value to view scoring criteria or to score the response\.\s*$/gm,'')));box.append(detail);}
  if(q.scoring_pages?.length){
   const guide=node('section',undefined,'inline-scoring-guide');guide.append(node('h3','原评分指南'));
   const seen=new Set();
@@ -78,7 +108,7 @@ function showAnswer(message){pauseClock();if(revealed){$('reference-answer')?.sc
  if(q.question_kind==='write')$('actions').append(button('检查代码',()=>checkCode(q)));
  if(q.question_kind==='write'){for(const [label,mastered] of [['自评：已掌握',true],['自评：还需练习',false]])$('actions').append(button(label,()=>{progress[q.id]=CSAProgress.submit(record(q),mastered);save();dashboard();next();},mastered));}
  else $('actions').append(button(notebookReview?'返回错题本':'下一题',next,true));
- box.scrollIntoView({behavior:'smooth',block:'start'});
+ requestAnimationFrame(()=>{box.focus({preventScroll:true});box.scrollIntoView({behavior:'instant',block:'start'});});
 }
 let checkingCode=false;
 async function checkCode(q){
@@ -162,7 +192,7 @@ function renderNotebook(){
  const notes=node('details',undefined,'review-notes'),summary=node('summary',r.note?'查看 / 修改复习笔记':'记录复习笔记'),label=node('label','这道题提醒了你什么？'),area=node('textarea');area.setAttribute('aria-label','复习笔记：'+q.title);area.value=r.note||'';area.maxLength=3000;area.placeholder='例如：整数除法会舍去小数部分。';area.oninput=()=>{progress[q.id]={...record(q),note:area.value};save();};label.append(area);notes.append(summary,label);card.append(actions,notes);$('mistake-list').append(card);
  }
 }
-async function init(){try{const response=await fetch('/api/bank');if(!response.ok)throw Error('题库暂时无法加载，请刷新重试。');const data=await response.json();catalog=data.ced_topics||[];bank=[...new Map(data.questions.filter(q=>q.source_item_id&&((q.question_kind==='concept'&&q.answer_key&&q.options?.[q.answer_key])||(q.question_kind==='write'&&(q.reference_solution||q.answer||(q.source_refs||[]).some(r=>r.role==='SG'))))).map(q=>[q.id,q])).values()];$('notice').textContent=storageOK?'':'当前浏览器无法保存进度。';unit=['1','2','3','4'].includes(initialView.get('unit'))?initialView.get('unit'):'';refreshTopics();dashboard();choose();setView(initialView.get('view')==='mistakes'?'mistakes':'practice');$('practice-tab').onclick=()=>{notebookReview=false;choose();setView('practice');};$('mistakes-tab').onclick=()=>setView('mistakes');for(const id of ['mistake-status','mistake-unit','mistake-kind'])$(id).onchange=renderNotebook;for(const id of ['kind','scope','topic'])$(id).onchange=()=>{if(id==='scope'&&$('scope').value==='runnable')$('kind').value='write';if(id==='kind'&&$('kind').value==='concept'&&$('scope').value==='runnable')$('scope').value='all';notebookReview=false;choose();};for(const id of ['kind','scope','topic'])$(id).disabled=false;}catch(e){$('notice').textContent=e.message;}}
+async function init(){try{await loadProgress();offerGuestImport();const response=await fetch('/api/bank');if(!response.ok)throw Error('题库暂时无法加载，请刷新重试。');const data=await response.json();$('bank-count-note').textContent=`教师组卷题库 ${data.total_count??data.questions.length} 题；学生练习只收录有参考答案的 PDF 题。`;catalog=data.ced_topics||[];bank=[...new Map(data.questions.filter(q=>q.source_item_id&&((q.question_kind==='concept'&&q.answer_key&&q.options?.[q.answer_key])||(q.question_kind==='write'&&(q.reference_solution||q.answer||(q.source_refs||[]).some(r=>r.role==='SG'))))).map(q=>[q.id,q])).values()];$('notice').textContent=storageOK?'':'当前浏览器无法保存进度。';unit=['1','2','3','4'].includes(initialView.get('unit'))?initialView.get('unit'):'';refreshTopics();dashboard();choose();setView(initialView.get('view')==='mistakes'?'mistakes':'practice');$('practice-tab').onclick=()=>{notebookReview=false;choose();setView('practice');};$('mistakes-tab').onclick=()=>setView('mistakes');for(const id of ['mistake-status','mistake-unit','mistake-kind'])$(id).onchange=renderNotebook;for(const id of ['kind','scope','topic'])$(id).onchange=()=>{if(id==='scope'&&$('scope').value==='runnable')$('kind').value='write';if(id==='kind'&&$('kind').value==='concept'&&$('scope').value==='runnable')$('scope').value='all';notebookReview=false;choose();};for(const id of ['kind','scope','topic'])$(id).disabled=false;}catch(e){$('notice').textContent=e.message;}}
 initWorkspace();
 init();
 
@@ -193,12 +223,14 @@ function paintClock(){
 function moveQuestion(step){const index=sessionRows.findIndex(q=>q.id===current?.id);const q=sessionRows[index+step];if(q)visitQuestion(q);}
 function visitQuestion(q){pauseClock();current=q;revealed=false;render();$('practice-area').scrollIntoView({behavior:'smooth',block:'start'});}
 function initWorkspace(){
+ $('overview-units').append($('unit-progress'));
+
  const reminder=node('dialog');reminder.id='time-reminder';reminder.setAttribute('aria-labelledby','time-reminder-title');const title=node('h2','练习时间到了');title.id='time-reminder-title';const text=node('p');text.id='time-reminder-text';reminder.append(title,text,button('继续作答',()=>reminder.close(),true));document.body.append(reminder);
  clockState=PracticeClock.restore(null);
  $('clock-toggle').onclick=()=>{if(!current)return;clockState=clockState.startedAt!==null?PracticeClock.pause(clockState,Date.now()):PracticeClock.start(clockState,Date.now());clockSave();paintClock();};
  $('clock-hide').onclick=()=>{clockHidden=!clockHidden;$('clock-hide').textContent=clockHidden?'显示时间':'隐藏时间';paintClock();};
  $('target-minutes').onchange=()=>{const n=Number($('target-minutes').value);if(!Number.isFinite(n)||n<1||n>180){$('target-minutes').value=clockState.target||22.5;return;}clockState.target=n;clockSave();paintClock();};
- $('setup-toggle').onclick=()=>{const focused=document.body.classList.toggle('focused-practice');$('setup-toggle').textContent=focused?'展开设置':'收起设置';$('setup-toggle').setAttribute('aria-expanded',String(!focused));$('practice-area').scrollIntoView({block:'start'});};
+ $('setup-toggle').onclick=()=>{const compact=document.body.classList.toggle('compact-practice');$('setup-toggle').textContent=compact?'练习设置':'收起设置';$('setup-toggle').setAttribute('aria-expanded',String(!compact));$('practice-area').scrollIntoView({block:'start'});};
  $('flag-question').onclick=()=>{if(!current)return;progress[current.id]={...record(current),flagged:!record(current).flagged};save();updateWorkspace();};
  $('previous-question').onclick=()=>moveQuestion(-1);$('next-question').onclick=()=>moveQuestion(1);
  $('question-menu-toggle').onclick=()=>{const menu=$('question-menu');menu.hidden=!menu.hidden;$('question-menu-toggle').setAttribute('aria-expanded',String(!menu.hidden));menu.replaceChildren();if(!menu.hidden){menu.append(node('p','实心为当前题 · 已答为已提交 · 标记为待检查'));sessionRows.forEach((q,i)=>{const r=record(q),b=button(`${i+1}${r.done?' · 已答':''}${r.flagged?' · 标记':''}`,()=>visitQuestion(q));b.setAttribute('aria-current',q.id===current?.id?'true':'false');menu.append(b);});menu.scrollIntoView({behavior:'smooth',block:'nearest'});}};

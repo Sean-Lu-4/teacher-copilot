@@ -299,3 +299,22 @@ py verify_java_bank.py --jdk .cache/java/jdk-21.0.12.1+1 --output outputs/bank30
 - 独立小问只统计本次提交的评分点；TriviaGame 两个方法的测试已分开，避免相互影响得分。
 - `python tools/verify_java_profiles.py --jdk <可信本地JDK路径>` 编译运行仓库内的可信样例：48 个题目/小问入口、12 个等价写法和 15 个故意错误，共 75 次验收。评分回归检查还核对等价写法不丢分、错误代码不误获对应分值。此脚本不得用于执行学生提交。
 - `python -m unittest test_frq_rubric_expansion test_java_initialization test_extended_java test_java_grading test_student_check test_student_portal test_generation_flow -q` 覆盖 59 项检查。线上仍通过免费 Judge0 CE 执行学生代码，服务不可用时保留输入并提示重试。
+
+
+## 上线账号与反馈
+
+- 游客可体验；用户名/密码注册后，学习记录与教师工作区按账号隔离。
+- 账号、会话与学生进度存放在 `outputs/accounts.sqlite3`；教师练习仍在 `outputs/sessions/account-<id>/`。部署必须保留整个 outputs 目录，并将 SQLite 数据库纳入一致性备份（使用 SQLite backup API）。
+- 公网设置 `TEACHER_COPILOT_PUBLIC_DEMO=1` 并使用 HTTPS；账号 Cookie 使用 HttpOnly、SameSite=Lax、Secure。不要为 HTTP 公网访问关闭 Secure。
+- 密码使用独立盐和 scrypt 校验；忘记密码使用注册时一次性展示的恢复码，重设后旧会话和旧恢复码失效。可配置 163 SMTP 启用绑定邮箱与邮件验证码找回；未配置时使用恢复码。
+- `CSA_CONTACT_EMAIL`、`CSA_CONTACT_WECHAT` 可覆盖页面公开联系方式。
+- 全站“反馈”无需登录，反馈带页面路径、可选题号和联系方式；在 `/admin` 使用原管理员密钥处理。账号身份选择不会授予管理员权限。
+- 登录后的新学习记录自动同步；游客旧记录需主动选择导入。不同网站域名的浏览器本地记录不会自动迁移。
+- 本轮验证：`py -m unittest test_accounts test_student_portal test_exam test_review_app -q` 和 `node test_student_progress.cjs`。
+
+### 2026-10-21 发布
+
+- 组卷仅使用 PDF 题库，关闭 AI 补题入口与生成调用。
+- 大范围正式试卷按题量和时长限制搜索规模，前端增加 30 秒超时提示。
+- 邮件设置：`CSA_SMTP_USER`、`CSA_SMTP_PASSWORD`（授权码），默认 `smtp.163.com:465`；密钥只在服务器环境变量配置。
+- 账号与考试数据需要持久保存整个 outputs；Render 免费实例仅供临时试用，重启/重部署不保证保留本地数据。

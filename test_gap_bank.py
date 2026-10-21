@@ -17,16 +17,20 @@ class GapBankTests(unittest.TestCase):
                 self.assertTrue(q['reference_solution'])
                 self.assertTrue(next(f for f in FIXTURES if f['id']==q['id'])['checks'])
 
-    def test_all_twenty_four_scenarios_complete_and_rotatable(self):
+    def test_pdf_only_scenarios_report_real_availability(self):
+        from teacher_copilot.worksheets import eligible_questions, validate_settings, DIFFICULTIES
         for topic in ['csa-math','csa-strings','csa-string-algorithms','csa-files']:
-            for difficulty in ['basic','advanced','exam']:
+            for difficulty in DIFFICULTIES:
                 for minutes in [10,20]:
-                    with self.subTest(topic=topic,difficulty=difficulty,minutes=minutes):
-                        s,r=assemble(dict(topic=topic,contents=TOPIC_CONTENTS[topic],difficulty=difficulty,minutes=minutes,purpose='homework'))
-                        self.assertEqual(summary(s,r)['homework']['status'],'complete')
-                        _,next_rows=assemble(s,{q['content']['id']:1000 for q in r})
-                        self.assertNotEqual({q['content']['id'] for q in r},{q['content']['id'] for q in next_rows})
-                        self.assertTrue(any(self.can_replace(s,r,i) for i in range(len(r))))
+                    settings=dict(topic=topic,contents=TOPIC_CONTENTS[topic],difficulty=difficulty,minutes=minutes,purpose='homework')
+                    eligible=[q for q in eligible_questions(validate_settings(settings)) if q['minutes']<=minutes]
+                    with self.subTest(settings=settings):
+                        if not eligible:
+                            with self.assertRaises(ValueError): assemble(settings)
+                        else:
+                            s,r=assemble(settings)
+                            self.assertLessEqual(summary(s,r)['minutes'],minutes)
+                            self.assertTrue(all(q['content'].get('source_item_id') for q in r))
 
     @staticmethod
     def can_replace(settings,records,index):
@@ -35,8 +39,10 @@ class GapBankTests(unittest.TestCase):
 
     def test_audit_covers_all_combinations(self):
         rows=audit()
-        self.assertEqual(len(rows),126)
-        self.assertEqual(len({(r['topic'],r['difficulty'],r['target']) for r in rows}),126)
+        from teacher_copilot.worksheets import VISIBLE_TOPICS, DIFFICULTIES
+        expected=(len(VISIBLE_TOPICS)-int('all-csa' in VISIBLE_TOPICS))*len(DIFFICULTIES)*2
+        self.assertEqual(len(rows),expected)
+        self.assertEqual(len({(r['topic'],r['difficulty'],r['target']) for r in rows}),expected)
         self.assertTrue(all(r['actual']<=r['target'] for r in rows))
 
 
